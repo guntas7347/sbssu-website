@@ -1,0 +1,112 @@
+[
+  {
+    "id": 1,
+    "title": "Full Stack Web Development Bootcamp",
+    "description": "Comprehensive 5-day bootcamp covering HTML, CSS, JavaScript, React, Node.js, and MongoDB. Hands-on projects and real-world applications.",
+    "date": "2024-11-20",
+    "venue": "Computer Center, Lab 1",
+    "organizer": "Department of Computer Science & IT",
+    "registration_link": "https://sbssu.ac.in/register/fullstack",
+    "image_url": "https://images.pexels.com/photos/1181271/pexels-photo-1181271.jpeg?auto=compress&cs=tinysrgb&w=800",
+    "status": "Open for Registration"
+  },
+  {
+    "id": 2,
+    "title": "Python for Data Science",
+    "description": "Learn Python programming, NumPy, Pandas, Matplotlib, and basic machine learning concepts in this 3-day intensive workshop.",
+    "date": "2024-12-05",
+    "venue": "Computer Center, Lab 2",
+    "organizer": "Department of Computer Science",
+    "registration_link": "https://sbssu.ac.in/register/python-ds",
+    "image_url": "https://images.pexels.com/photos/1181673/pexels-photo-1181673.jpeg?auto=compress&cs=tinysrgb&w=800",
+    "status": "Open for Registration"
+  },
+  {
+    "id": 3,
+    "title": "IoT and Embedded Systems",
+    "description": "Hands-on workshop on Arduino, Raspberry Pi, sensors, and building IoT applications. Create your own smart devices.",
+    "date": "2024-11-28",
+    "venue": "ECE Department Lab",
+    "organizer": "Department of Electronics & Communication",
+    "registration_link": "https://sbssu.ac.in/register/iot",
+    "image_url": "https://images.pexels.com/photos/442152/pexels-photo-442152.jpeg?auto=compress&cs=tinysrgb&w=800",
+    "status": "Open for Registration"
+  },
+  {
+    "id": 4,
+    "title": "Mobile App Development with Flutter",
+    "description": "Learn to build cross-platform mobile applications using Flutter and Dart. Build and deploy your first app.",
+    "date": "2024-12-10",
+    "venue": "IT Department Lab",
+    "organizer": "Department of Information Technology",
+    "registration_link": "https://sbssu.ac.in/register/flutter",
+    "image_url": "https://images.pexels.com/photos/607812/pexels-photo-607812.jpeg?auto=compress&cs=tinysrgb&w=800",
+    "status": "Open for Registration"
+  },
+  {
+    "id": 5,
+    "title": "Cybersecurity and Ethical Hacking",
+    "description": "Introduction to cybersecurity principles, ethical hacking techniques, penetration testing, and security best practices.",
+    "date": "2024-11-15",
+    "venue": "Network & Security Lab",
+    "organizer": "Department of Information Technology",
+    "registration_link": "https://sbssu.ac.in/register/cybersecurity",
+    "image_url": "https://images.pexels.com/photos/5240606/pexels-photo-5240606.jpeg?auto=compress&cs=tinysrgb&w=800",
+    "status": "Registration Closed"
+  },
+  {
+    "id": 6,
+    "title": "CAD/CAM and 3D Modeling",
+    "description": "Master AutoCAD, SolidWorks, and CATIA for mechanical design. Learn 3D modeling, assembly, and engineering drawing.",
+    "date": "2024-12-15",
+    "venue": "Mechanical Department CAD Lab",
+    "organizer": "Department of Mechanical Engineering",
+    "registration_link": "https://sbssu.ac.in/register/cadcam",
+    "image_url": "https://images.pexels.com/photos/8961182/pexels-photo-8961182.jpeg?auto=compress&cs=tinysrgb&w=800",
+    "status": "Open for Registration"
+  },
+  {
+    "id": 7,
+    "title": "MATLAB for Engineers",
+    "description": "Comprehensive MATLAB training covering programming, data analysis, visualization, and Simulink for engineering applications.",
+    "date": "2024-11-25",
+    "venue": "Applied Sciences Department",
+    "organizer": "Department of Applied Sciences",
+    "registration_link": "https://sbssu.ac.in/register/matlab",
+    "image_url": "https://images.pexels.com/photos/8439093/pexels-photo-8439093.jpeg?auto=compress&cs=tinysrgb&w=800",
+    "status": "Open for Registration"
+  },
+  {
+    "id": 8,
+    "title": "PCB Design and Prototyping",
+    "description": "Learn PCB design using EagleCAD and KiCAD. Hands-on experience in designing, simulating, and fabricating PCBs.",
+    "date": "2024-12-08",
+    "venue": "Electronics Lab",
+    "organizer": "Department of ECE",
+    "registration_link": "https://sbssu.ac.in/register/pcb",
+    "image_url": "https://images.pexels.com/photos/163100/circuit-circuit-board-resistor-computer-163100.jpeg?auto=compress&cs=tinysrgb&w=800",
+    "status": "Open for Registration"
+  },
+  {
+    "id": 9,
+    "title": "Digital Marketing and SEO",
+    "description": "Learn digital marketing strategies, SEO, social media marketing, content marketing, and Google Analytics.",
+    "date": "2024-11-30",
+    "venue": "MBA Department Seminar Hall",
+    "organizer": "Department of Management Studies",
+    "registration_link": "https://sbssu.ac.in/register/digital-marketing",
+    "image_url": "https://images.pexels.com/photos/265087/pexels-photo-265087.jpeg?auto=compress&cs=tinysrgb&w=800",
+    "status": "Open for Registration"
+  },
+  {
+    "id": 10,
+    "title": "Cloud Computing with AWS",
+    "description": "Introduction to cloud computing concepts, AWS services, EC2, S3, Lambda, and deploying applications on cloud.",
+    "date": "2024-12-18",
+    "venue": "Computer Center",
+    "organizer": "Department of CSE & IT",
+    "registration_link": "https://sbssu.ac.in/register/aws",
+    "image_url": "https://images.pexels.com/photos/1181675/pexels-photo-1181675.jpeg?auto=compress&cs=tinysrgb&w=800",
+    "status": "Open for Registration"
+  }
+]

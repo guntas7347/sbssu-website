@@ -1,0 +1,98 @@
+[
+  {
+    "id": 1,
+    "department_id": 1,
+    "name": "Dr. Rajesh Kumar",
+    "designation": "Professor & Head",
+    "photo_url": "https://images.pexels.com/photos/2182970/pexels-photo-2182970.jpeg?auto=compress&cs=tinysrgb&w=400",
+    "email": "rajesh.kumar@sbssu.ac.in",
+    "phone": "+91-1632-245001",
+    "message": "Welcome to the Department of Computer Science & Engineering. We are committed to excellence in education, research, and innovation. Our department strives to produce competent engineers who can contribute to society and industry.",
+    "qualifications": "Ph.D. (Computer Science), M.Tech (CSE), B.E. (CSE)",
+    "experience": "25 years"
+  },
+  {
+    "id": 2,
+    "department_id": 2,
+    "name": "Dr. Priya Sharma",
+    "designation": "Professor & Head",
+    "photo_url": "https://images.pexels.com/photos/3831645/pexels-photo-3831645.jpeg?auto=compress&cs=tinysrgb&w=400",
+    "email": "priya.sharma@sbssu.ac.in",
+    "phone": "+91-1632-245002",
+    "message": "The ECE department is at the forefront of technological advancement. We focus on providing hands-on experience and industry-relevant skills to our students.",
+    "qualifications": "Ph.D. (Electronics), M.Tech (VLSI), B.Tech (ECE)",
+    "experience": "22 years"
+  },
+  {
+    "id": 3,
+    "department_id": 3,
+    "name": "Dr. Amandeep Singh",
+    "designation": "Professor & Head",
+    "photo_url": "https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=400",
+    "email": "amandeep.singh@sbssu.ac.in",
+    "phone": "+91-1632-245003",
+    "message": "Mechanical Engineering is the backbone of industry. Our department prepares students to tackle real-world engineering challenges with innovative solutions.",
+    "qualifications": "Ph.D. (Mechanical), M.Tech (Thermal), B.E. (Mechanical)",
+    "experience": "28 years"
+  },
+  {
+    "id": 4,
+    "department_id": 4,
+    "name": "Dr. Gurpreet Kaur",
+    "designation": "Associate Professor & Head",
+    "photo_url": "https://images.pexels.com/photos/3831621/pexels-photo-3831621.jpeg?auto=compress&cs=tinysrgb&w=400",
+    "email": "gurpreet.kaur@sbssu.ac.in",
+    "phone": "+91-1632-245004",
+    "message": "Civil Engineering plays a crucial role in nation building. We train our students to design sustainable infrastructure for tomorrow.",
+    "qualifications": "Ph.D. (Structural), M.Tech (Structures), B.Tech (Civil)",
+    "experience": "20 years"
+  },
+  {
+    "id": 5,
+    "department_id": 5,
+    "name": "Dr. Harpreet Singh",
+    "designation": "Professor & Head",
+    "photo_url": "https://images.pexels.com/photos/3785079/pexels-photo-3785079.jpeg?auto=compress&cs=tinysrgb&w=400",
+    "email": "harpreet.singh@sbssu.ac.in",
+    "phone": "+91-1632-245005",
+    "message": "The Electrical Engineering department focuses on power generation, transmission, and renewable energy technologies to build a sustainable future.",
+    "qualifications": "Ph.D. (Power Systems), M.Tech (EE), B.Tech (EE)",
+    "experience": "24 years"
+  },
+  {
+    "id": 6,
+    "department_id": 6,
+    "name": "Dr. Neha Gupta",
+    "designation": "Associate Professor & Head",
+    "photo_url": "https://images.pexels.com/photos/3831645/pexels-photo-3831645.jpeg?auto=compress&cs=tinysrgb&w=400",
+    "email": "neha.gupta@sbssu.ac.in",
+    "phone": "+91-1632-245006",
+    "message": "Information Technology is transforming every aspect of modern life. Our department equips students with cutting-edge skills in software and IT systems.",
+    "qualifications": "Ph.D. (IT), M.Tech (CSE), B.Tech (IT)",
+    "experience": "18 years"
+  },
+  {
+    "id": 7,
+    "department_id": 7,
+    "name": "Dr. Sukhwinder Kaur",
+    "designation": "Professor & Head",
+    "photo_url": "https://images.pexels.com/photos/3769021/pexels-photo-3769021.jpeg?auto=compress&cs=tinysrgb&w=400",
+    "email": "sukhwinder.kaur@sbssu.ac.in",
+    "phone": "+91-1632-245007",
+    "message": "Applied Sciences form the foundation of engineering education. We provide strong fundamental knowledge in science and mathematics.",
+    "qualifications": "Ph.D. (Physics), M.Sc (Physics), B.Sc",
+    "experience": "26 years"
+  },
+  {
+    "id": 8,
+    "department_id": 8,
+    "name": "Dr. Vikram Mehta",
+    "designation": "Professor & Head",
+    "photo_url": "https://images.pexels.com/photos/1516680/pexels-photo-1516680.jpeg?auto=compress&cs=tinysrgb&w=400",
+    "email": "vikram.mehta@sbssu.ac.in",
+    "phone": "+91-1632-245008",
+    "message": "MBA program at SBSSU prepares future leaders and managers with strong business acumen and ethical values.",
+    "qualifications": "Ph.D. (Management), MBA, B.Com",
+    "experience": "15 years"
+  }
+]

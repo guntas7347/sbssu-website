@@ -1,0 +1,112 @@
+[
+  {
+    "id": 1,
+    "department_id": 1,
+    "event_name": "TechVista 2024 - Annual Tech Fest",
+    "description": "Three-day technical festival featuring coding competitions, hackathons, tech talks, and project exhibitions",
+    "date": "2024-03-15",
+    "venue": "University Auditorium",
+    "image_url": "https://images.pexels.com/photos/1181406/pexels-photo-1181406.jpeg?auto=compress&cs=tinysrgb&w=800",
+    "type": "Technical Fest",
+    "attendees": 800
+  },
+  {
+    "id": 2,
+    "department_id": 1,
+    "event_name": "AI Workshop by Google",
+    "description": "Industry expert from Google conducted workshop on latest AI/ML technologies",
+    "date": "2024-09-20",
+    "venue": "CSE Department Seminar Hall",
+    "image_url": "https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg?auto=compress&cs=tinysrgb&w=800",
+    "type": "Workshop",
+    "attendees": 150
+  },
+  {
+    "id": 3,
+    "department_id": 2,
+    "event_name": "Electronica 2024",
+    "description": "Electronics project exhibition and competition",
+    "date": "2024-04-10",
+    "venue": "ECE Department",
+    "image_url": "https://images.pexels.com/photos/2599244/pexels-photo-2599244.jpeg?auto=compress&cs=tinysrgb&w=800",
+    "type": "Competition",
+    "attendees": 300
+  },
+  {
+    "id": 4,
+    "department_id": 2,
+    "event_name": "5G Technology Seminar",
+    "description": "National seminar on emerging 5G communication technologies",
+    "date": "2024-08-25",
+    "venue": "University Conference Hall",
+    "image_url": "https://images.pexels.com/photos/2774556/pexels-photo-2774556.jpeg?auto=compress&cs=tinysrgb&w=800",
+    "type": "Seminar",
+    "attendees": 200
+  },
+  {
+    "id": 5,
+    "department_id": 3,
+    "event_name": "BAJA SAE Competition",
+    "description": "Student team participated in national BAJA SAE competition with all-terrain vehicle",
+    "date": "2024-02-18",
+    "venue": "NATRAX, Indore",
+    "image_url": "https://images.pexels.com/photos/163210/dubai-race-course-competition-car-163210.jpeg?auto=compress&cs=tinysrgb&w=800",
+    "type": "Competition",
+    "attendees": 50
+  },
+  {
+    "id": 6,
+    "department_id": 3,
+    "event_name": "Manufacturing Excellence Workshop",
+    "description": "Two-day workshop on advanced manufacturing techniques and Industry 4.0",
+    "date": "2024-07-12",
+    "venue": "ME Workshop",
+    "image_url": "https://images.pexels.com/photos/159298/gears-cogs-machine-machinery-159298.jpeg?auto=compress&cs=tinysrgb&w=800",
+    "type": "Workshop",
+    "attendees": 120
+  },
+  {
+    "id": 7,
+    "department_id": 4,
+    "event_name": "Civil Conclave 2024",
+    "description": "Annual gathering of civil engineering students with guest lectures from industry experts",
+    "date": "2024-05-08",
+    "venue": "Civil Department",
+    "image_url": "https://images.pexels.com/photos/380283/pexels-photo-380283.jpeg?auto=compress&cs=tinysrgb&w=800",
+    "type": "Conference",
+    "attendees": 250
+  },
+  {
+    "id": 8,
+    "department_id": 5,
+    "event_name": "Power Systems Symposium",
+    "description": "National symposium on smart grids and renewable energy integration",
+    "date": "2024-06-15",
+    "venue": "EE Department Auditorium",
+    "image_url": "https://images.pexels.com/photos/433308/pexels-photo-433308.jpeg?auto=compress&cs=tinysrgb&w=800",
+    "type": "Symposium",
+    "attendees": 180
+  },
+  {
+    "id": 9,
+    "department_id": 6,
+    "event_name": "Hackathon 2024",
+    "description": "24-hour coding marathon with prizes worth 2 lakhs",
+    "date": "2024-10-05",
+    "venue": "IT Department Labs",
+    "image_url": "https://images.pexels.com/photos/1181263/pexels-photo-1181263.jpeg?auto=compress&cs=tinysrgb&w=800",
+    "type": "Hackathon",
+    "attendees": 200
+  },
+  {
+    "id": 10,
+    "department_id": 6,
+    "event_name": "Cybersecurity Awareness Week",
+    "description": "Week-long series of workshops and CTF competitions on information security",
+    "date": "2024-09-10",
+    "venue": "IT Department",
+    "image_url": "https://images.pexels.com/photos/60504/security-protection-anti-virus-software-60504.jpeg?auto=compress&cs=tinysrgb&w=800",
+    "type": "Workshop Series",
+    "attendees": 300
+  }
+]

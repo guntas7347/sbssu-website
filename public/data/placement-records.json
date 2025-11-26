@@ -1,0 +1,122 @@
+[
+  {
+    "id": 1,
+    "year": "2023-24",
+    "company": "Google India",
+    "sector": "IT & Software",
+    "students_placed": 12,
+    "highest_package": "₹24 LPA",
+    "average_package": "₹18 LPA",
+    "roles": ["Software Engineer", "Data Analyst", "Product Manager"]
+  },
+  {
+    "id": 2,
+    "year": "2023-24",
+    "company": "Microsoft India",
+    "sector": "IT & Software",
+    "students_placed": 8,
+    "highest_package": "₹22 LPA",
+    "average_package": "₹16 LPA",
+    "roles": ["Software Developer", "Cloud Engineer"]
+  },
+  {
+    "id": 3,
+    "year": "2023-24",
+    "company": "Infosys",
+    "sector": "IT & Software",
+    "students_placed": 45,
+    "highest_package": "₹8 LPA",
+    "average_package": "₹5.5 LPA",
+    "roles": ["System Engineer", "Digital Specialist"]
+  },
+  {
+    "id": 4,
+    "year": "2023-24",
+    "company": "TCS",
+    "sector": "IT & Software",
+    "students_placed": 52,
+    "highest_package": "₹7 LPA",
+    "average_package": "₹4.5 LPA",
+    "roles": ["Assistant System Engineer", "IT Analyst"]
+  },
+  {
+    "id": 5,
+    "year": "2023-24",
+    "company": "Wipro",
+    "sector": "IT & Software",
+    "students_placed": 38,
+    "highest_package": "₹6.5 LPA",
+    "average_package": "₹4.2 LPA",
+    "roles": ["Project Engineer", "Software Trainee"]
+  },
+  {
+    "id": 6,
+    "year": "2023-24",
+    "company": "Amazon",
+    "sector": "E-Commerce",
+    "students_placed": 6,
+    "highest_package": "₹20 LPA",
+    "average_package": "₹15 LPA",
+    "roles": ["Software Development Engineer", "Operations Manager"]
+  },
+  {
+    "id": 7,
+    "year": "2023-24",
+    "company": "Accenture",
+    "sector": "Consulting",
+    "students_placed": 25,
+    "highest_package": "₹8.5 LPA",
+    "average_package": "₹5.8 LPA",
+    "roles": ["Application Development Analyst", "Technology Analyst"]
+  },
+  {
+    "id": 8,
+    "year": "2022-23",
+    "company": "Flipkart",
+    "sector": "E-Commerce",
+    "students_placed": 10,
+    "highest_package": "₹18 LPA",
+    "average_package": "₹12 LPA",
+    "roles": ["Software Engineer", "Supply Chain Analyst"]
+  },
+  {
+    "id": 9,
+    "year": "2022-23",
+    "company": "Samsung R&D",
+    "sector": "Electronics",
+    "students_placed": 7,
+    "highest_package": "₹16 LPA",
+    "average_package": "₹12 LPA",
+    "roles": ["Research Engineer", "Hardware Engineer"]
+  },
+  {
+    "id": 10,
+    "year": "2022-23",
+    "company": "Adobe",
+    "sector": "IT & Software",
+    "students_placed": 4,
+    "highest_package": "₹22 LPA",
+    "average_package": "₹18 LPA",
+    "roles": ["Software Engineer", "UX Designer"]
+  },
+  {
+    "id": 11,
+    "year": "2022-23",
+    "company": "Cognizant",
+    "sector": "IT & Software",
+    "students_placed": 42,
+    "highest_package": "₹7.5 LPA",
+    "average_package": "₹4.8 LPA",
+    "roles": ["Programmer Analyst", "Associate Projects"]
+  },
+  {
+    "id": 12,
+    "year": "2022-23",
+    "company": "Tech Mahindra",
+    "sector": "IT & Software",
+    "students_placed": 30,
+    "highest_package": "₹6 LPA",
+    "average_package": "₹4 LPA",
+    "roles": ["Software Engineer", "Network Engineer"]
+  }
+]

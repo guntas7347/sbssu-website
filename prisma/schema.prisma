@@ -1,0 +1,62 @@
+
+generator client {
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id              String           @id @default(uuid())
+  username        String           @unique
+  passwordHash    String
+  email           String
+  departmentId    String?
+  department      Department?      @relation(fields: [departmentId], references: [id])
+  rights          String[]         @default([])
+  portals         String[]         @default([])
+  loginEnabled    Boolean          @default(true)
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  notices         Notice[]
+  
+}
+
+model Notice {
+  id          String   @id @default(uuid())
+  title       String
+  description String?
+  refNumber   String
+  date        DateTime
+  showTill    DateTime
+  category    String   @default("other")
+  fileUrl     String?
+  noticeLevel String   @default("central")
+  createdAt   DateTime @default(now())
+  uploadedBy  String?
+  uploader    User?    @relation(fields: [uploadedBy], references: [id])
+}
+
+model Department {
+  id                String  @id @default(uuid())
+  name              String
+  departmentCode    String  @unique
+  description       String?
+  establishmentYear Int
+  location          String?
+  hidden            Boolean @default(false)
+  users             User[]
+}
+
+
+
+
+model Page {
+  id        String   @id @default(uuid())
+  slug      String   @unique
+  data      Json
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+}

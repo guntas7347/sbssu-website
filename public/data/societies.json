@@ -1,0 +1,102 @@
+[
+  {
+    "id": 1,
+    "department_id": 1,
+    "society_name": "CodeX - Programming Society",
+    "description": "CodeX organizes coding competitions, hackathons, and workshops to enhance programming skills of students",
+    "coordinator": "Dr. Sandeep Verma",
+    "email": "codex@sbssu.ac.in",
+    "activities": "Weekly coding contests, Annual hackathon, Guest lectures, Open source contributions",
+    "achievements": "Won Smart India Hackathon 2023, Organized TechFest with 500+ participants"
+  },
+  {
+    "id": 2,
+    "department_id": 1,
+    "society_name": "AI/ML Club",
+    "description": "Dedicated to promoting artificial intelligence and machine learning among students",
+    "coordinator": "Dr. Anjali Rani",
+    "email": "aiml.club@sbssu.ac.in",
+    "activities": "ML workshops, Research paper discussions, AI competitions, Industry visits",
+    "achievements": "Published 5 research papers, Organized state-level AI symposium"
+  },
+  {
+    "id": 3,
+    "department_id": 2,
+    "society_name": "Electronics Society",
+    "description": "Society focused on practical electronics projects and innovation",
+    "coordinator": "Dr. Meenakshi Sharma",
+    "email": "electronics.society@sbssu.ac.in",
+    "activities": "PCB design workshops, Robotics competitions, Electronics exhibitions",
+    "achievements": "Won National Robotics Competition 2023, Built 50+ projects"
+  },
+  {
+    "id": 4,
+    "department_id": 2,
+    "society_name": "Communication Systems Forum",
+    "description": "Platform for exploring modern communication technologies",
+    "coordinator": "Dr. Amarjeet Singh",
+    "email": "comm.forum@sbssu.ac.in",
+    "activities": "5G technology seminars, Antenna design workshops, Industry collaborations",
+    "achievements": "Collaboration with Airtel for 5G training program"
+  },
+  {
+    "id": 5,
+    "department_id": 3,
+    "society_name": "Mechanical Engineers Society",
+    "description": "Society promoting mechanical engineering innovation and design",
+    "coordinator": "Dr. Ravi Kant",
+    "email": "mes@sbssu.ac.in",
+    "activities": "CAD workshops, Manufacturing competitions, Industry visits, Design challenges",
+    "achievements": "Won BAJA SAE India 2023, Built formula racing car"
+  },
+  {
+    "id": 6,
+    "department_id": 3,
+    "society_name": "Energy Club",
+    "description": "Focus on renewable energy and sustainable technologies",
+    "coordinator": "Dr. Manpreet Kaur",
+    "email": "energy.club@sbssu.ac.in",
+    "activities": "Solar panel workshops, Energy audit projects, Sustainability drives",
+    "achievements": "Installed 100kW solar plant on campus"
+  },
+  {
+    "id": 7,
+    "department_id": 4,
+    "society_name": "Civil Engineering Society",
+    "description": "Promoting excellence in civil engineering and infrastructure",
+    "coordinator": "Dr. Parveen Kumar",
+    "email": "ces@sbssu.ac.in",
+    "activities": "Surveying competitions, Structural design contests, Site visits",
+    "achievements": "Won National Concrete Design Competition 2023"
+  },
+  {
+    "id": 8,
+    "department_id": 5,
+    "society_name": "Power Systems Club",
+    "description": "Dedicated to power generation, transmission and distribution",
+    "coordinator": "Dr. Kuldeep Singh",
+    "email": "power.club@sbssu.ac.in",
+    "activities": "Power plant visits, Smart grid workshops, Renewable energy projects",
+    "achievements": "Micro-grid project funded by MNRE"
+  },
+  {
+    "id": 9,
+    "department_id": 6,
+    "society_name": "Cybersecurity Club",
+    "description": "Focus on information security and ethical hacking",
+    "coordinator": "Dr. Navdeep Kumar",
+    "email": "cybersec@sbssu.ac.in",
+    "activities": "CTF competitions, Security awareness workshops, Bug bounty programs",
+    "achievements": "100+ students certified in ethical hacking"
+  },
+  {
+    "id": 10,
+    "department_id": 6,
+    "society_name": "Web Developers Community",
+    "description": "Community of web and mobile app developers",
+    "coordinator": "Ms. Harleen Kaur",
+    "email": "webdev@sbssu.ac.in",
+    "activities": "Web development bootcamps, App development contests, Open source projects",
+    "achievements": "Developed 20+ web applications for local businesses"
+  }
+]

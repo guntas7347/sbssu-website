@@ -1,0 +1,82 @@
+[
+  {
+    "id": 1,
+    "name": "Dr. Rajesh Kumar",
+    "photo": "https://images.pexels.com/photos/2182970/pexels-photo-2182970.jpeg?auto=compress&cs=tinysrgb&w=300",
+    "designation": "Training & Placement Officer",
+    "role": "coordinator",
+    "email": "tpo@sbssu.ac.in",
+    "phone": "+91-1632-245030",
+    "department": "Placement Cell"
+  },
+  {
+    "id": 2,
+    "name": "Prof. Anita Sharma",
+    "photo": "https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=300",
+    "designation": "Deputy TPO",
+    "role": "coordinator",
+    "email": "anita.sharma@sbssu.ac.in",
+    "phone": "+91-1632-245031",
+    "department": "Placement Cell"
+  },
+  {
+    "id": 3,
+    "name": "Mr. Vikram Singh",
+    "photo": "https://images.pexels.com/photos/1516680/pexels-photo-1516680.jpeg?auto=compress&cs=tinysrgb&w=300",
+    "designation": "Placement Coordinator",
+    "role": "coordinator",
+    "email": "vikram.singh@sbssu.ac.in",
+    "phone": "+91-1632-245032",
+    "department": "Placement Cell"
+  },
+  {
+    "id": 4,
+    "name": "Dr. Priya Malhotra",
+    "photo": "https://images.pexels.com/photos/1181686/pexels-photo-1181686.jpeg?auto=compress&cs=tinysrgb&w=300",
+    "designation": "Associate Professor",
+    "role": "faculty",
+    "email": "priya.malhotra@sbssu.ac.in",
+    "phone": "+91-1632-245100",
+    "department": "Computer Science"
+  },
+  {
+    "id": 5,
+    "name": "Dr. Amit Verma",
+    "photo": "https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=300",
+    "designation": "Assistant Professor",
+    "role": "faculty",
+    "email": "amit.verma@sbssu.ac.in",
+    "phone": "+91-1632-245101",
+    "department": "Electronics & Communication"
+  },
+  {
+    "id": 6,
+    "name": "Dr. Neha Kapoor",
+    "photo": "https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=300",
+    "designation": "Assistant Professor",
+    "role": "faculty",
+    "email": "neha.kapoor@sbssu.ac.in",
+    "phone": "+91-1632-245102",
+    "department": "Information Technology"
+  },
+  {
+    "id": 7,
+    "name": "Dr. Sandeep Gupta",
+    "photo": "https://images.pexels.com/photos/2182970/pexels-photo-2182970.jpeg?auto=compress&cs=tinysrgb&w=300",
+    "designation": "Assistant Professor",
+    "role": "faculty",
+    "email": "sandeep.gupta@sbssu.ac.in",
+    "phone": "+91-1632-245103",
+    "department": "Mechanical Engineering"
+  },
+  {
+    "id": 8,
+    "name": "Prof. Ritu Sharma",
+    "photo": "https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=300",
+    "designation": "Associate Professor",
+    "role": "faculty",
+    "email": "ritu.sharma@sbssu.ac.in",
+    "phone": "+91-1632-245104",
+    "department": "Civil Engineering"
+  }
+]

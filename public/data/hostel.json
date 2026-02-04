@@ -1,0 +1,42 @@
+[
+  {
+    "id": 1,
+    "hostel_name": "Boys Hostel - Block A",
+    "type": "Boys",
+    "capacity": 250,
+    "warden_name": "Dr. Ramesh Kumar",
+    "contact": "+91-1632-246001",
+    "facilities": "24x7 Security, Wi-Fi, Mess, Common Room, TV, Indoor Games, Gym, Laundry",
+    "rules": "Hostel timings: 6 AM to 10 PM, No visitors after 8 PM, ID card mandatory, Cleanliness to be maintained"
+  },
+  {
+    "id": 2,
+    "hostel_name": "Boys Hostel - Block B",
+    "type": "Boys",
+    "capacity": 300,
+    "warden_name": "Mr. Sukhdev Singh",
+    "contact": "+91-1632-246002",
+    "facilities": "24x7 Security, Wi-Fi, Mess, Common Room, Reading Room, Sports Room, Water Cooler",
+    "rules": "Hostel timings: 6 AM to 10 PM, Ragging strictly prohibited, Attendance mandatory, Respectful behavior required"
+  },
+  {
+    "id": 3,
+    "hostel_name": "Girls Hostel - Block A",
+    "type": "Girls",
+    "capacity": 200,
+    "warden_name": "Dr. Manpreet Kaur",
+    "contact": "+91-1632-246003",
+    "facilities": "24x7 Security with Female Guards, Wi-Fi, Mess, Common Room, TV, Indoor Games, Gym, Beauty Salon",
+    "rules": "Hostel timings: 6 AM to 9 PM, No male visitors, ID card mandatory, Respectful conduct expected"
+  },
+  {
+    "id": 4,
+    "hostel_name": "Girls Hostel - Block B",
+    "type": "Girls",
+    "capacity": 150,
+    "warden_name": "Ms. Simran Kaur",
+    "contact": "+91-1632-246004",
+    "facilities": "24x7 Security with Female Guards, Wi-Fi, Mess, Library, Computer Room, Medical Room",
+    "rules": "Hostel timings: 6 AM to 9 PM, Visitors only in visiting hours 4-6 PM, Cleanliness and discipline mandatory"
+  }
+]

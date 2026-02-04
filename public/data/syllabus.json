@@ -1,0 +1,98 @@
+[
+  {
+    "id": 1,
+    "department_id": 1,
+    "course_name": "B.Tech Computer Science & Engineering",
+    "semester": 1,
+    "file_url": "/downloads/syllabus-cse-sem1.pdf",
+    "academic_year": "2024-25"
+  },
+  {
+    "id": 2,
+    "department_id": 1,
+    "course_name": "B.Tech Computer Science & Engineering",
+    "semester": 3,
+    "file_url": "/downloads/syllabus-cse-sem3.pdf",
+    "academic_year": "2024-25"
+  },
+  {
+    "id": 3,
+    "department_id": 1,
+    "course_name": "B.Tech Computer Science & Engineering",
+    "semester": 5,
+    "file_url": "/downloads/syllabus-cse-sem5.pdf",
+    "academic_year": "2024-25"
+  },
+  {
+    "id": 4,
+    "department_id": 1,
+    "course_name": "B.Tech Computer Science & Engineering",
+    "semester": 7,
+    "file_url": "/downloads/syllabus-cse-sem7.pdf",
+    "academic_year": "2024-25"
+  },
+  {
+    "id": 5,
+    "department_id": 2,
+    "course_name": "B.Tech Electronics & Communication",
+    "semester": 1,
+    "file_url": "/downloads/syllabus-ece-sem1.pdf",
+    "academic_year": "2024-25"
+  },
+  {
+    "id": 6,
+    "department_id": 2,
+    "course_name": "B.Tech Electronics & Communication",
+    "semester": 3,
+    "file_url": "/downloads/syllabus-ece-sem3.pdf",
+    "academic_year": "2024-25"
+  },
+  {
+    "id": 7,
+    "department_id": 3,
+    "course_name": "B.Tech Mechanical Engineering",
+    "semester": 1,
+    "file_url": "/downloads/syllabus-me-sem1.pdf",
+    "academic_year": "2024-25"
+  },
+  {
+    "id": 8,
+    "department_id": 3,
+    "course_name": "B.Tech Mechanical Engineering",
+    "semester": 5,
+    "file_url": "/downloads/syllabus-me-sem5.pdf",
+    "academic_year": "2024-25"
+  },
+  {
+    "id": 9,
+    "department_id": 4,
+    "course_name": "B.Tech Civil Engineering",
+    "semester": 1,
+    "file_url": "/downloads/syllabus-civil-sem1.pdf",
+    "academic_year": "2024-25"
+  },
+  {
+    "id": 10,
+    "department_id": 5,
+    "course_name": "B.Tech Electrical Engineering",
+    "semester": 1,
+    "file_url": "/downloads/syllabus-ee-sem1.pdf",
+    "academic_year": "2024-25"
+  },
+  {
+    "id": 11,
+    "department_id": 6,
+    "course_name": "B.Tech Information Technology",
+    "semester": 1,
+    "file_url": "/downloads/syllabus-it-sem1.pdf",
+    "academic_year": "2024-25"
+  },
+  {
+    "id": 12,
+    "department_id": 8,
+    "course_name": "Master of Business Administration",
+    "semester": 1,
+    "file_url": "/downloads/syllabus-mba-sem1.pdf",
+    "academic_year": "2024-25"
+  }
+]

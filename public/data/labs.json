@@ -1,0 +1,137 @@
+[
+  {
+    "id": 1,
+    "department_id": 1,
+    "lab_name": "Computer Programming Lab",
+    "description": "Well-equipped lab with latest computers for programming practice",
+    "equipment": "60 Desktop Computers, Projector, Whiteboard",
+    "capacity": 60,
+    "in_charge": "Mr. Rohit Kumar"
+  },
+  {
+    "id": 2,
+    "department_id": 1,
+    "lab_name": "Data Structures & Algorithms Lab",
+    "description": "Dedicated lab for DSA practical sessions",
+    "equipment": "50 Computers, Visual Studio, Code::Blocks",
+    "capacity": 50,
+    "in_charge": "Dr. Anjali Rani"
+  },
+  {
+    "id": 3,
+    "department_id": 1,
+    "lab_name": "AI/ML Lab",
+    "description": "Advanced lab with GPU-enabled systems for AI/ML projects",
+    "equipment": "30 High-end Workstations with GPU, Python, TensorFlow, PyTorch",
+    "capacity": 30,
+    "in_charge": "Dr. Sandeep Verma"
+  },
+  {
+    "id": 4,
+    "department_id": 2,
+    "lab_name": "Digital Electronics Lab",
+    "description": "Lab for digital logic design and circuit implementation",
+    "equipment": "Logic Trainer Kits, Oscilloscopes, Multimeters, Breadboards",
+    "capacity": 40,
+    "in_charge": "Dr. Meenakshi Sharma"
+  },
+  {
+    "id": 5,
+    "department_id": 2,
+    "lab_name": "Communication Systems Lab",
+    "description": "Modern lab for communication experiments",
+    "equipment": "Signal Generators, Spectrum Analyzers, Modulation Kits",
+    "capacity": 35,
+    "in_charge": "Dr. Amarjeet Singh"
+  },
+  {
+    "id": 6,
+    "department_id": 2,
+    "lab_name": "VLSI Design Lab",
+    "description": "Advanced VLSI design and simulation lab",
+    "equipment": "Computers with Cadence, Xilinx, ModelSim",
+    "capacity": 30,
+    "in_charge": "Dr. Meenakshi Sharma"
+  },
+  {
+    "id": 7,
+    "department_id": 3,
+    "lab_name": "Manufacturing Lab",
+    "description": "Workshop with CNC and conventional machines",
+    "equipment": "CNC Lathe, Milling Machine, Drilling Machine, Lathe",
+    "capacity": 25,
+    "in_charge": "Dr. Ravi Kant"
+  },
+  {
+    "id": 8,
+    "department_id": 3,
+    "lab_name": "Thermal Engineering Lab",
+    "description": "Lab for heat transfer and thermodynamics experiments",
+    "equipment": "Heat Exchanger, Steam Boiler, IC Engine Models",
+    "capacity": 30,
+    "in_charge": "Dr. Manpreet Kaur"
+  },
+  {
+    "id": 9,
+    "department_id": 3,
+    "lab_name": "CAD/CAM Lab",
+    "description": "Computer-aided design and manufacturing lab",
+    "equipment": "40 Computers, AutoCAD, SolidWorks, CATIA, ANSYS",
+    "capacity": 40,
+    "in_charge": "Mr. Jaspal Singh"
+  },
+  {
+    "id": 10,
+    "department_id": 4,
+    "lab_name": "Concrete & Materials Testing Lab",
+    "description": "Lab for testing construction materials",
+    "equipment": "UTM, Compression Testing Machine, Aggregate Testing Equipment",
+    "capacity": 30,
+    "in_charge": "Dr. Parveen Kumar"
+  },
+  {
+    "id": 11,
+    "department_id": 4,
+    "lab_name": "Surveying Lab",
+    "description": "Land surveying and geomatics lab",
+    "equipment": "Theodolites, Total Stations, GPS, Leveling Instruments",
+    "capacity": 25,
+    "in_charge": "Ms. Pooja Rani"
+  },
+  {
+    "id": 12,
+    "department_id": 5,
+    "lab_name": "Electrical Machines Lab",
+    "description": "Lab for electrical machine experiments",
+    "equipment": "DC Motors, Transformers, Induction Motors, Alternators",
+    "capacity": 30,
+    "in_charge": "Ms. Jaspreet Kaur"
+  },
+  {
+    "id": 13,
+    "department_id": 5,
+    "lab_name": "Power Systems Lab",
+    "description": "Advanced power systems simulation lab",
+    "equipment": "Power System Simulator, MATLAB, ETAP Software",
+    "capacity": 35,
+    "in_charge": "Dr. Kuldeep Singh"
+  },
+  {
+    "id": 14,
+    "department_id": 6,
+    "lab_name": "Network & Security Lab",
+    "description": "Networking and cybersecurity lab",
+    "equipment": "Cisco Routers, Switches, Firewalls, Kali Linux Systems",
+    "capacity": 40,
+    "in_charge": "Dr. Navdeep Kumar"
+  },
+  {
+    "id": 15,
+    "department_id": 6,
+    "lab_name": "Web Technologies Lab",
+    "description": "Lab for web and mobile development",
+    "equipment": "50 Computers, VS Code, Android Studio, Xcode",
+    "capacity": 50,
+    "in_charge": "Ms. Harleen Kaur"
+  }
+]

@@ -1,0 +1,101 @@
+[
+  {
+    "id": 1,
+    "department_id": 1,
+    "project_title": "Deep Learning Based Medical Image Analysis",
+    "principal_investigator": "Dr. Sandeep Verma",
+    "funding_agency": "DRDO",
+    "amount": "₹15,00,000",
+    "duration": "3 years (2022-2025)",
+    "status": "Ongoing",
+    "description": "Development of AI models for automated disease detection from medical images"
+  },
+  {
+    "id": 2,
+    "department_id": 1,
+    "project_title": "Smart City IoT Infrastructure",
+    "principal_investigator": "Dr. Anjali Rani",
+    "funding_agency": "DST",
+    "amount": "₹12,50,000",
+    "duration": "2 years (2023-2025)",
+    "status": "Ongoing",
+    "description": "IoT-based smart monitoring system for urban infrastructure"
+  },
+  {
+    "id": 3,
+    "department_id": 2,
+    "project_title": "5G Communication Systems Research",
+    "principal_investigator": "Dr. Amarjeet Singh",
+    "funding_agency": "AICTE",
+    "amount": "₹10,00,000",
+    "duration": "3 years (2021-2024)",
+    "status": "Completed",
+    "description": "Research on millimeter wave antenna design for 5G networks"
+  },
+  {
+    "id": 4,
+    "department_id": 2,
+    "project_title": "Low Power VLSI Design Techniques",
+    "principal_investigator": "Dr. Meenakshi Sharma",
+    "funding_agency": "SERB",
+    "amount": "₹18,00,000",
+    "duration": "3 years (2022-2025)",
+    "status": "Ongoing",
+    "description": "Development of energy-efficient VLSI circuits for mobile applications"
+  },
+  {
+    "id": 5,
+    "department_id": 3,
+    "project_title": "Renewable Energy Integration in Manufacturing",
+    "principal_investigator": "Dr. Manpreet Kaur",
+    "funding_agency": "MNRE",
+    "amount": "₹20,00,000",
+    "duration": "4 years (2021-2025)",
+    "status": "Ongoing",
+    "description": "Solar thermal systems for industrial heating applications"
+  },
+  {
+    "id": 6,
+    "department_id": 3,
+    "project_title": "Additive Manufacturing of Composite Materials",
+    "principal_investigator": "Dr. Ravi Kant",
+    "funding_agency": "CSIR",
+    "amount": "₹16,00,000",
+    "duration": "3 years (2023-2026)",
+    "status": "Ongoing",
+    "description": "3D printing of fiber-reinforced composites for aerospace"
+  },
+  {
+    "id": 7,
+    "department_id": 4,
+    "project_title": "Sustainable Construction Materials",
+    "principal_investigator": "Dr. Parveen Kumar",
+    "funding_agency": "CPWD",
+    "amount": "₹14,00,000",
+    "duration": "3 years (2022-2025)",
+    "status": "Ongoing",
+    "description": "Development of eco-friendly concrete using industrial waste"
+  },
+  {
+    "id": 8,
+    "department_id": 5,
+    "project_title": "Smart Grid Technologies",
+    "principal_investigator": "Dr. Kuldeep Singh",
+    "funding_agency": "MNRE",
+    "amount": "₹25,00,000",
+    "duration": "4 years (2020-2024)",
+    "status": "Completed",
+    "description": "Implementation of smart grid for renewable energy integration"
+  },
+  {
+    "id": 9,
+    "department_id": 6,
+    "project_title": "Blockchain for Secure Healthcare Data",
+    "principal_investigator": "Dr. Navdeep Kumar",
+    "funding_agency": "ICMR",
+    "amount": "₹13,00,000",
+    "duration": "2 years (2023-2025)",
+    "status": "Ongoing",
+    "description": "Blockchain-based secure electronic health record system"
+  }
+]

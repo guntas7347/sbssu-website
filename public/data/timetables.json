@@ -1,0 +1,110 @@
+[
+  {
+    "id": 1,
+    "department_id": 1,
+    "course": "B.Tech CSE",
+    "semester": 1,
+    "file_url": "/downloads/timetable-cse-sem1.pdf",
+    "academic_year": "2024-25",
+    "upload_date": "2024-08-01"
+  },
+  {
+    "id": 2,
+    "department_id": 1,
+    "course": "B.Tech CSE",
+    "semester": 3,
+    "file_url": "/downloads/timetable-cse-sem3.pdf",
+    "academic_year": "2024-25",
+    "upload_date": "2024-08-01"
+  },
+  {
+    "id": 3,
+    "department_id": 1,
+    "course": "B.Tech CSE",
+    "semester": 5,
+    "file_url": "/downloads/timetable-cse-sem5.pdf",
+    "academic_year": "2024-25",
+    "upload_date": "2024-08-01"
+  },
+  {
+    "id": 4,
+    "department_id": 1,
+    "course": "B.Tech CSE",
+    "semester": 7,
+    "file_url": "/downloads/timetable-cse-sem7.pdf",
+    "academic_year": "2024-25",
+    "upload_date": "2024-08-01"
+  },
+  {
+    "id": 5,
+    "department_id": 2,
+    "course": "B.Tech ECE",
+    "semester": 1,
+    "file_url": "/downloads/timetable-ece-sem1.pdf",
+    "academic_year": "2024-25",
+    "upload_date": "2024-08-01"
+  },
+  {
+    "id": 6,
+    "department_id": 2,
+    "course": "B.Tech ECE",
+    "semester": 3,
+    "file_url": "/downloads/timetable-ece-sem3.pdf",
+    "academic_year": "2024-25",
+    "upload_date": "2024-08-01"
+  },
+  {
+    "id": 7,
+    "department_id": 3,
+    "course": "B.Tech ME",
+    "semester": 1,
+    "file_url": "/downloads/timetable-me-sem1.pdf",
+    "academic_year": "2024-25",
+    "upload_date": "2024-08-01"
+  },
+  {
+    "id": 8,
+    "department_id": 3,
+    "course": "B.Tech ME",
+    "semester": 5,
+    "file_url": "/downloads/timetable-me-sem5.pdf",
+    "academic_year": "2024-25",
+    "upload_date": "2024-08-01"
+  },
+  {
+    "id": 9,
+    "department_id": 4,
+    "course": "B.Tech Civil",
+    "semester": 1,
+    "file_url": "/downloads/timetable-civil-sem1.pdf",
+    "academic_year": "2024-25",
+    "upload_date": "2024-08-01"
+  },
+  {
+    "id": 10,
+    "department_id": 5,
+    "course": "B.Tech EE",
+    "semester": 1,
+    "file_url": "/downloads/timetable-ee-sem1.pdf",
+    "academic_year": "2024-25",
+    "upload_date": "2024-08-01"
+  },
+  {
+    "id": 11,
+    "department_id": 6,
+    "course": "B.Tech IT",
+    "semester": 1,
+    "file_url": "/downloads/timetable-it-sem1.pdf",
+    "academic_year": "2024-25",
+    "upload_date": "2024-08-01"
+  },
+  {
+    "id": 12,
+    "department_id": 6,
+    "course": "B.Tech IT",
+    "semester": 5,
+    "file_url": "/downloads/timetable-it-sem5.pdf",
+    "academic_year": "2024-25",
+    "upload_date": "2024-08-01"
+  }
+]

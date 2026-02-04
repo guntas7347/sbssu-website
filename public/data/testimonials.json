@@ -1,0 +1,68 @@
+[
+  {
+    "id": 1,
+    "name": "Rahul Sharma",
+    "photo": "https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=300",
+    "branch": "Computer Science & Engineering",
+    "year": "2023",
+    "company": "Google India",
+    "package": "₹24 LPA",
+    "role": "Software Engineer",
+    "testimonial": "SBSSU provided me with excellent technical education and a supportive environment. The placement cell worked tirelessly to bring top companies to campus. The rigorous curriculum and hands-on projects prepared me well for the industry challenges."
+  },
+  {
+    "id": 2,
+    "name": "Priya Singh",
+    "photo": "https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=300",
+    "branch": "Electronics & Communication Engineering",
+    "year": "2023",
+    "company": "Samsung R&D",
+    "package": "₹16 LPA",
+    "role": "Research Engineer",
+    "testimonial": "The faculty at SBSSU are highly knowledgeable and always ready to guide students. The well-equipped labs and research facilities helped me develop practical skills that were crucial during my interview process. Grateful for this amazing journey!"
+  },
+  {
+    "id": 3,
+    "name": "Amit Kumar",
+    "photo": "https://images.pexels.com/photos/2182970/pexels-photo-2182970.jpeg?auto=compress&cs=tinysrgb&w=300",
+    "branch": "Computer Science & Engineering",
+    "year": "2023",
+    "company": "Microsoft India",
+    "package": "₹22 LPA",
+    "role": "Software Developer",
+    "testimonial": "SBSSU shaped my career in ways I couldn't have imagined. The coding culture, competitive programming support, and industry-oriented training sessions were instrumental in landing my dream job. Thank you SBSSU!"
+  },
+  {
+    "id": 4,
+    "name": "Sneha Patel",
+    "photo": "https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=300",
+    "branch": "Information Technology",
+    "year": "2023",
+    "company": "Amazon",
+    "package": "₹20 LPA",
+    "role": "Software Development Engineer",
+    "testimonial": "The placement training, mock interviews, and aptitude preparation sessions at SBSSU were top-notch. The TPO and faculty members guided us at every step. The four years here were transformative and prepared me for corporate life."
+  },
+  {
+    "id": 5,
+    "name": "Vikram Mehta",
+    "photo": "https://images.pexels.com/photos/1516680/pexels-photo-1516680.jpeg?auto=compress&cs=tinysrgb&w=300",
+    "branch": "Mechanical Engineering",
+    "year": "2022",
+    "company": "L&T Construction",
+    "package": "₹8 LPA",
+    "role": "Site Engineer",
+    "testimonial": "SBSSU's focus on practical learning through industrial visits and internships made me industry-ready. The placement cell ensured we had multiple opportunities, and I'm proud to be working with L&T today."
+  },
+  {
+    "id": 6,
+    "name": "Anjali Verma",
+    "photo": "https://images.pexels.com/photos/1181686/pexels-photo-1181686.jpeg?auto=compress&cs=tinysrgb&w=300",
+    "branch": "Computer Science & Engineering",
+    "year": "2022",
+    "company": "Adobe",
+    "package": "₹22 LPA",
+    "role": "Software Engineer",
+    "testimonial": "The technical societies and hackathons at SBSSU helped me build a strong portfolio. The supportive peer group and excellent mentorship from faculty made all the difference. SBSSU will always be close to my heart."
+  }
+]

@@ -1,0 +1,119 @@
+[
+  {
+    "id": 1,
+    "facility_name": "Central Library",
+    "category": "library",
+    "description": "A vast collection of over 50,000 books, journals, magazines, and digital resources. Fully air-conditioned reading halls with modern amenities.",
+    "location": "Central Block, Ground Floor",
+    "timings": "Monday-Saturday: 8:00 AM - 8:00 PM, Sunday: 9:00 AM - 5:00 PM",
+    "contact": "librarian@sbssu.ac.in, +91-1632-246101"
+  },
+  {
+    "id": 2,
+    "facility_name": "Computer Center",
+    "category": "computer",
+    "description": "State-of-the-art computer center with 500+ high-speed computers, latest software, and high-speed internet connectivity.",
+    "location": "IT Block, All Floors",
+    "timings": "Monday-Saturday: 8:00 AM - 6:00 PM",
+    "contact": "cc@sbssu.ac.in, +91-1632-246102"
+  },
+  {
+    "id": 3,
+    "facility_name": "GDG (Google Developer Group)",
+    "category": "gdg",
+    "description": "Google Developer Group chapter promoting technology education through workshops, hackathons, and community events.",
+    "location": "Innovation Hub, CSE Block",
+    "timings": "Events scheduled monthly",
+    "contact": "gdg@sbssu.ac.in"
+  },
+  {
+    "id": 4,
+    "facility_name": "Health Center",
+    "category": "health",
+    "description": "24x7 medical facility with qualified doctors and nurses. Emergency ambulance service available. Basic medicines and first aid.",
+    "location": "Administrative Block, Ground Floor",
+    "timings": "24x7 Emergency, OPD: 9:00 AM - 5:00 PM",
+    "contact": "health@sbssu.ac.in, Emergency: +91-1632-246911"
+  },
+  {
+    "id": 5,
+    "facility_name": "Sports Complex",
+    "category": "sports",
+    "description": "Multi-sport complex with facilities for cricket, football, basketball, volleyball, badminton, table tennis, and gym.",
+    "location": "Behind Main Building",
+    "timings": "Monday-Sunday: 6:00 AM - 8:00 PM",
+    "contact": "sports@sbssu.ac.in, +91-1632-246103"
+  },
+  {
+    "id": 6,
+    "facility_name": "University Cafeteria",
+    "category": "cafeteria",
+    "description": "Hygienic cafeteria serving variety of food items including South Indian, North Indian, Chinese, and beverages at affordable prices.",
+    "location": "Near Boys Hostel",
+    "timings": "Monday-Saturday: 8:00 AM - 7:00 PM",
+    "contact": "+91-1632-246104"
+  },
+  {
+    "id": 7,
+    "facility_name": "Shopping Complex",
+    "category": "shopping",
+    "description": "On-campus shopping complex with stationary shop, photocopy center, book store, general store, and salon.",
+    "location": "Near Main Gate",
+    "timings": "Monday-Saturday: 9:00 AM - 6:00 PM",
+    "contact": ""
+  },
+  {
+    "id": 8,
+    "facility_name": "Banking & ATM",
+    "category": "banking",
+    "description": "Punjab National Bank branch with ATM facility available 24x7 for students and staff.",
+    "location": "Administrative Block",
+    "timings": "Bank: Mon-Fri 10:00 AM - 4:00 PM, ATM: 24x7",
+    "contact": "+91-1632-246105"
+  },
+  {
+    "id": 9,
+    "facility_name": "Post Office",
+    "category": "post",
+    "description": "University post office for all postal services including speed post and courier.",
+    "location": "Administrative Block",
+    "timings": "Monday-Friday: 10:00 AM - 4:00 PM",
+    "contact": "+91-1632-246106"
+  },
+  {
+    "id": 10,
+    "facility_name": "Auditorium",
+    "category": "auditorium",
+    "description": "Modern auditorium with seating capacity of 1000, equipped with audio-visual systems and air conditioning.",
+    "location": "Central Block",
+    "timings": "Event-based booking",
+    "contact": "admin@sbssu.ac.in, +91-1632-246107"
+  },
+  {
+    "id": 11,
+    "facility_name": "Transportation",
+    "category": "transport",
+    "description": "University bus service connecting Ferozepur city and nearby areas with multiple routes covering major locations.",
+    "location": "Main Gate Parking",
+    "timings": "Morning: 7:30 AM - 9:30 AM, Evening: 4:30 PM - 6:30 PM",
+    "contact": "transport@sbssu.ac.in, +91-1632-246108"
+  },
+  {
+    "id": 12,
+    "facility_name": "Parking",
+    "category": "parking",
+    "description": "Separate parking facilities for students and staff with security. Two-wheeler and four-wheeler parking available.",
+    "location": "Near Main Gate & Behind Hostels",
+    "timings": "24x7",
+    "contact": "security@sbssu.ac.in"
+  },
+  {
+    "id": 13,
+    "facility_name": "Guest House",
+    "category": "accommodation",
+    "description": "Comfortable guest house for visiting faculty, dignitaries, and parents with AC and non-AC rooms.",
+    "location": "Near Administrative Block",
+    "timings": "24x7 Reception",
+    "contact": "guesthouse@sbssu.ac.in, +91-1632-246109"
+  }
+]

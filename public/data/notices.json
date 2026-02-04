@@ -1,0 +1,74 @@
+[
+  {
+    "id": 1,
+    "title": "Admission Notice for B.Tech Programs 2024-25",
+    "description": "Applications are invited for admission to B.Tech programs for the academic year 2024-25. Eligible candidates may apply online through the university portal.",
+    "date": "2024-10-15",
+    "category": "admissions",
+    "file_url": "/downloads/btech-admission-2024.pdf",
+    "is_active": true
+  },
+  {
+    "id": 2,
+    "title": "Walk-in Interview for Assistant Professor Positions",
+    "description": "Walk-in interview for the post of Assistant Professor in various departments will be held on November 5, 2024. Candidates should bring all original documents.",
+    "date": "2024-10-20",
+    "category": "recruitment",
+    "file_url": "/downloads/faculty-recruitment-2024.pdf",
+    "is_active": true
+  },
+  {
+    "id": 3,
+    "title": "Mid-Semester Examination Schedule",
+    "description": "The mid-semester examinations for all programs will commence from November 10, 2024. Students are advised to check the detailed schedule on the examination portal.",
+    "date": "2024-10-18",
+    "category": "examination",
+    "file_url": "/downloads/mid-sem-schedule.pdf",
+    "is_active": true
+  },
+  {
+    "id": 4,
+    "title": "Fee Payment Deadline Extended",
+    "description": "The last date for fee payment for the current semester has been extended to October 31, 2024 without late fee charges.",
+    "date": "2024-10-22",
+    "category": "general",
+    "file_url": "",
+    "is_active": true
+  },
+  {
+    "id": 5,
+    "title": "Workshop on Artificial Intelligence and Machine Learning",
+    "description": "A three-day workshop on AI and ML will be conducted from November 15-17, 2024. Interested students can register through the university website.",
+    "date": "2024-10-12",
+    "category": "workshop",
+    "file_url": "/downloads/ai-ml-workshop.pdf",
+    "is_active": true
+  },
+  {
+    "id": 6,
+    "title": "PhD Admission Notification",
+    "description": "Applications are invited for admission to PhD programs in various disciplines for January 2025 session.",
+    "date": "2024-10-10",
+    "category": "admissions",
+    "file_url": "/downloads/phd-admission-2025.pdf",
+    "is_active": true
+  },
+  {
+    "id": 7,
+    "title": "Annual Sports Meet 2024",
+    "description": "The annual sports meet will be held from December 5-8, 2024. All students are encouraged to participate in various sporting events.",
+    "date": "2024-10-08",
+    "category": "events",
+    "file_url": "",
+    "is_active": true
+  },
+  {
+    "id": 8,
+    "title": "Scholarship Application for Meritorious Students",
+    "description": "Eligible students can apply for merit-based scholarships for the current academic year. Last date for submission is November 15, 2024.",
+    "date": "2024-10-05",
+    "category": "scholarship",
+    "file_url": "/downloads/scholarship-form.pdf",
+    "is_active": true
+  }
+]

@@ -1,0 +1,76 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../prisma/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+
+model User {
+  id           String      @id @default(uuid())
+  username     String      @unique
+  passwordHash String
+  email        String
+  departmentId String?
+  department   Department? @relation(fields: [departmentId], references: [id])
+  rights       String[]    @default([])
+  role         String
+  loginEnabled Boolean     @default(true)
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  notices Notice[] @relation("UserNotices")
+  pages   Page[]   @relation("UserPages")
+}
+
+model Notice {
+  id          String   @id @default(uuid())
+  title       String
+  description String?
+  refNumber   String
+  date        DateTime
+  showTill    DateTime
+  category    String   @default("other")
+  file        Json?
+  noticeLevel String   @default("central")
+  createdAt   DateTime @default(now())
+
+  createdBy String
+  creator   User   @relation("UserNotices", fields: [createdBy], references: [id])
+}
+
+model Page {
+  id           String   @id @default(uuid())
+
+  slug         String   // "hod", "placements", "vc-message", "hero-gallery"
+
+  departmentId String?  
+  department   Department? @relation(fields: [departmentId], references: [id])
+
+  data         Json
+
+  updatedAt    DateTime @updatedAt
+  createdAt    DateTime @default(now())
+
+  createdBy    String?
+  creator      User?   @relation("UserPages", fields: [createdBy], references: [id])
+
+  @@unique([slug, departmentId])
+  @@index([departmentId])
+}
+
+model Department {
+  id                String  @id @default(uuid())
+  name              String
+  departmentCode    String  @unique  // cse, eee, etc
+
+  description       String?
+  establishmentYear Int
+  location          String?
+  hidden            Boolean @default(false)
+
+  users             User[]
+  pages             Page[]
+}

@@ -1,0 +1,56 @@
+[
+  {
+    "id": 1,
+    "title": "Walk-in Interview for Assistant Professor (Computer Science)",
+    "position": "Assistant Professor",
+    "description": "Applications are invited for the post of Assistant Professor in Computer Science & Engineering department. Candidates with Ph.D. or pursuing Ph.D. in relevant area with good academic record may apply. Experience in teaching and research will be preferred.",
+    "last_date": "2024-11-10",
+    "file_url": "/downloads/assistant-prof-cse.pdf",
+    "is_active": true
+  },
+  {
+    "id": 2,
+    "title": "Recruitment for Technical Assistant (Electronics)",
+    "position": "Technical Assistant",
+    "description": "Walk-in interview for the post of Technical Assistant in Electronics & Communication Engineering department. Candidates must have B.Tech/Diploma in Electronics with minimum 60% marks. Hands-on experience in lab management preferred.",
+    "last_date": "2024-11-15",
+    "file_url": "/downloads/tech-asst-ece.pdf",
+    "is_active": true
+  },
+  {
+    "id": 3,
+    "title": "Assistant Professor - Mechanical Engineering",
+    "position": "Assistant Professor",
+    "description": "Applications invited for Assistant Professor position in Mechanical Engineering. Ph.D. in Mechanical Engineering with specialization in Thermal/Manufacturing/Design. Minimum 2 years teaching experience required.",
+    "last_date": "2024-11-20",
+    "file_url": "/downloads/assistant-prof-me.pdf",
+    "is_active": true
+  },
+  {
+    "id": 4,
+    "title": "Lab Instructor - Computer Science",
+    "position": "Lab Instructor",
+    "description": "Recruitment for Lab Instructor in Computer Science department. M.Tech/MCA with good programming skills. Experience in managing computer labs and knowledge of latest technologies preferred.",
+    "last_date": "2024-11-25",
+    "file_url": "/downloads/lab-instructor-cs.pdf",
+    "is_active": true
+  },
+  {
+    "id": 5,
+    "title": "Librarian Position",
+    "position": "Librarian",
+    "description": "Applications are invited for the post of Librarian. Candidates must have Master's degree in Library Science with minimum 5 years experience. Knowledge of digital library management systems mandatory.",
+    "last_date": "2024-11-18",
+    "file_url": "/downloads/librarian.pdf",
+    "is_active": true
+  },
+  {
+    "id": 6,
+    "title": "Sports Officer",
+    "position": "Sports Officer",
+    "description": "Recruitment for Sports Officer. Candidates must have Bachelor's degree in Physical Education with National/State level sports achievements. Coaching certification will be an added advantage.",
+    "last_date": "2024-11-12",
+    "file_url": "/downloads/sports-officer.pdf",
+    "is_active": true
+  }
+]

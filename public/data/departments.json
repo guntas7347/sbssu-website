@@ -1,0 +1,66 @@
+[
+  {
+    "id": 1,
+    "name": "Computer Science & Engineering",
+    "slug": "cse",
+    "description": "The Department of Computer Science & Engineering is committed to providing quality education in the field of computing. The department offers undergraduate and postgraduate programs with state-of-the-art facilities.",
+    "established_year": 1995,
+    "building_location": "Block A, Ground Floor"
+  },
+  {
+    "id": 2,
+    "name": "Electronics & Communication Engineering",
+    "slug": "ece",
+    "description": "The ECE department focuses on cutting-edge research and education in electronics, communication systems, VLSI design, and embedded systems.",
+    "established_year": 1996,
+    "building_location": "Block B, First Floor"
+  },
+  {
+    "id": 3,
+    "name": "Mechanical Engineering",
+    "slug": "me",
+    "description": "The Mechanical Engineering department offers comprehensive programs in thermal engineering, manufacturing, design, and automation.",
+    "established_year": 1995,
+    "building_location": "Block C, Ground Floor"
+  },
+  {
+    "id": 4,
+    "name": "Civil Engineering",
+    "slug": "ce",
+    "description": "The Civil Engineering department prepares students for careers in construction, infrastructure development, environmental engineering, and urban planning.",
+    "established_year": 1997,
+    "building_location": "Block D, Ground Floor"
+  },
+  {
+    "id": 5,
+    "name": "Electrical Engineering",
+    "slug": "ee",
+    "description": "The Electrical Engineering department provides education in power systems, control systems, electrical machines, and renewable energy.",
+    "established_year": 1998,
+    "building_location": "Block B, Second Floor"
+  },
+  {
+    "id": 6,
+    "name": "Information Technology",
+    "slug": "it",
+    "description": "The IT department focuses on software development, database management, web technologies, and cybersecurity.",
+    "established_year": 2005,
+    "building_location": "Block A, First Floor"
+  },
+  {
+    "id": 7,
+    "name": "Applied Sciences",
+    "slug": "as",
+    "description": "The Applied Sciences department offers courses in Physics, Chemistry, Mathematics, and English to support engineering education.",
+    "established_year": 1995,
+    "building_location": "Block E, All Floors"
+  },
+  {
+    "id": 8,
+    "name": "Management Studies",
+    "slug": "mba",
+    "description": "The MBA department provides quality management education with specializations in Marketing, Finance, HR, and Operations.",
+    "established_year": 2008,
+    "building_location": "Block F, First Floor"
+  }
+]

@@ -17,100 +17,100 @@ import {
   Bell,
 } from "lucide-react";
 
+type Role = "SUPER_ADMIN" | "CENTRAL_EDITOR" | "HOD" | "DEPT_EDITOR";
+
 interface NavItem {
   name: string;
   icon: any;
-  right: string[];
+  roles: Role[];
   href: string;
 }
 
-export default function Sidebar({ rights = [""] }) {
+export default function Sidebar({ roles = [] }: { roles: Role[] }) {
   const pathname = usePathname();
 
   const allNavItems: NavItem[] = [
     {
       name: "Dashboard",
       icon: LayoutDashboard,
-      right: [],
+      roles: [],
       href: "/admin/dashboard",
     },
     {
       name: "Departments",
       icon: Building2,
-      right: ["manage_departments"],
+      roles: ["SUPER_ADMIN"],
       href: "/admin/manage-departments",
     },
     {
       name: "Users",
       icon: Users,
-      right: ["manage_users"],
+      roles: ["SUPER_ADMIN"],
       href: "/admin/manage-users",
     },
     {
       name: "Notices",
       icon: Bell,
-      right: ["manage_notices"],
+      roles: ["SUPER_ADMIN", "CENTRAL_EDITOR", "HOD", "DEPT_EDITOR"],
       href: "/admin/notices",
     },
     {
       name: "Content",
       icon: Shield,
-      right: ["edit_central", "hod"],
+      roles: ["SUPER_ADMIN", "CENTRAL_EDITOR", "HOD"],
       href: "/admin/content",
     },
     {
       name: "Academics",
       icon: BookOpen,
-      right: ["academics"],
+      roles: ["HOD", "DEPT_EDITOR"],
       href: "/admin/academics",
     },
     {
       name: "HOD Message",
       icon: User,
-      right: ["hod-message"],
+      roles: ["HOD"],
       href: "/admin/hod-message",
     },
     {
       name: "Department About",
       icon: School,
-      right: ["department-about"],
+      roles: ["HOD", "DEPT_EDITOR"],
       href: "/admin/department-about",
     },
     {
       name: "Faculty",
       icon: GraduationCap,
-      right: ["faculty"],
+      roles: ["HOD", "DEPT_EDITOR"],
       href: "/admin/faculty",
     },
     {
       name: "Labs",
       icon: FlaskConical,
-      right: ["labs"],
+      roles: ["HOD", "DEPT_EDITOR"],
       href: "/admin/labs",
     },
     {
       name: "Timetable",
       icon: Calendar,
-      right: ["timetable"],
+      roles: ["HOD", "DEPT_EDITOR"],
       href: "/admin/timetable",
     },
     {
       name: "Placement Records",
       icon: Briefcase,
-      right: ["placement-records"],
+      roles: ["CENTRAL_EDITOR"],
       href: "/admin/placement-records",
     },
   ];
 
-  // rights is your list of granted permissions: string[]
-
   const filtered = allNavItems.filter(
     (item) =>
-      item.right.length === 0 || item.right.some((r) => rights.includes(r)),
+      item.roles.length === 0 || item.roles.some((r) => roles.includes(r)),
   );
 
   return (
-    <aside className="bg-white border-r border-gray-200 w-64 flex flex-col">
+    <aside className="bg-white border-r border-gray-200 min-w-72 flex flex-col">
       <div className="p-4 border-b border-gray-200">
         <h2 className="font-bold text-gray-800 capitalize">
           SBSSU Website Portal

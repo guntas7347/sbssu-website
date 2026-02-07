@@ -1,27 +1,23 @@
 import { Gavel, Download, FileText } from "lucide-react";
-
-import getPage from "@/lib/getPage";
 import LastUpdatedTag from "@/components/LastUpdatedTag";
+import PageHeader from "@/components/PageHeader";
+import { getPage } from "@/lib/actions/getPage";
 
 export default async function ByLawsPage() {
-  const { page, updatedAt } = await getPage("university-bylaws");
+  const { page, updatedAt } = await getPage("admin", "university-bylaws");
 
+  const about = page?.about || "N/A";
   const documents = page?.documents || [];
   const keyProvisions = page?.keyProvisions || [];
+  const amendmentProcedure = page?.amendmentProcedure || "N/A";
 
   return (
     <div>
-      <div className="bg-linear-to-r from-orange-600 to-green-600 py-16 px-4">
-        <div className="max-w-7xl mx-auto text-center text-white">
-          <Gavel className="w-16 h-16 mx-auto mb-4" />
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">
-            By-Laws & Regulations
-          </h1>
-          <p className="text-lg md:text-xl max-w-3xl mx-auto">
-            Legal framework and rules governing the university
-          </p>
-        </div>
-      </div>
+      <PageHeader
+        title="By-Laws & Regulations"
+        subTitle="Legal framework and rules governing the university"
+        icon={Gavel}
+      />
 
       <section className="py-16 px-4">
         <div className="max-w-7xl mx-auto">
@@ -29,14 +25,12 @@ export default async function ByLawsPage() {
             <h2 className="text-2xl font-bold text-gray-800 mb-4">
               About University By-Laws
             </h2>
-            <p className="text-gray-600 leading-relaxed">
-              {page?.about || "N/A"}
-            </p>
+            <p className="text-gray-600 leading-relaxed">{about}</p>
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
             {documents.length > 0 ? (
-              documents.map((doc: any, index: number) => (
+              documents.map((doc, index) => (
                 <div
                   key={index}
                   className="bg-white border-2 border-gray-200 rounded-xl p-6 hover:shadow-xl hover:border-orange-600 transition"
@@ -47,17 +41,17 @@ export default async function ByLawsPage() {
                     </div>
                     <div className="flex-1">
                       <h3 className="font-bold text-gray-800">
-                        {doc.title || "N/A"}
+                        {doc?.title || "N/A"}
                       </h3>
                       <p className="text-xs text-gray-500">
-                        {doc.size || "N/A"}
+                        {doc?.size || "N/A"}
                       </p>
                     </div>
                   </div>
                   <p className="text-sm text-gray-600 mb-4">
-                    {doc.description || "N/A"}
+                    {doc?.description || "N/A"}
                   </p>
-                  {doc.file?.url ? (
+                  {doc?.file?.url ? (
                     <a
                       href={doc.file.url}
                       className="inline-flex items-center gap-2 px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition text-sm font-semibold w-full justify-center"
@@ -85,16 +79,16 @@ export default async function ByLawsPage() {
             </h2>
             <div className="grid md:grid-cols-2 gap-6">
               {keyProvisions.length > 0 ? (
-                keyProvisions.map((prov: any, index: number) => (
+                keyProvisions.map((prov, index) => (
                   <div
                     key={index}
                     className="bg-white rounded-lg p-5 border-l-4 border-orange-600"
                   >
                     <h3 className="font-bold text-gray-800 mb-2">
-                      {prov.title || "N/A"}
+                      {prov?.title || "N/A"}
                     </h3>
                     <p className="text-sm text-gray-600">
-                      {prov.provision || "N/A"}
+                      {prov?.provision || "N/A"}
                     </p>
                   </div>
                 ))
@@ -110,9 +104,7 @@ export default async function ByLawsPage() {
             <h3 className="text-xl font-bold text-gray-800 mb-4">
               Amendment Procedure
             </h3>
-            <p className="text-gray-600 mb-4">
-              {page?.amendmentProcedure || "N/A"}
-            </p>
+            <p className="text-gray-600 mb-4">{amendmentProcedure}</p>
           </div>
         </div>
       </section>

@@ -5,7 +5,7 @@ import { Calendar } from "lucide-react";
 
 export default async function AcademicCalendarPage() {
   const page = await prisma.page.findMany({
-    where: { slug: "academic-calendar" },
+    where: { pageKey: "academic-calendar" },
     include: { department: { select: { name: true } } },
   });
 

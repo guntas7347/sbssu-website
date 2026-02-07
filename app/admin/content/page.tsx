@@ -4,123 +4,122 @@ import Link from "next/link";
 export default async function AdministrationPage() {
   const auth = await getAuth();
 
-  const powers = auth?.rights ?? [];
-
   const departmentName = auth?.department?.name;
   const departmentCode = auth?.department?.departmentCode?.toLowerCase();
 
   const centralSections = [
-    { name: "Hero Gallery", href: "/admin/content/central/hero-gallery" },
+    { name: "Hero Gallery", href: "/admin/content/admin/hero-gallery" },
     {
       name: "Vice Chancellor's Message",
-      href: "/admin/content/central/vc-message",
+      href: "/admin/content/admin/vc-message",
     },
-    { name: "University Society", href: "/admin/content/central/society" },
-    { name: "Board of Governors", href: "/admin/content/central/bog" },
+    { name: "University Society", href: "/admin/content/admin/society" },
+    { name: "Board of Governors", href: "/admin/content/admin/bog" },
     {
       name: "University Authorities",
-      href: "/admin/content/central/authorities",
+      href: "/admin/content/admin/authorities",
     },
     {
       name: "Governance Structure",
-      href: "/admin/content/central/governance-structure",
+      href: "/admin/content/admin/governance-structure",
     },
     {
       name: "Academic Council",
-      href: "/admin/content/central/academic-council",
+      href: "/admin/content/admin/academic-council",
     },
     {
       name: "Academic Council Meetings",
-      href: "/admin/content/central/council-meetings",
+      href: "/admin/content/admin/council-meetings",
     },
     {
       name: "University Committees",
-      href: "/admin/content/central/university-committees",
+      href: "/admin/content/admin/university-committees",
     },
-    { name: "RTI Cell", href: "/admin/content/central/rti-cell" },
+    { name: "RTI Cell", href: "/admin/content/admin/rti-cell" },
     {
       name: "University By-Laws",
-      href: "/admin/content/central/university-bylaws",
+      href: "/admin/content/admin/university-bylaws",
     },
     {
       name: "Academic Regulations",
-      href: "/admin/content/central/academic-regulations",
+      href: "/admin/content/admin/academic-regulations",
     },
     {
       name: "Courses",
-      href: "/admin/content/central/courses",
+      href: "/admin/content/admin/courses",
     },
     {
       name: "fees-structure",
-      href: "/admin/content/central/fees-structure",
+      href: "/admin/content/admin/fees-structure",
     },
     {
       name: "academic-eligibility",
-      href: "/admin/content/central/academic-eligibility",
+      href: "/admin/content/admin/academic-eligibility",
     },
     {
       name: "graduation-certificate",
-      href: "/admin/content/central/graduation-certificate",
+      href: "/admin/content/admin/graduation-certificate",
     },
   ];
 
   const departmentSections = [
     {
       name: "HOD",
-      href: `/admin/content/department/${departmentCode}/hod`,
+      href: `/admin/content/${departmentCode}/hod`,
     },
     {
       name: "Board of Studies",
-      href: `/admin/content/department/${departmentCode}/bos`,
+      href: `/admin/content/${departmentCode}/bos`,
     },
     {
       name: "Faculty",
-      href: `/admin/content/department/${departmentCode}/faculty`,
+      href: `/admin/content/${departmentCode}/faculty`,
     },
     {
       name: "course-outcomes",
-      href: `/admin/content/department/${departmentCode}/course-outcomes`,
+      href: `/admin/content/${departmentCode}/course-outcomes`,
     },
     {
       name: "Labs",
-      href: `/admin/content/department/${departmentCode}/labs`,
+      href: `/admin/content/${departmentCode}/labs`,
     },
     {
       name: "funded research",
-      href: `/admin/content/department/${departmentCode}/funded-research`,
+      href: `/admin/content/${departmentCode}/funded-research`,
     },
     {
       name: "student-society",
-      href: `/admin/content/department/${departmentCode}/student-society`,
+      href: `/admin/content/${departmentCode}/student-society`,
     },
     {
       name: "timetable",
-      href: `/admin/content/department/${departmentCode}/timetable`,
+      href: `/admin/content/${departmentCode}/timetable`,
     },
     {
       name: "academic-calendar",
-      href: `/admin/content/department/${departmentCode}/academic-calendar`,
+      href: `/admin/content/${departmentCode}/academic-calendar`,
     },
     {
       name: "Syllabus",
-      href: `/admin/content/department/${departmentCode}/syllabus`,
+      href: `/admin/content/${departmentCode}/syllabus`,
     },
   ];
-
-  const sections = [
-    {
-      name: "manage_central_content",
-      label: "Central",
-      sections: centralSections,
-    },
-    {
-      name: "manage_department_content",
-      label: `Department - ${departmentName}`,
-      sections: departmentSections,
-    },
-  ];
-
-  // const allowed = sections.filter((s) => powers.includes(s.name));
+  const sections =
+    departmentCode === "admin"
+      ? [
+          {
+            name: "manage_central_content",
+            label: "Central",
+            sections: centralSections,
+          },
+        ]
+      : [
+          {
+            name: "manage_department_content",
+            label: `Department - ${departmentName}`,
+            sections: departmentSections,
+          },
+        ];
 
   const allowed = sections;
 
@@ -153,7 +152,7 @@ export default async function AdministrationPage() {
                     {subSection.name}
                   </h3>
                   <p className="text-sm text-gray-500 group-hover:text-gray-600">
-                    {subSection.description ||
+                    {subSection?.description ||
                       "Click to edit content and manage attachments"}
                   </p>
                 </Link>

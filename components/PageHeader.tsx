@@ -1,16 +1,25 @@
-import { GraduationCap } from "lucide-react";
+import React from "react";
+import { GraduationCap, LucideIcon } from "lucide-react";
+
+interface PageHeaderProps {
+  title?: string;
+  subTitle?: string;
+  icon?: LucideIcon;
+}
 
 const PageHeader = ({
-  title = "",
+  title = "Default Title",
   subTitle = "",
-  icon: SVG = GraduationCap,
-}) => {
+  icon: Icon = GraduationCap,
+}: PageHeaderProps) => {
   return (
-    <div className="bg-linear-to-r from-orange-600 to-green-600 py-16 px-4">
+    <div className="bg-gradient-to-r from-orange-600 to-green-600 py-16 px-4">
       <div className="max-w-7xl mx-auto text-center text-white">
-        <SVG className="w-16 h-16 mx-auto mb-4" />
+        <Icon className="w-16 h-16 mx-auto mb-4" />
         <h1 className="text-4xl md:text-5xl font-bold mb-4">{title}</h1>
-        <p className="text-lg md:text-xl">{subTitle}</p>
+        {subTitle && (
+          <p className="text-lg md:text-xl max-w-3xl mx-auto">{subTitle}</p>
+        )}
       </div>
     </div>
   );

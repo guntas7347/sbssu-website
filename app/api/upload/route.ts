@@ -1,36 +1,61 @@
-import { NextResponse } from "next/server";
 import { writeFile, mkdir } from "fs/promises";
 import { join } from "path";
-import verifyAuth from "@/lib/auth";
 import { randomUUID } from "crypto";
+import { send } from "@/lib/utils";
+
+const cloud = true; // toggle
 
 export async function POST(request: Request) {
   try {
-    // const auth = await verifyAuth("central");
-    // if (!auth.ok) return auth.response!;
-
-    // Process file
     const data = await request.formData();
 
     let folderName = "other";
     const folderEntry = data.get("folder");
-    if (typeof folderEntry === "string") {
-      folderName = folderEntry;
-    }
+    if (typeof folderEntry === "string") folderName = folderEntry;
 
     const fileEntry = data.get("file");
     if (!(fileEntry instanceof File)) {
-      return NextResponse.json({ message: "No file found." }, { status: 400 });
+      return send(400, "No file found");
     }
 
-    const file = fileEntry; // type: File
+    const file = fileEntry;
 
-    // 1 MB limit
-    if (file.size > 1024 * 1024 * 5)
-      return NextResponse.json(
-        { message: "File too large (max 1 MB)" },
-        { status: 413 }
+    // 5 MB limit
+    if (file.size > 1024 * 1024 * 5) {
+      return send(413, "File too large (max 5 MB)");
+    }
+
+    /* ================= CLOUDINARY ================= */
+
+    if (cloud) {
+      const isImage = file.type.startsWith("image/");
+
+      const resourceType = isImage ? "auto" : "raw";
+
+      const form = new FormData();
+      form.append("file", file);
+      form.append("upload_preset", process.env.CLOUDINARY_UNSIGNED_PRESET!);
+      form.append("folder", folderName);
+
+      const res = await fetch(
+        `https://api.cloudinary.com/v1_1/${process.env.CLOUDINARY_CLOUD_NAME}/${resourceType}/upload`,
+        {
+          method: "POST",
+          body: form,
+        },
       );
+
+      if (!res.ok) return send(500, "Cloudinary upload failed");
+
+      const json = await res.json();
+
+      return send(200, "Uploaded", {
+        path: json.secure_url,
+        publicId: json.public_id,
+      });
+    }
+
+    /* ================= LOCAL ================= */
 
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
@@ -44,10 +69,11 @@ export async function POST(request: Request) {
     const filePath = join(uploadDir, filename);
     await writeFile(filePath, buffer);
 
-    const publicUrl = `/uploads/${folderName}/${filename}`;
-    return NextResponse.json({ path: publicUrl }, { status: 200 });
-  } catch (error) {
-    console.error("File upload failed:", error);
-    return NextResponse.json({ message: "Server error" }, { status: 500 });
+    return send(200, "Uploaded", {
+      path: `/uploads/${folderName}/${filename}`,
+    });
+  } catch (err) {
+    console.error(err);
+    return send(500, "Server error");
   }
 }

@@ -4,9 +4,16 @@ import prisma from "@/lib/prisma";
 
 export default async function DepartmentsPage() {
   const departments = await prisma.department.findMany({
-    orderBy: { name: "asc" },
-    where: { hidden: false },
+    where: {
+      departmentCode: {
+        not: "ADMIN",
+      },
+    },
+    orderBy: {
+      name: "asc",
+    },
   });
+
   return (
     <div>
       <div className="bg-linear-to-r from-orange-600 to-green-600 py-16 px-4">

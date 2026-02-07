@@ -9,7 +9,27 @@
 * 🟢 You can import this file directly.
 */
 
+export const PageScope = {
+  CENTRAL: 'CENTRAL',
+  DEPARTMENT: 'DEPARTMENT'
+} as const
+
+export type PageScope = (typeof PageScope)[keyof typeof PageScope]
 
 
-// This file is empty because there are no enums in the schema.
-export {}
+export const Role = {
+  SUPER_ADMIN: 'SUPER_ADMIN',
+  CENTRAL_EDITOR: 'CENTRAL_EDITOR',
+  HOD: 'HOD',
+  DEPT_EDITOR: 'DEPT_EDITOR'
+} as const
+
+export type Role = (typeof Role)[keyof typeof Role]
+
+
+export const NoticeScope = {
+  CENTRAL: 'CENTRAL',
+  DEPARTMENT: 'DEPARTMENT'
+} as const
+
+export type NoticeScope = (typeof NoticeScope)[keyof typeof NoticeScope]

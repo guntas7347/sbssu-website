@@ -1,22 +1,20 @@
-import verifyAuth from "@/lib/auth";
 import prisma from "@/lib/prisma";
-import { send } from "@/lib/utils";
 import bcrypt from "bcryptjs";
+import { send } from "@/lib/utils";
 
 // GET all users
 export async function GET() {
-  // const auth = await verifyAuth("manage-users");
-  // if (!auth.ok) return auth.response!;
-
   try {
     const users = await prisma.user.findMany({
+      orderBy: { createdAt: "desc" },
       select: {
         id: true,
         username: true,
         email: true,
+        fullName: true,
+        roles: true,
         loginEnabled: true,
-        role: true,
-        rights: true,
+        createdAt: true,
         department: {
           select: {
             name: true,
@@ -24,40 +22,39 @@ export async function GET() {
           },
         },
       },
-      orderBy: { id: "asc" },
     });
 
-    const result = users.map((u) => ({
-      id: u.id,
-      username: u.username,
-      email: u.email,
-      loginEnabled: u.loginEnabled,
-      role: u.role,
-      rights: u.rights,
-      department: u.department ? u.department.name : "—",
-      departmentCode: u.department ? u.department.departmentCode : null,
-    }));
-
-    return send(200, "OK", result);
+    return send(200, "OK", users);
   } catch (err) {
-    console.error("Error fetching users:", err);
+    console.error("GET /users error:", err);
     return send(500, "Failed to fetch users");
   }
 }
 
 // CREATE user
 export async function POST(req: Request) {
-  // const auth = await verifyAuth("manage-users");
-  // if (!auth.ok) return auth.response!;
-
   try {
     const body = await req.json();
-    const { username, email, department, rights, loginEnabled, role } = body;
 
-    if (!username || !email) return send(400, "Missing required fields");
+    const { username, email, department, roles, loginEnabled } = body;
 
-    const existing = await prisma.user.findUnique({ where: { username } });
-    if (existing) return send(400, "Username already exists");
+    if (!username || !email || !Array.isArray(roles))
+      return send(400, "Missing required fields");
+
+    const deptCode = department?.toUpperCase();
+
+    const dept = await prisma.department.findUnique({
+      where: { departmentCode: deptCode },
+      select: { id: true },
+    });
+
+    if (!dept) return send(400, "Invalid department");
+
+    const existing = await prisma.user.findUnique({
+      where: { username },
+    });
+
+    if (existing) return send(409, "Username already exists");
 
     const passwordHash = await bcrypt.hash("123456", 10);
 
@@ -66,28 +63,27 @@ export async function POST(req: Request) {
         username,
         email,
         passwordHash,
-        rights: Array.isArray(rights) ? rights : [],
-        role: role || "staff",
+
+        // required by schema
+        fullName: username,
+
+        departmentId: dept.id,
+        roles,
         loginEnabled: Boolean(loginEnabled),
-        ...(department
-          ? {
-              department: {
-                connect: { departmentCode: department },
-              },
-            }
-          : {}),
       },
       select: {
         id: true,
         username: true,
         email: true,
-        rights: true,
-        role: true,
+        roles: true,
         loginEnabled: true,
-        department: {
-          select: { name: true, departmentCode: true },
-        },
         createdAt: true,
+        department: {
+          select: {
+            name: true,
+            departmentCode: true,
+          },
+        },
       },
     });
 
@@ -100,43 +96,42 @@ export async function POST(req: Request) {
 
 // UPDATE user
 export async function PATCH(req: Request) {
-  // const auth = await verifyAuth("manage-users");
-  // if (!auth.ok) return auth.response!;
-
   try {
     const data = await req.json();
-    const { id, username, email, department, rights, loginEnabled, role } =
-      data;
+
+    const { id, username, email, department, roles, loginEnabled } = data;
 
     if (!id) return send(400, "Missing user id");
+
+    const deptCode = department?.toUpperCase();
+
+    const dept = await prisma.department.findUnique({
+      where: { departmentCode: deptCode },
+      select: { id: true },
+    });
+
+    if (!dept) return send(400, "Invalid department");
 
     const updated = await prisma.user.update({
       where: { id },
       data: {
-        username: String(username),
-        email: String(email),
-        rights: Array.isArray(rights) ? rights : [],
-        role: role || "staff",
+        username,
+        email,
+        departmentId: dept.id,
+        roles,
         loginEnabled: Boolean(loginEnabled),
-        ...(department
-          ? {
-              department: {
-                connect: { departmentCode: department },
-              },
-            }
-          : {
-              department: { disconnect: true },
-            }),
       },
       select: {
         id: true,
         username: true,
         email: true,
-        rights: true,
-        role: true,
+        roles: true,
         loginEnabled: true,
         department: {
-          select: { name: true, departmentCode: true },
+          select: {
+            name: true,
+            departmentCode: true,
+          },
         },
       },
     });

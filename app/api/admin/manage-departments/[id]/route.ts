@@ -22,15 +22,12 @@ export async function POST(req, { params }) {
     if (id !== "add") return send(400, "Bad Req");
 
     const body = await req.json();
+    const code = body.departmentCode?.toUpperCase();
 
     const created = await prisma.department.create({
       data: {
         name: body.name,
-        departmentCode: body.departmentCode,
-        establishmentYear: body.establishmentYear,
-        location: body.location,
-        description: body.description,
-        hidden: body.hidden ?? false,
+        departmentCode: code,
       },
     });
 
@@ -53,7 +50,6 @@ export async function PUT(req, { params }) {
         establishmentYear: body.establishmentYear,
         location: body.location,
         description: body.description,
-        hidden: body.hidden,
       },
     });
 

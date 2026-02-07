@@ -31,14 +31,14 @@ export default function DocumentUploader({
 
   const [fileName, setFileName] = useState<string | null>(initialFileName);
   const [fileUrl, setFileUrl] = useState<string | null>(
-    initialFile?.url || null
+    initialFile?.url || null,
   );
   const [uploading, setUploading] = useState(false);
   const [status, setStatus] = useState<"idle" | "error" | "success">(
-    initialStatus as "idle" | "error" | "success"
+    initialStatus as "idle" | "error" | "success",
   );
   const [message, setMessage] = useState<string | null>(
-    initialFile ? "File attached." : null
+    initialFile ? "File attached." : null,
   );
 
   // Effect to handle external changes to initialFile (e.g., when parent state changes)
@@ -98,7 +98,6 @@ export default function DocumentUploader({
 
       const res = await fetch("/api/upload", {
         method: "POST",
-
         body: formData,
       });
 
@@ -106,7 +105,7 @@ export default function DocumentUploader({
 
       const data = await res.json();
 
-      const uploadedUrl = data.path || data.url;
+      const uploadedUrl = data.payload.path || data.payload.url;
 
       if (!uploadedUrl) throw new Error("Invalid upload response.");
 

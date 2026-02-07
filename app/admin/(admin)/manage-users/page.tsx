@@ -2,6 +2,7 @@ import { Plus, Edit, Trash2, CheckCircle, XCircle } from "lucide-react";
 
 import getData from "@/lib/getData";
 import Link from "next/link";
+import { getUsers } from "@/lib/actions/getUsers";
 
 interface User {
   id: string;
@@ -13,7 +14,7 @@ interface User {
 }
 
 export default async function UsersPage() {
-  const { payload: users } = await getData("admin/users");
+  const users = await getUsers();
 
   return (
     <>
@@ -73,11 +74,14 @@ export default async function UsersPage() {
                       </td>
                       <td className="px-6 py-4 text-gray-600">{user.email}</td>
                       <td className="px-6 py-4 text-gray-600">
-                        {user.department}
+                        {user.department?.name}
                       </td>
                       <td className="px-6 py-4">
-                        <span className="px-2 py-1 text-xs font-semibold bg-orange-100 text-orange-700 rounded">
-                          {user.role}
+                        <span
+                          title={user.roles.join(", ")}
+                          className="px-2 py-1 text-xs font-semibold bg-orange-100 text-orange-700 rounded max-w-[140px] truncate inline-block cursor-pointer"
+                        >
+                          {user.roles.join(", ")}
                         </span>
                       </td>
                       <td className="px-6 py-4">

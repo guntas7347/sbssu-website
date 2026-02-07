@@ -28,8 +28,9 @@ export default function Header({ user }) {
             <div className="flex items-center gap-3 text-white">
               <div className="text-right">
                 <p className="font-semibold text-sm">{user?.username}</p>
+                <p className="text-xs text-orange-100">{user?.roles}</p>
                 <p className="text-xs text-orange-100">
-                  {user?.role} - {user?.department?.name}
+                  {user?.department?.name}
                 </p>
               </div>{" "}
               <div className="bg-white/20 p-2 rounded-full">

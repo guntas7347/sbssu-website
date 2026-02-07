@@ -1,27 +1,23 @@
 import { BookOpen } from "lucide-react";
 import LastUpdatedTag from "@/components/LastUpdatedTag";
-
-import getPage from "@/lib/getPage";
+import PageHeader from "@/components/PageHeader";
+import { getPage } from "@/lib/actions/getPage";
 
 export default async function AcademicCouncilPage() {
-  const { page, updatedAt } = await getPage("academic-council");
+  const { page, updatedAt } = await getPage("admin", "academic-council");
 
+  const about = page?.about || "N/A";
   const councilMembers = page?.councilMembers || [];
+  const responsibilities = page?.responsibilities || [];
+  const meetingSchedule = page?.meetingSchedule || "N/A";
 
   return (
     <div>
-      <div className="bg-linear-to-r from-orange-600 to-green-600 py-16 px-4">
-        <div className="max-w-7xl mx-auto text-center text-white">
-          <BookOpen className="w-16 h-16 mx-auto mb-4" />
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">
-            Academic Council
-          </h1>
-          <p className="text-lg md:text-xl max-w-3xl mx-auto">
-            The principal academic body responsible for academic policies and
-            programs
-          </p>
-        </div>
-      </div>
+      <PageHeader
+        title="Academic Council"
+        subTitle="The principal academic body responsible for academic policies and programs"
+        icon={BookOpen}
+      />
 
       <section className="py-16 px-4">
         <div className="max-w-7xl mx-auto">
@@ -29,9 +25,7 @@ export default async function AcademicCouncilPage() {
             <h2 className="text-2xl font-bold text-gray-800 mb-4">
               About the Council
             </h2>
-            <p className="text-gray-600 leading-relaxed">
-              {page?.about || "N/A"}
-            </p>
+            <p className="text-gray-600 leading-relaxed">{about}</p>
           </div>
 
           <div className="grid md:grid-cols-2 gap-8 mb-8">
@@ -41,20 +35,20 @@ export default async function AcademicCouncilPage() {
               </h3>
               <div className="space-y-3">
                 {councilMembers.length > 0 ? (
-                  councilMembers.map((member: any, index: number) => (
+                  councilMembers.map((member, index) => (
                     <div
                       key={index}
                       className="flex items-center gap-3 p-3 bg-orange-50 rounded-lg"
                     >
-                      <div className="w-8 h-8 bg-orange-600 rounded-full flex items-center justify-center text-white text-sm font-bold">
+                      <div className="w-8 h-8 bg-orange-600 rounded-full flex items-center justify-center text-white text-sm font-bold shrink-0">
                         {index + 1}
                       </div>
                       <div>
                         <p className="font-semibold text-gray-800">
-                          {member.name || "N/A"}
+                          {member?.name || "N/A"}
                         </p>
                         <p className="text-sm text-gray-600">
-                          {member.designation || "N/A"}
+                          {member?.designation || "N/A"}
                         </p>
                       </div>
                     </div>
@@ -70,8 +64,8 @@ export default async function AcademicCouncilPage() {
                 Key Responsibilities
               </h3>
               <ul className="space-y-3">
-                {(page?.responsibilities || []).length > 0 ? (
-                  page.responsibilities.map((value: string, index: number) => (
+                {responsibilities.length > 0 ? (
+                  responsibilities.map((value, index) => (
                     <li key={index} className="flex items-start gap-3">
                       <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
                         <div className="w-2 h-2 bg-green-600 rounded-full"></div>
@@ -90,9 +84,7 @@ export default async function AcademicCouncilPage() {
             <h3 className="text-xl font-bold text-gray-800 mb-4">
               Meeting Schedule
             </h3>
-            <p className="text-gray-600 mb-4">
-              {page?.meetingSchedule || "N/A"}
-            </p>
+            <p className="text-gray-600 mb-4">{meetingSchedule}</p>
             <a
               href="/administration/academic-council-meeting"
               className="inline-flex items-center gap-2 px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition font-semibold"
@@ -100,9 +92,9 @@ export default async function AcademicCouncilPage() {
               View Meeting Minutes
             </a>
           </div>
-          <LastUpdatedTag date={updatedAt} />
         </div>
       </section>
+      <LastUpdatedTag date={updatedAt} />
     </div>
   );
 }

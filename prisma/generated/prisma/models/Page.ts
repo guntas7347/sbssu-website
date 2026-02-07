@@ -26,7 +26,8 @@ export type AggregatePage = {
 
 export type PageMinAggregateOutputType = {
   id: string | null
-  slug: string | null
+  pageKey: string | null
+  scope: $Enums.PageScope | null
   departmentId: string | null
   updatedAt: Date | null
   createdAt: Date | null
@@ -35,7 +36,8 @@ export type PageMinAggregateOutputType = {
 
 export type PageMaxAggregateOutputType = {
   id: string | null
-  slug: string | null
+  pageKey: string | null
+  scope: $Enums.PageScope | null
   departmentId: string | null
   updatedAt: Date | null
   createdAt: Date | null
@@ -44,7 +46,8 @@ export type PageMaxAggregateOutputType = {
 
 export type PageCountAggregateOutputType = {
   id: number
-  slug: number
+  pageKey: number
+  scope: number
   departmentId: number
   data: number
   updatedAt: number
@@ -56,7 +59,8 @@ export type PageCountAggregateOutputType = {
 
 export type PageMinAggregateInputType = {
   id?: true
-  slug?: true
+  pageKey?: true
+  scope?: true
   departmentId?: true
   updatedAt?: true
   createdAt?: true
@@ -65,7 +69,8 @@ export type PageMinAggregateInputType = {
 
 export type PageMaxAggregateInputType = {
   id?: true
-  slug?: true
+  pageKey?: true
+  scope?: true
   departmentId?: true
   updatedAt?: true
   createdAt?: true
@@ -74,7 +79,8 @@ export type PageMaxAggregateInputType = {
 
 export type PageCountAggregateInputType = {
   id?: true
-  slug?: true
+  pageKey?: true
+  scope?: true
   departmentId?: true
   data?: true
   updatedAt?: true
@@ -157,12 +163,13 @@ export type PageGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
 
 export type PageGroupByOutputType = {
   id: string
-  slug: string
-  departmentId: string | null
+  pageKey: string
+  scope: $Enums.PageScope
+  departmentId: string
   data: runtime.JsonValue
   updatedAt: Date
   createdAt: Date
-  createdBy: string | null
+  createdBy: string
   _count: PageCountAggregateOutputType | null
   _min: PageMinAggregateOutputType | null
   _max: PageMaxAggregateOutputType | null
@@ -188,52 +195,56 @@ export type PageWhereInput = {
   OR?: Prisma.PageWhereInput[]
   NOT?: Prisma.PageWhereInput | Prisma.PageWhereInput[]
   id?: Prisma.StringFilter<"Page"> | string
-  slug?: Prisma.StringFilter<"Page"> | string
-  departmentId?: Prisma.StringNullableFilter<"Page"> | string | null
+  pageKey?: Prisma.StringFilter<"Page"> | string
+  scope?: Prisma.EnumPageScopeFilter<"Page"> | $Enums.PageScope
+  departmentId?: Prisma.StringFilter<"Page"> | string
   data?: Prisma.JsonFilter<"Page">
   updatedAt?: Prisma.DateTimeFilter<"Page"> | Date | string
   createdAt?: Prisma.DateTimeFilter<"Page"> | Date | string
-  createdBy?: Prisma.StringNullableFilter<"Page"> | string | null
-  department?: Prisma.XOR<Prisma.DepartmentNullableScalarRelationFilter, Prisma.DepartmentWhereInput> | null
-  creator?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
+  createdBy?: Prisma.StringFilter<"Page"> | string
+  department?: Prisma.XOR<Prisma.DepartmentScalarRelationFilter, Prisma.DepartmentWhereInput>
+  creator?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
 }
 
 export type PageOrderByWithRelationInput = {
   id?: Prisma.SortOrder
-  slug?: Prisma.SortOrder
-  departmentId?: Prisma.SortOrderInput | Prisma.SortOrder
+  pageKey?: Prisma.SortOrder
+  scope?: Prisma.SortOrder
+  departmentId?: Prisma.SortOrder
   data?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
-  createdBy?: Prisma.SortOrderInput | Prisma.SortOrder
+  createdBy?: Prisma.SortOrder
   department?: Prisma.DepartmentOrderByWithRelationInput
   creator?: Prisma.UserOrderByWithRelationInput
 }
 
 export type PageWhereUniqueInput = Prisma.AtLeast<{
   id?: string
-  slug_departmentId?: Prisma.PageSlugDepartmentIdCompoundUniqueInput
+  pageKey_departmentId?: Prisma.PagePageKeyDepartmentIdCompoundUniqueInput
   AND?: Prisma.PageWhereInput | Prisma.PageWhereInput[]
   OR?: Prisma.PageWhereInput[]
   NOT?: Prisma.PageWhereInput | Prisma.PageWhereInput[]
-  slug?: Prisma.StringFilter<"Page"> | string
-  departmentId?: Prisma.StringNullableFilter<"Page"> | string | null
+  pageKey?: Prisma.StringFilter<"Page"> | string
+  scope?: Prisma.EnumPageScopeFilter<"Page"> | $Enums.PageScope
+  departmentId?: Prisma.StringFilter<"Page"> | string
   data?: Prisma.JsonFilter<"Page">
   updatedAt?: Prisma.DateTimeFilter<"Page"> | Date | string
   createdAt?: Prisma.DateTimeFilter<"Page"> | Date | string
-  createdBy?: Prisma.StringNullableFilter<"Page"> | string | null
-  department?: Prisma.XOR<Prisma.DepartmentNullableScalarRelationFilter, Prisma.DepartmentWhereInput> | null
-  creator?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
-}, "id" | "slug_departmentId">
+  createdBy?: Prisma.StringFilter<"Page"> | string
+  department?: Prisma.XOR<Prisma.DepartmentScalarRelationFilter, Prisma.DepartmentWhereInput>
+  creator?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+}, "id" | "pageKey_departmentId">
 
 export type PageOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
-  slug?: Prisma.SortOrder
-  departmentId?: Prisma.SortOrderInput | Prisma.SortOrder
+  pageKey?: Prisma.SortOrder
+  scope?: Prisma.SortOrder
+  departmentId?: Prisma.SortOrder
   data?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
-  createdBy?: Prisma.SortOrderInput | Prisma.SortOrder
+  createdBy?: Prisma.SortOrder
   _count?: Prisma.PageCountOrderByAggregateInput
   _max?: Prisma.PageMaxOrderByAggregateInput
   _min?: Prisma.PageMinOrderByAggregateInput
@@ -244,67 +255,74 @@ export type PageScalarWhereWithAggregatesInput = {
   OR?: Prisma.PageScalarWhereWithAggregatesInput[]
   NOT?: Prisma.PageScalarWhereWithAggregatesInput | Prisma.PageScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"Page"> | string
-  slug?: Prisma.StringWithAggregatesFilter<"Page"> | string
-  departmentId?: Prisma.StringNullableWithAggregatesFilter<"Page"> | string | null
+  pageKey?: Prisma.StringWithAggregatesFilter<"Page"> | string
+  scope?: Prisma.EnumPageScopeWithAggregatesFilter<"Page"> | $Enums.PageScope
+  departmentId?: Prisma.StringWithAggregatesFilter<"Page"> | string
   data?: Prisma.JsonWithAggregatesFilter<"Page">
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Page"> | Date | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Page"> | Date | string
-  createdBy?: Prisma.StringNullableWithAggregatesFilter<"Page"> | string | null
+  createdBy?: Prisma.StringWithAggregatesFilter<"Page"> | string
 }
 
 export type PageCreateInput = {
   id?: string
-  slug: string
+  pageKey: string
+  scope: $Enums.PageScope
   data: Prisma.JsonNullValueInput | runtime.InputJsonValue
   updatedAt?: Date | string
   createdAt?: Date | string
-  department?: Prisma.DepartmentCreateNestedOneWithoutPagesInput
-  creator?: Prisma.UserCreateNestedOneWithoutPagesInput
+  department: Prisma.DepartmentCreateNestedOneWithoutPagesInput
+  creator: Prisma.UserCreateNestedOneWithoutPagesInput
 }
 
 export type PageUncheckedCreateInput = {
   id?: string
-  slug: string
-  departmentId?: string | null
+  pageKey: string
+  scope: $Enums.PageScope
+  departmentId: string
   data: Prisma.JsonNullValueInput | runtime.InputJsonValue
   updatedAt?: Date | string
   createdAt?: Date | string
-  createdBy?: string | null
+  createdBy: string
 }
 
 export type PageUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  pageKey?: Prisma.StringFieldUpdateOperationsInput | string
+  scope?: Prisma.EnumPageScopeFieldUpdateOperationsInput | $Enums.PageScope
   data?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  department?: Prisma.DepartmentUpdateOneWithoutPagesNestedInput
-  creator?: Prisma.UserUpdateOneWithoutPagesNestedInput
+  department?: Prisma.DepartmentUpdateOneRequiredWithoutPagesNestedInput
+  creator?: Prisma.UserUpdateOneRequiredWithoutPagesNestedInput
 }
 
 export type PageUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
-  departmentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pageKey?: Prisma.StringFieldUpdateOperationsInput | string
+  scope?: Prisma.EnumPageScopeFieldUpdateOperationsInput | $Enums.PageScope
+  departmentId?: Prisma.StringFieldUpdateOperationsInput | string
   data?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  createdBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdBy?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type PageCreateManyInput = {
   id?: string
-  slug: string
-  departmentId?: string | null
+  pageKey: string
+  scope: $Enums.PageScope
+  departmentId: string
   data: Prisma.JsonNullValueInput | runtime.InputJsonValue
   updatedAt?: Date | string
   createdAt?: Date | string
-  createdBy?: string | null
+  createdBy: string
 }
 
 export type PageUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  pageKey?: Prisma.StringFieldUpdateOperationsInput | string
+  scope?: Prisma.EnumPageScopeFieldUpdateOperationsInput | $Enums.PageScope
   data?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -312,12 +330,13 @@ export type PageUpdateManyMutationInput = {
 
 export type PageUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
-  departmentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pageKey?: Prisma.StringFieldUpdateOperationsInput | string
+  scope?: Prisma.EnumPageScopeFieldUpdateOperationsInput | $Enums.PageScope
+  departmentId?: Prisma.StringFieldUpdateOperationsInput | string
   data?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  createdBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdBy?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type PageListRelationFilter = {
@@ -330,14 +349,15 @@ export type PageOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
 }
 
-export type PageSlugDepartmentIdCompoundUniqueInput = {
-  slug: string
+export type PagePageKeyDepartmentIdCompoundUniqueInput = {
+  pageKey: string
   departmentId: string
 }
 
 export type PageCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  slug?: Prisma.SortOrder
+  pageKey?: Prisma.SortOrder
+  scope?: Prisma.SortOrder
   departmentId?: Prisma.SortOrder
   data?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -347,7 +367,8 @@ export type PageCountOrderByAggregateInput = {
 
 export type PageMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  slug?: Prisma.SortOrder
+  pageKey?: Prisma.SortOrder
+  scope?: Prisma.SortOrder
   departmentId?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -356,7 +377,8 @@ export type PageMaxOrderByAggregateInput = {
 
 export type PageMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  slug?: Prisma.SortOrder
+  pageKey?: Prisma.SortOrder
+  scope?: Prisma.SortOrder
   departmentId?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -405,6 +427,10 @@ export type PageUncheckedUpdateManyWithoutCreatorNestedInput = {
   deleteMany?: Prisma.PageScalarWhereInput | Prisma.PageScalarWhereInput[]
 }
 
+export type EnumPageScopeFieldUpdateOperationsInput = {
+  set?: $Enums.PageScope
+}
+
 export type PageCreateNestedManyWithoutDepartmentInput = {
   create?: Prisma.XOR<Prisma.PageCreateWithoutDepartmentInput, Prisma.PageUncheckedCreateWithoutDepartmentInput> | Prisma.PageCreateWithoutDepartmentInput[] | Prisma.PageUncheckedCreateWithoutDepartmentInput[]
   connectOrCreate?: Prisma.PageCreateOrConnectWithoutDepartmentInput | Prisma.PageCreateOrConnectWithoutDepartmentInput[]
@@ -449,17 +475,19 @@ export type PageUncheckedUpdateManyWithoutDepartmentNestedInput = {
 
 export type PageCreateWithoutCreatorInput = {
   id?: string
-  slug: string
+  pageKey: string
+  scope: $Enums.PageScope
   data: Prisma.JsonNullValueInput | runtime.InputJsonValue
   updatedAt?: Date | string
   createdAt?: Date | string
-  department?: Prisma.DepartmentCreateNestedOneWithoutPagesInput
+  department: Prisma.DepartmentCreateNestedOneWithoutPagesInput
 }
 
 export type PageUncheckedCreateWithoutCreatorInput = {
   id?: string
-  slug: string
-  departmentId?: string | null
+  pageKey: string
+  scope: $Enums.PageScope
+  departmentId: string
   data: Prisma.JsonNullValueInput | runtime.InputJsonValue
   updatedAt?: Date | string
   createdAt?: Date | string
@@ -496,30 +524,33 @@ export type PageScalarWhereInput = {
   OR?: Prisma.PageScalarWhereInput[]
   NOT?: Prisma.PageScalarWhereInput | Prisma.PageScalarWhereInput[]
   id?: Prisma.StringFilter<"Page"> | string
-  slug?: Prisma.StringFilter<"Page"> | string
-  departmentId?: Prisma.StringNullableFilter<"Page"> | string | null
+  pageKey?: Prisma.StringFilter<"Page"> | string
+  scope?: Prisma.EnumPageScopeFilter<"Page"> | $Enums.PageScope
+  departmentId?: Prisma.StringFilter<"Page"> | string
   data?: Prisma.JsonFilter<"Page">
   updatedAt?: Prisma.DateTimeFilter<"Page"> | Date | string
   createdAt?: Prisma.DateTimeFilter<"Page"> | Date | string
-  createdBy?: Prisma.StringNullableFilter<"Page"> | string | null
+  createdBy?: Prisma.StringFilter<"Page"> | string
 }
 
 export type PageCreateWithoutDepartmentInput = {
   id?: string
-  slug: string
+  pageKey: string
+  scope: $Enums.PageScope
   data: Prisma.JsonNullValueInput | runtime.InputJsonValue
   updatedAt?: Date | string
   createdAt?: Date | string
-  creator?: Prisma.UserCreateNestedOneWithoutPagesInput
+  creator: Prisma.UserCreateNestedOneWithoutPagesInput
 }
 
 export type PageUncheckedCreateWithoutDepartmentInput = {
   id?: string
-  slug: string
+  pageKey: string
+  scope: $Enums.PageScope
   data: Prisma.JsonNullValueInput | runtime.InputJsonValue
   updatedAt?: Date | string
   createdAt?: Date | string
-  createdBy?: string | null
+  createdBy: string
 }
 
 export type PageCreateOrConnectWithoutDepartmentInput = {
@@ -550,8 +581,9 @@ export type PageUpdateManyWithWhereWithoutDepartmentInput = {
 
 export type PageCreateManyCreatorInput = {
   id?: string
-  slug: string
-  departmentId?: string | null
+  pageKey: string
+  scope: $Enums.PageScope
+  departmentId: string
   data: Prisma.JsonNullValueInput | runtime.InputJsonValue
   updatedAt?: Date | string
   createdAt?: Date | string
@@ -559,17 +591,19 @@ export type PageCreateManyCreatorInput = {
 
 export type PageUpdateWithoutCreatorInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  pageKey?: Prisma.StringFieldUpdateOperationsInput | string
+  scope?: Prisma.EnumPageScopeFieldUpdateOperationsInput | $Enums.PageScope
   data?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  department?: Prisma.DepartmentUpdateOneWithoutPagesNestedInput
+  department?: Prisma.DepartmentUpdateOneRequiredWithoutPagesNestedInput
 }
 
 export type PageUncheckedUpdateWithoutCreatorInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
-  departmentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pageKey?: Prisma.StringFieldUpdateOperationsInput | string
+  scope?: Prisma.EnumPageScopeFieldUpdateOperationsInput | $Enums.PageScope
+  departmentId?: Prisma.StringFieldUpdateOperationsInput | string
   data?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -577,8 +611,9 @@ export type PageUncheckedUpdateWithoutCreatorInput = {
 
 export type PageUncheckedUpdateManyWithoutCreatorInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
-  departmentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pageKey?: Prisma.StringFieldUpdateOperationsInput | string
+  scope?: Prisma.EnumPageScopeFieldUpdateOperationsInput | $Enums.PageScope
+  departmentId?: Prisma.StringFieldUpdateOperationsInput | string
   data?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -586,81 +621,89 @@ export type PageUncheckedUpdateManyWithoutCreatorInput = {
 
 export type PageCreateManyDepartmentInput = {
   id?: string
-  slug: string
+  pageKey: string
+  scope: $Enums.PageScope
   data: Prisma.JsonNullValueInput | runtime.InputJsonValue
   updatedAt?: Date | string
   createdAt?: Date | string
-  createdBy?: string | null
+  createdBy: string
 }
 
 export type PageUpdateWithoutDepartmentInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  pageKey?: Prisma.StringFieldUpdateOperationsInput | string
+  scope?: Prisma.EnumPageScopeFieldUpdateOperationsInput | $Enums.PageScope
   data?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  creator?: Prisma.UserUpdateOneWithoutPagesNestedInput
+  creator?: Prisma.UserUpdateOneRequiredWithoutPagesNestedInput
 }
 
 export type PageUncheckedUpdateWithoutDepartmentInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  pageKey?: Prisma.StringFieldUpdateOperationsInput | string
+  scope?: Prisma.EnumPageScopeFieldUpdateOperationsInput | $Enums.PageScope
   data?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  createdBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdBy?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type PageUncheckedUpdateManyWithoutDepartmentInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  pageKey?: Prisma.StringFieldUpdateOperationsInput | string
+  scope?: Prisma.EnumPageScopeFieldUpdateOperationsInput | $Enums.PageScope
   data?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  createdBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdBy?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 
 
 export type PageSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  slug?: boolean
+  pageKey?: boolean
+  scope?: boolean
   departmentId?: boolean
   data?: boolean
   updatedAt?: boolean
   createdAt?: boolean
   createdBy?: boolean
-  department?: boolean | Prisma.Page$departmentArgs<ExtArgs>
-  creator?: boolean | Prisma.Page$creatorArgs<ExtArgs>
+  department?: boolean | Prisma.DepartmentDefaultArgs<ExtArgs>
+  creator?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["page"]>
 
 export type PageSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  slug?: boolean
+  pageKey?: boolean
+  scope?: boolean
   departmentId?: boolean
   data?: boolean
   updatedAt?: boolean
   createdAt?: boolean
   createdBy?: boolean
-  department?: boolean | Prisma.Page$departmentArgs<ExtArgs>
-  creator?: boolean | Prisma.Page$creatorArgs<ExtArgs>
+  department?: boolean | Prisma.DepartmentDefaultArgs<ExtArgs>
+  creator?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["page"]>
 
 export type PageSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  slug?: boolean
+  pageKey?: boolean
+  scope?: boolean
   departmentId?: boolean
   data?: boolean
   updatedAt?: boolean
   createdAt?: boolean
   createdBy?: boolean
-  department?: boolean | Prisma.Page$departmentArgs<ExtArgs>
-  creator?: boolean | Prisma.Page$creatorArgs<ExtArgs>
+  department?: boolean | Prisma.DepartmentDefaultArgs<ExtArgs>
+  creator?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["page"]>
 
 export type PageSelectScalar = {
   id?: boolean
-  slug?: boolean
+  pageKey?: boolean
+  scope?: boolean
   departmentId?: boolean
   data?: boolean
   updatedAt?: boolean
@@ -668,34 +711,35 @@ export type PageSelectScalar = {
   createdBy?: boolean
 }
 
-export type PageOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "slug" | "departmentId" | "data" | "updatedAt" | "createdAt" | "createdBy", ExtArgs["result"]["page"]>
+export type PageOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "pageKey" | "scope" | "departmentId" | "data" | "updatedAt" | "createdAt" | "createdBy", ExtArgs["result"]["page"]>
 export type PageInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  department?: boolean | Prisma.Page$departmentArgs<ExtArgs>
-  creator?: boolean | Prisma.Page$creatorArgs<ExtArgs>
+  department?: boolean | Prisma.DepartmentDefaultArgs<ExtArgs>
+  creator?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
 export type PageIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  department?: boolean | Prisma.Page$departmentArgs<ExtArgs>
-  creator?: boolean | Prisma.Page$creatorArgs<ExtArgs>
+  department?: boolean | Prisma.DepartmentDefaultArgs<ExtArgs>
+  creator?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
 export type PageIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  department?: boolean | Prisma.Page$departmentArgs<ExtArgs>
-  creator?: boolean | Prisma.Page$creatorArgs<ExtArgs>
+  department?: boolean | Prisma.DepartmentDefaultArgs<ExtArgs>
+  creator?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
 
 export type $PagePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Page"
   objects: {
-    department: Prisma.$DepartmentPayload<ExtArgs> | null
-    creator: Prisma.$UserPayload<ExtArgs> | null
+    department: Prisma.$DepartmentPayload<ExtArgs>
+    creator: Prisma.$UserPayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
-    slug: string
-    departmentId: string | null
+    pageKey: string
+    scope: $Enums.PageScope
+    departmentId: string
     data: runtime.JsonValue
     updatedAt: Date
     createdAt: Date
-    createdBy: string | null
+    createdBy: string
   }, ExtArgs["result"]["page"]>
   composites: {}
 }
@@ -1090,8 +1134,8 @@ readonly fields: PageFieldRefs;
  */
 export interface Prisma__PageClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  department<T extends Prisma.Page$departmentArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Page$departmentArgs<ExtArgs>>): Prisma.Prisma__DepartmentClient<runtime.Types.Result.GetResult<Prisma.$DepartmentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-  creator<T extends Prisma.Page$creatorArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Page$creatorArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  department<T extends Prisma.DepartmentDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DepartmentDefaultArgs<ExtArgs>>): Prisma.Prisma__DepartmentClient<runtime.Types.Result.GetResult<Prisma.$DepartmentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  creator<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1122,7 +1166,8 @@ export interface Prisma__PageClient<T, Null = never, ExtArgs extends runtime.Typ
  */
 export interface PageFieldRefs {
   readonly id: Prisma.FieldRef<"Page", 'String'>
-  readonly slug: Prisma.FieldRef<"Page", 'String'>
+  readonly pageKey: Prisma.FieldRef<"Page", 'String'>
+  readonly scope: Prisma.FieldRef<"Page", 'PageScope'>
   readonly departmentId: Prisma.FieldRef<"Page", 'String'>
   readonly data: Prisma.FieldRef<"Page", 'Json'>
   readonly updatedAt: Prisma.FieldRef<"Page", 'DateTime'>
@@ -1521,44 +1566,6 @@ export type PageDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Internal
    * Limit how many Pages to delete.
    */
   limit?: number
-}
-
-/**
- * Page.department
- */
-export type Page$departmentArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the Department
-   */
-  select?: Prisma.DepartmentSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the Department
-   */
-  omit?: Prisma.DepartmentOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.DepartmentInclude<ExtArgs> | null
-  where?: Prisma.DepartmentWhereInput
-}
-
-/**
- * Page.creator
- */
-export type Page$creatorArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the User
-   */
-  select?: Prisma.UserSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the User
-   */
-  omit?: Prisma.UserOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.UserInclude<ExtArgs> | null
-  where?: Prisma.UserWhereInput
 }
 
 /**

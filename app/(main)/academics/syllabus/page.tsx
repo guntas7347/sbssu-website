@@ -5,7 +5,7 @@ import { BookOpen } from "lucide-react";
 
 export default async function SyllabusPage() {
   const page = await prisma.page.findMany({
-    where: { slug: "syllabus" },
+    where: { pageKey: "syllabus" },
     include: { department: { select: { name: true } } },
   });
   return (

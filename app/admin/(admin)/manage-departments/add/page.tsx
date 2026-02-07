@@ -9,7 +9,6 @@ export default function DepartmentPage() {
   const { values, handleChange, resetForm } = useForm({
     name: "",
     departmentCode: "",
-    hidden: false,
   });
 
   async function handleSubmit(e: React.FormEvent) {
@@ -25,7 +24,6 @@ export default function DepartmentPage() {
         body: JSON.stringify({
           name: values.name.trim(),
           departmentCode: values.departmentCode.trim(),
-          hidden: values.hidden,
         }),
       });
 
@@ -74,19 +72,6 @@ export default function DepartmentPage() {
           className="input w-full"
           required
         />
-
-        <div className="flex items-center gap-3">
-          <input
-            type="checkbox"
-            name="hidden"
-            checked={values.hidden}
-            onChange={handleChange}
-            className="w-5 h-5"
-          />
-          <label className="text-sm font-medium text-gray-700">
-            Hidden Department
-          </label>
-        </div>
 
         <button
           type="submit"

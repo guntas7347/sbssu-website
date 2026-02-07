@@ -667,12 +667,12 @@ function validate(schema: PageSchema, data: any): Record<string, string[]> {
 
 // Main component
 export default function UniversalEditor({
-  slug,
+  pageKey,
   schema,
   dept,
   initialData,
 }: {
-  slug: string;
+  pageKey: string;
   dept: string | null;
   schema: PageSchema;
   initialData?: any;
@@ -702,21 +702,18 @@ export default function UniversalEditor({
 
     setSaving(true);
     try {
-      const ask = confirm(`Save changes for ${slug}?`);
+      const ask = confirm(`Save changes for ${pageKey}?`);
       if (!ask) return;
 
-      const url = dept
-        ? `/api/admin/pages/department/${dept}/${slug}`
-        : `/api/admin/pages/central/${slug}`;
-
-      const res = await fetch(url, {
+      const res = await fetch(`/api/admin/page/${dept}/${pageKey}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ slug, data }),
+        body: JSON.stringify({ data }),
       });
 
       if (!res.ok) throw new Error(`Save failed ${res.status}`);
-      alert(`Saved ${slug}!`);
+
+      alert(`Saved ${pageKey}!`);
     } catch (err: any) {
       setServerError(err.message || "Save failed: Unknown error.");
     } finally {
@@ -728,7 +725,7 @@ export default function UniversalEditor({
     <div className="max-w-6xl mx-auto w-full m-5 font-sans">
       <div className="bg-white rounded-2xl shadow-2xl p-8 border border-gray-100 transition-all duration-300">
         <h2 className="text-3xl font-extrabold mb-8 text-gray-800 border-b pb-4">
-          Editor: {slug}
+          Editor: {pageKey}
         </h2>
 
         <div className="space-y-6">

@@ -8,6 +8,10 @@ export async function POST(req) {
     const body = await req.json();
 
     const user = await getAuth();
+    if (!user) throw Error();
+
+    const scope =
+      user?.department.departmentCode === "ADMIN" ? "CENTRAL" : "DEPARTMENT";
 
     const created = await prisma.notice.create({
       data: {
@@ -18,8 +22,9 @@ export async function POST(req) {
         showTill: new Date(body.showTill),
         category: body.category ?? "other",
         file: body.fileUrl ?? null,
-        noticeLevel: body.noticeLevel ?? "central",
         createdBy: user.id,
+        departmentId: user.department.id,
+        scope,
       },
     });
 

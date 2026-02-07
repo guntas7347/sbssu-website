@@ -1,24 +1,23 @@
-import LastUpdatedTag from "@/components/LastUpdatedTag";
-import getPage from "@/lib/getPage";
 import { FileText, Mail, Phone, Download } from "lucide-react";
+import LastUpdatedTag from "@/components/LastUpdatedTag";
+import PageHeader from "@/components/PageHeader";
+import { getPage } from "@/lib/actions/getPage";
 
 export default async function RTICellPage() {
-  const { page, updatedAt } = await getPage("rti-cell");
+  const { page, updatedAt } = await getPage("admin", "rti-cell");
+
   const pio = page?.pio || [];
   const appellate = page?.appellateAuthority || [];
   const importantInfo = page?.importantInfo?.[0] || {};
+  const documents = page?.documents || [];
 
   return (
     <div>
-      <div className="bg-linear-to-r from-orange-600 to-green-600 py-16 px-4">
-        <div className="max-w-7xl mx-auto text-center text-white">
-          <FileText className="w-16 h-16 mx-auto mb-4" />
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">RTI Cell</h1>
-          <p className="text-lg md:text-xl max-w-3xl mx-auto">
-            Right to Information Act, 2005 - Transparency and Accountability
-          </p>
-        </div>
-      </div>
+      <PageHeader
+        title="RTI Cell"
+        subTitle="Right to Information Act, 2005 - Transparency and Accountability"
+        icon={FileText}
+      />
 
       <section className="py-16 px-4">
         <div className="max-w-5xl mx-auto">
@@ -39,7 +38,7 @@ export default async function RTICellPage() {
 
           <div className="grid md:grid-cols-2 gap-8 mb-8">
             {pio.length > 0 ? (
-              pio.map((officer: any, i: number) => (
+              pio.map((officer, i) => (
                 <div
                   key={i}
                   className="bg-orange-50 rounded-xl p-6 border-2 border-orange-200"
@@ -50,29 +49,29 @@ export default async function RTICellPage() {
                   <div className="space-y-3">
                     <div>
                       <p className="font-semibold text-gray-800">
-                        {officer.name || "N/A"}
+                        {officer?.name || "N/A"}
                       </p>
                       <p className="text-sm text-gray-600">
-                        {officer.designation || "N/A"}
+                        {officer?.designation || "N/A"}
                       </p>
                     </div>
                     <div className="flex items-center gap-2 text-sm text-gray-700">
                       <Mail className="w-4 h-4 text-orange-600" />
                       <a
-                        href={`mailto:${officer.email || ""}`}
+                        href={`mailto:${officer?.email || ""}`}
                         className="hover:text-orange-600"
                       >
-                        {officer.email || "N/A"}
+                        {officer?.email || "N/A"}
                       </a>
                     </div>
                     <div className="flex items-center gap-2 text-sm text-gray-700">
                       <Phone className="w-4 h-4 text-orange-600" />
-                      <span>{officer.phone || "N/A"}</span>
+                      <span>{officer?.phone || "N/A"}</span>
                     </div>
                     <div className="mt-4 pt-4 border-t border-orange-200">
                       <p className="text-sm text-gray-600">
                         <strong>Office Hours:</strong>{" "}
-                        {officer.officeHours || "N/A"}
+                        {officer?.officeHours || "N/A"}
                       </p>
                     </div>
                   </div>
@@ -85,7 +84,7 @@ export default async function RTICellPage() {
             )}
 
             {appellate.length > 0 ? (
-              appellate.map((auth: any, i: number) => (
+              appellate.map((auth, i) => (
                 <div
                   key={i}
                   className="bg-green-50 rounded-xl p-6 border-2 border-green-200"
@@ -96,31 +95,31 @@ export default async function RTICellPage() {
                   <div className="space-y-3">
                     <div>
                       <p className="font-semibold text-gray-800">
-                        {auth.name || "N/A"}
+                        {auth?.name || "N/A"}
                       </p>
                       <p className="text-sm text-gray-600">
-                        {auth.designation || "N/A"}
+                        {auth?.designation || "N/A"}
                       </p>
                     </div>
 
                     <div className="flex items-center gap-2 text-sm text-gray-700">
                       <Mail className="w-4 h-4 text-green-600" />
                       <a
-                        href={`mailto:${auth.email || ""}`}
+                        href={`mailto:${auth?.email || ""}`}
                         className="hover:text-green-600"
                       >
-                        {auth.email || "N/A"}
+                        {auth?.email || "N/A"}
                       </a>
                     </div>
 
                     <div className="flex items-center gap-2 text-sm text-gray-700">
                       <Phone className="w-4 h-4 text-green-600" />
-                      <span>{auth.phone || "N/A"}</span>
+                      <span>{auth?.phone || "N/A"}</span>
                     </div>
 
                     <div className="mt-4 pt-4 border-t border-green-200">
                       <p className="text-sm text-gray-600">
-                        <strong>Appeals:</strong> {auth.remarks || "N/A"}
+                        <strong>Appeals:</strong> {auth?.remarks || "N/A"}
                       </p>
                     </div>
                   </div>
@@ -204,7 +203,7 @@ export default async function RTICellPage() {
                 <div className="w-2 h-2 bg-orange-600 rounded-full mt-2"></div>
                 <span>
                   <strong>Application Fee:</strong>{" "}
-                  {importantInfo.applicationFee || "N/A"}
+                  {importantInfo?.applicationFee || "N/A"}
                 </span>
               </li>
 
@@ -212,7 +211,7 @@ export default async function RTICellPage() {
                 <div className="w-2 h-2 bg-orange-600 rounded-full mt-2"></div>
                 <span>
                   <strong>Response Time:</strong>{" "}
-                  {importantInfo.responseTime || "N/A"}
+                  {importantInfo?.responseTime || "N/A"}
                 </span>
               </li>
 
@@ -220,7 +219,7 @@ export default async function RTICellPage() {
                 <div className="w-2 h-2 bg-orange-600 rounded-full mt-2"></div>
                 <span>
                   <strong>Appeal Period:</strong>{" "}
-                  {importantInfo.appealPeriod || "N/A"}
+                  {importantInfo?.appealPeriod || "N/A"}
                 </span>
               </li>
 
@@ -228,25 +227,23 @@ export default async function RTICellPage() {
                 <div className="w-2 h-2 bg-orange-600 rounded-full mt-2"></div>
                 <span>
                   <strong>BPL Citizens:</strong>{" "}
-                  {importantInfo.bplCitizens || "N/A"}
+                  {importantInfo?.bplCitizens || "N/A"}
                 </span>
               </li>
             </ul>
 
             <div className="mt-6 flex gap-4">
-              {(page?.documents || []).length > 0 ? (
-                page.documents.map(({ file }: any, index: number) => {
-                  return (
-                    <a
-                      key={index}
-                      href={file?.url || "#"}
-                      className="inline-flex items-center gap-2 px-6 py-3 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition font-semibold"
-                    >
-                      <Download className="w-4 h-4" />
-                      {file?.title || "Download"}
-                    </a>
-                  );
-                })
+              {documents.length > 0 ? (
+                documents.map((doc, index) => (
+                  <a
+                    key={index}
+                    href={doc?.file?.url || "#"}
+                    className="inline-flex items-center gap-2 px-6 py-3 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition font-semibold"
+                  >
+                    <Download className="w-4 h-4" />
+                    {doc?.file?.title || "Download"}
+                  </a>
+                ))
               ) : (
                 <p className="text-gray-500 italic">No documents available.</p>
               )}

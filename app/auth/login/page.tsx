@@ -32,8 +32,9 @@ export default function LoginPage() {
 
       if (!res.ok) throw new Error("Invalid username or password");
 
-      const json = await res.json();
-      router.push(`/auth/otp?login=${json.tempToken}`);
+      const { payload } = await res.json();
+      console.log("OTP: ", payload.otp);
+      router.push(`/auth/otp?login=${payload.tempToken}`);
     } catch (err: any) {
       setError(err.message || "Login failed. Try again.");
     } finally {

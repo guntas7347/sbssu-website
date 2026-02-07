@@ -20,7 +20,7 @@ export default async function AdminLayout({
       <body>
         <Header user={auth} />
         <div className="flex flex-1 min-h-screen">
-          <Sidebar rights={auth?.rights} />
+          <Sidebar roles={auth?.roles} />
           {children}
         </div>
         <Footer />

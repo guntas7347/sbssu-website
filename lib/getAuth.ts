@@ -29,9 +29,8 @@ export async function getAuth() {
     select: {
       id: true,
       username: true,
-      rights: true,
-      role: true,
-      department: { select: { name: true, departmentCode: true } },
+      roles: true,
+      department: { select: { name: true, departmentCode: true, id: true } },
     },
   });
 

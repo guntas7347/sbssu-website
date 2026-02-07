@@ -1,18 +1,42 @@
 import getData from "@/lib/getData";
-import React from "react";
-import AddUser from "./UserForm";
+
+import prisma from "@/lib/prisma";
+import EditUser from "./EditUser";
 
 const Page = async ({ params }) => {
   const { id } = await params;
 
-  const { payload: departments } = await getData(`public/departments`);
+  const departments = await prisma.department.findMany({
+    orderBy: { name: "asc" },
+    select: {
+      id: true,
+      name: true,
+      departmentCode: true,
+    },
+  });
 
-  if (id === "add") {
-    return <AddUser departments={departments} editingUser={false} />;
-  }
-  const { payload: user } = await getData(`admin/users/${id}`);
+  const user = await prisma.user.findUnique({
+    where: { id },
+    select: {
+      id: true,
+      username: true,
+      email: true,
+      fullName: true,
+      roles: true,
+      loginEnabled: true,
+      createdAt: true,
+      updatedAt: true,
+      department: {
+        select: {
+          id: true,
+          name: true,
+          departmentCode: true,
+        },
+      },
+    },
+  });
 
-  return <AddUser departments={departments} editingUser={user} />;
+  return <EditUser departments={departments} editingUser={user} />;
 };
 
 export default Page;

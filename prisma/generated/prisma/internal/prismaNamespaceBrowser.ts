@@ -78,9 +78,12 @@ export const UserScalarFieldEnum = {
   username: 'username',
   passwordHash: 'passwordHash',
   email: 'email',
+  fullName: 'fullName',
+  staffCode: 'staffCode',
+  designation: 'designation',
+  phone: 'phone',
   departmentId: 'departmentId',
-  rights: 'rights',
-  role: 'role',
+  roles: 'roles',
   loginEnabled: 'loginEnabled',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -98,7 +101,8 @@ export const NoticeScalarFieldEnum = {
   showTill: 'showTill',
   category: 'category',
   file: 'file',
-  noticeLevel: 'noticeLevel',
+  scope: 'scope',
+  departmentId: 'departmentId',
   createdAt: 'createdAt',
   createdBy: 'createdBy'
 } as const
@@ -108,7 +112,8 @@ export type NoticeScalarFieldEnum = (typeof NoticeScalarFieldEnum)[keyof typeof 
 
 export const PageScalarFieldEnum = {
   id: 'id',
-  slug: 'slug',
+  pageKey: 'pageKey',
+  scope: 'scope',
   departmentId: 'departmentId',
   data: 'data',
   updatedAt: 'updatedAt',
@@ -125,8 +130,7 @@ export const DepartmentScalarFieldEnum = {
   departmentCode: 'departmentCode',
   description: 'description',
   establishmentYear: 'establishmentYear',
-  location: 'location',
-  hidden: 'hidden'
+  location: 'location'
 } as const
 
 export type DepartmentScalarFieldEnum = (typeof DepartmentScalarFieldEnum)[keyof typeof DepartmentScalarFieldEnum]

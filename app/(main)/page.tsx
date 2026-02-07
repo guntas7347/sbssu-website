@@ -12,14 +12,14 @@ import {
 import HeroSection from "@/components/homepage/HeroSection";
 import NoticesSection from "@/components/homepage/NoticesSection";
 import { initAdmin } from "@/lib/dev";
-import getPage from "@/lib/getPage";
+import { getPage } from "@/lib/actions/getPage";
 
 export default async function Home() {
   // initAdmin();
-  const { payload: pageData } = await getPage(
-    `public/pages/central/hero-gallery`,
-  );
-  const { images } = pageData?.data;
+  const { page } = await getPage("admin", "hero-gallery");
+
+  const { images } = page;
+
   return (
     <div>
       <HeroSection images={images} />

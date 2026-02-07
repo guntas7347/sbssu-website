@@ -1,26 +1,23 @@
 import { Users, ChevronRight } from "lucide-react";
-
-import getPage from "@/lib/getPage";
 import LastUpdatedTag from "@/components/LastUpdatedTag";
+import PageHeader from "@/components/PageHeader";
+import { getPage } from "@/lib/actions/getPage";
 
 export default async function CommitteesPage() {
-  const { page, updatedAt } = await getPage("university-committees");
+  const { page, updatedAt } = await getPage("admin", "university-committees");
 
+  const about =
+    page?.about ||
+    "Various committees have been constituted to ensure effective governance, transparent decision-making, and smooth functioning of different aspects of university operations.";
   const committees = page?.committees || [];
 
   return (
     <div>
-      <div className="bg-linear-to-r from-orange-600 to-green-600 py-16 px-4">
-        <div className="max-w-7xl mx-auto text-center text-white">
-          <Users className="w-16 h-16 mx-auto mb-4" />
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">
-            University Committees
-          </h1>
-          <p className="text-lg md:text-xl max-w-3xl mx-auto">
-            Various committees working for smooth functioning of the university
-          </p>
-        </div>
-      </div>
+      <PageHeader
+        title="University Committees"
+        subTitle="Various committees working for smooth functioning of the university"
+        icon={Users}
+      />
 
       <section className="py-16 px-4">
         <div className="max-w-7xl mx-auto">
@@ -28,15 +25,12 @@ export default async function CommitteesPage() {
             <h2 className="text-2xl font-bold text-gray-800 mb-4">
               About Committees
             </h2>
-            <p className="text-gray-600 leading-relaxed">
-              {page?.about ||
-                "Various committees have been constituted to ensure effective governance, transparent decision-making, and smooth functioning of different aspects of university operations."}
-            </p>
+            <p className="text-gray-600 leading-relaxed">{about}</p>
           </div>
 
           <div className="grid md:grid-cols-2 gap-6">
             {committees.length > 0 ? (
-              committees.map((committee: any, index: number) => (
+              committees.map((committee, index) => (
                 <div
                   key={index}
                   className="bg-white border-2 border-gray-200 rounded-xl p-6 hover:shadow-xl hover:border-orange-600 transition"
@@ -47,10 +41,10 @@ export default async function CommitteesPage() {
                     </div>
                     <div>
                       <h3 className="text-lg font-bold text-gray-800 mb-2">
-                        {committee.name || "N/A"}
+                        {committee?.name || "N/A"}
                       </h3>
                       <p className="text-sm text-gray-600 mb-3">
-                        {committee.purpose || "N/A"}
+                        {committee?.purpose || "N/A"}
                       </p>
                     </div>
                   </div>
@@ -60,8 +54,8 @@ export default async function CommitteesPage() {
                       Committee Members:
                     </h4>
                     <ul className="space-y-1">
-                      {(committee.members || []).length > 0 ? (
-                        committee.members.map((member: string, idx: number) => (
+                      {(committee?.members || []).length > 0 ? (
+                        committee.members.map((member, idx) => (
                           <li
                             key={idx}
                             className="flex items-start gap-2 text-sm text-gray-700"
@@ -87,7 +81,6 @@ export default async function CommitteesPage() {
           </div>
         </div>
       </section>
-
       <LastUpdatedTag date={updatedAt} />
     </div>
   );

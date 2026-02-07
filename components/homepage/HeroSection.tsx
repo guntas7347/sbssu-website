@@ -17,7 +17,7 @@ const HeroSection = ({ images }) => {
             index === currentSlide ? "opacity-100" : "opacity-0"
           }`}
         >
-          <Image
+          <img
             height={1000}
             width={1000}
             src={image.photo.url}

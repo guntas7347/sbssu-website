@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+html {
+  font-size: 12px;
+}
+
 .modal {
   @apply fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4;
 }

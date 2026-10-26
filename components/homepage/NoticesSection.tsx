@@ -1,10 +1,10 @@
-import { getNotices } from "@/lib/db";
 import { ChevronDown } from "lucide-react";
 import Link from "next/link";
 import NoticeCard from "../cards/NoticeCard";
+import { getAllNotices } from "@/lib/actions";
 
 const NoticesSection = async () => {
-  const notices = await getNotices(6);
+  const notices = await getAllNotices();
 
   return (
     <section className="py-16 px-4 bg-linear-to-b from-green-50 to-white">

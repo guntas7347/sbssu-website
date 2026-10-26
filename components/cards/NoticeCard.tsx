@@ -26,9 +26,9 @@ const NoticeCard = ({ notice }) => {
             {notice.category}
           </span>
         </div>
-        {notice.file && (
+        {notice.filePath && (
           <a
-            href={notice.file.url}
+            href={notice.filePath}
             target="_blank"
             className="text-sm text-orange-600 hover:text-orange-700 font-semibold"
           >

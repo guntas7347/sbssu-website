@@ -2,6 +2,8 @@
 
 import { useForm } from "@/hooks/useForm";
 import { useButtonLoading } from "@/hooks/useButtonLoading";
+import { useRouter } from "next/navigation";
+import { createUserAction } from "@/lib/actions/users";
 
 type Role = "SUPER_ADMIN" | "CENTRAL_EDITOR" | "HOD" | "DEPT_EDITOR";
 
@@ -12,7 +14,17 @@ const ALL_ROLES: Role[] = [
   "DEPT_EDITOR",
 ];
 
-export default function CreateUser({ departments }) {
+interface DeptItem {
+  id: string;
+  name: string;
+  departmentCode: string;
+}
+
+export default function CreateUser({
+  departments,
+}: {
+  departments: DeptItem[];
+}) {
   const { values, handleChange, setField } = useForm({
     username: "",
     email: "",
@@ -22,6 +34,8 @@ export default function CreateUser({ departments }) {
   });
 
   const { loading, run, Spinner } = useButtonLoading();
+
+  const router = useRouter();
 
   function toggleRole(role: Role) {
     setField(
@@ -38,22 +52,18 @@ export default function CreateUser({ departments }) {
     if (!confirm("Create user?")) return;
 
     try {
-      const res = await fetch("/api/admin/users", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(values),
-      });
+      const result = await createUserAction(values);
 
-      if (!res.ok) {
-        const msg = await res.text();
-        alert(msg || "Create failed");
+      if (!result.success) {
+        alert(result.error || "Create failed");
         return;
       }
 
-      alert("User created");
-      window.location.reload();
-    } catch (err) {
-      alert("Error");
+      alert("User created successfully");
+      router.push("/admin/manage-users");
+      router.refresh();
+    } catch (err: any) {
+      alert("Error: " + err.message);
       console.error(err);
     }
   }

@@ -7,7 +7,7 @@ import { getPage } from "@/lib/actions/getPage";
 export default async function Page({
   params,
 }: {
-  params: { dept: string; pageKey: string };
+  params: Promise<{ dept: string; pageKey: string }>;
 }) {
   const { dept, pageKey } = await params;
 

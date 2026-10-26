@@ -1,6 +1,8 @@
 import { useForm } from "@/hooks/useForm";
 import { Upload, X } from "lucide-react";
 import React, { useState } from "react";
+import { uploadFileAction } from "@/lib/actions/upload";
+import { createNoticeAction } from "@/lib/actions/notices";
 
 interface FormFieldProps {
   label: string;
@@ -75,50 +77,30 @@ const CreateNoticeModal = ({
         fileFormData.append("file", values.file);
         fileFormData.append("folder", "notices");
 
-        // This is the call to the external API or your internal upload handler
-        const uploadResponse = await fetch("/api/upload", {
-          method: "POST",
-          body: fileFormData,
-        });
-
-        if (!uploadResponse.ok) {
-          throw new Error("File upload failed.");
+        const uploadRes = await uploadFileAction(fileFormData);
+        if (!uploadRes.success || (!uploadRes.url && !uploadRes.path)) {
+          throw new Error(uploadRes.error || "File upload failed.");
         }
 
-        const uploadResult = await uploadResponse.json();
-
-        // Extract the "link path" (assuming it's returned as 'path' or 'url')
-        fileLinkPath = uploadResult.path || uploadResult.url;
-
-        if (!fileLinkPath) {
-          throw new Error(
-            "File upload succeeded but did not return a valid link path."
-          );
-        }
+        fileLinkPath = uploadRes.path || uploadRes.url || null;
       }
 
-      // Step 2: Construct the data object matching the Notice model.
-      const noticeData = {
+      // Step 2: Create notice via Server Action
+      const noticeRes = await createNoticeAction({
         title: values.title.trim(),
-        description: values.description.trim() || null, // Send null if empty
+        description: values.description.trim() || null,
         refNumber: values.refNumber.trim(),
-        date: values.date, // Send as ISO string (e.g., "2025-11-01")
-        showTill: values.showTill, // Send as ISO string
+        date: values.date,
+        showTill: values.showTill,
         category: values.category,
-        fileUrl: fileLinkPath, // Assign the returned link path here
-        noticeLevel,
-      };
-
-      // Step 3: Submit the complete notice data to your notice API.
-      const noticeResponse = await fetch("/api/admin/notices", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(noticeData),
+        file: fileLinkPath
+          ? { title: values.file?.name || "Notice File", url: fileLinkPath }
+          : null,
+        scope: noticeLevel === "central" ? "CENTRAL" : "DEPARTMENT",
       });
 
-      if (!noticeResponse.ok) {
-        const errorData = await noticeResponse.json();
-        throw new Error(errorData.message || "Failed to publish notice.");
+      if (!noticeRes.success) {
+        throw new Error(noticeRes.error || "Failed to publish notice.");
       }
 
       setShowModal(false);

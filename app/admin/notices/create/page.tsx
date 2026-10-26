@@ -3,8 +3,16 @@
 import { useForm } from "@/hooks/useForm";
 import { useButtonLoading } from "@/hooks/useButtonLoading";
 import DocumentUploader from "@/components/forms/DocumentUploader";
+import { useRouter } from "next/navigation";
+import { createNoticeAction } from "@/lib/actions/notices";
 
-function FormField({ label, children }) {
+function FormField({
+  label,
+  children,
+}: {
+  label: string;
+  children: React.ReactNode;
+}) {
   return (
     <div>
       <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -22,6 +30,7 @@ const getDefaultShowTillDate = () => {
 };
 
 export default function CreateNoticePage() {
+  const router = useRouter();
   const noticeLevel = "central";
 
   const { loading, run, Spinner } = useButtonLoading();
@@ -50,26 +59,20 @@ export default function CreateNoticePage() {
         showTill: values.showTill,
         category: values.category,
         file: values.file || null,
-        noticeLevel,
       };
 
-      const res = await fetch("/api/admin/notices", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
+      const result = await createNoticeAction(payload);
 
-      if (!res.ok) {
-        const j = await res.json().catch(() => null);
-        throw new Error(j?.message || "Failed to publish notice");
+      if (!result.success) {
+        throw new Error(result.error || "Failed to publish notice");
       }
 
       alert("Notice Created");
-    } catch (err) {
-      alert("Error occurred");
+      router.push("/admin/notices");
+      router.refresh();
+    } catch (err: any) {
+      alert(err.message || "Error occurred");
       console.error(err);
-    } finally {
-      window.location.reload();
     }
   }
 

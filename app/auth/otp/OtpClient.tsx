@@ -5,6 +5,8 @@ import { GraduationCap, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 
+import { verifyOtpAction } from "@/lib/actions/auth";
+
 export default function OtpPage() {
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [timeLeft, setTimeLeft] = useState(120);
@@ -73,12 +75,13 @@ export default function OtpPage() {
     }
 
     try {
-      const res = await fetch("/api/auth/verify-otp", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ otp: code, tempToken: loginToken }),
+      const res = await verifyOtpAction({
+        otp: code,
+        tempToken: loginToken || "",
       });
-      if (!res.ok) throw new Error("OTP verification failed");
+      if (!res.success) {
+        throw new Error(res.error || "OTP verification failed");
+      }
       router.push("/admin/dashboard");
     } catch (err: any) {
       setError(err.message);
@@ -123,7 +126,9 @@ export default function OtpPage() {
               {otp.map((digit, index) => (
                 <input
                   key={index}
-                  ref={(el) => (inputRefs.current[index] = el)}
+                  ref={(el) => {
+                    inputRefs.current[index] = el;
+                  }}
                   type="text"
                   maxLength={1}
                   value={digit}

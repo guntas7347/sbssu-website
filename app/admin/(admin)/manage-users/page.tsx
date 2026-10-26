@@ -1,15 +1,14 @@
-import { Plus, Edit, Trash2, CheckCircle, XCircle } from "lucide-react";
-
-import getData from "@/lib/getData";
+import { Plus, Edit, CheckCircle, XCircle } from "lucide-react";
 import Link from "next/link";
 import { getUsers } from "@/lib/actions/getUsers";
+import DeleteUserButton from "./DeleteUserButton";
 
 interface User {
   id: string;
   username: string;
   email: string;
-  department: string;
-  rights: string[];
+  department?: { name: string; departmentCode: string } | null;
+  roles: string[];
   loginEnabled: boolean;
 }
 
@@ -74,7 +73,7 @@ export default async function UsersPage() {
                       </td>
                       <td className="px-6 py-4 text-gray-600">{user.email}</td>
                       <td className="px-6 py-4 text-gray-600">
-                        {user.department?.name}
+                        {user.department?.name || "N/A"}
                       </td>
                       <td className="px-6 py-4">
                         <span
@@ -102,12 +101,11 @@ export default async function UsersPage() {
                           <Link
                             href={`/admin/manage-users/${user.id}`}
                             className="p-2 text-orange-600 hover:bg-orange-50 rounded-lg transition-colors"
+                            title="Edit User"
                           >
                             <Edit className="w-4 h-4" />
                           </Link>
-                          <button className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors">
-                            <Trash2 className="w-4 h-4" />
-                          </button>
+                          <DeleteUserButton id={user.id} username={user.username} />
                         </div>
                       </td>
                     </tr>

@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import DocumentUploader from "../forms/DocumentUploader";
+import { savePageAction } from "@/lib/actions/pages";
 
 export type FieldType =
   | "text"
@@ -705,13 +706,10 @@ export default function UniversalEditor({
       const ask = confirm(`Save changes for ${pageKey}?`);
       if (!ask) return;
 
-      const res = await fetch(`/api/admin/page/${dept}/${pageKey}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ data }),
-      });
-
-      if (!res.ok) throw new Error(`Save failed ${res.status}`);
+      const result = await savePageAction(dept || "admin", pageKey, data);
+      if (!result.success) {
+        throw new Error(result.error || "Save failed");
+      }
 
       alert(`Saved ${pageKey}!`);
     } catch (err: any) {

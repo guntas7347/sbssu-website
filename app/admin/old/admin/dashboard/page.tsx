@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Building2, Users, Bell } from "lucide-react";
 import Link from "next/link";
+import { getAdminStatsAction } from "@/lib/actions/stats";
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState([
@@ -32,16 +33,14 @@ export default function AdminDashboard() {
   useEffect(() => {
     async function loadStats() {
       try {
-        const res = await fetch("/api/admin/admin/stats");
-        if (!res.ok) throw new Error(await res.text());
-        const data = await res.json();
-
-        setStats((prev) =>
-          prev.map((s, i) => ({
-            ...s,
-            value: String(data[i] ?? "-"),
-          }))
-        );
+        const res = await getAdminStatsAction();
+        if (res.success && res.data) {
+          setStats((prev) => [
+            { ...prev[0], value: String(res.data?.departments ?? "-") },
+            { ...prev[1], value: String(res.data?.users ?? "-") },
+            { ...prev[2], value: String(res.data?.activeNotices ?? "-") },
+          ]);
+        }
       } catch (err) {
         console.error("Failed to fetch stats:", err);
       }

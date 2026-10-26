@@ -1,0 +1,143 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../prisma/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum PageScope {
+  CENTRAL
+  DEPARTMENT
+}
+
+enum Role {
+  SUPER_ADMIN
+  CENTRAL_EDITOR
+  HOD
+  DEPT_EDITOR
+}
+
+enum NoticeScope {
+  CENTRAL
+  DEPARTMENT
+}
+
+model User {
+  id           String @id @default(uuid())
+  username     String @unique
+  passwordHash String
+  email        String
+
+  // identity
+  fullName    String
+  staffCode   String? @unique
+  designation String?
+  phone       String?
+
+  departmentId String?
+  department   Department? @relation(fields: [departmentId], references: [id])
+  roles        Role[]
+  loginEnabled Boolean     @default(true)
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  notices    Notice[]     @relation("UserNotices")
+  pages      Page[]       @relation("UserPages")
+  placements Placements[] @relation("UserPlacements")
+}
+
+model Notice {
+  id          String    @id @default(uuid())
+  title       String
+  description String?
+  refNumber   String?
+  date        DateTime  @default(now())
+  showTill    DateTime?
+  category    String    @default("other")
+
+  fileName String?
+  filePath String?
+
+  scope        NoticeScope?
+  departmentId String?
+  department   Department?  @relation(fields: [departmentId], references: [id])
+
+  createdAt DateTime @default(now())
+
+  createdBy String?
+  creator   User?   @relation("UserNotices", fields: [createdBy], references: [id])
+
+  @@index([createdBy])
+  @@index([departmentId])
+}
+
+model Page {
+  id           String     @id @default(uuid())
+  pageKey      String // "hod", "placements", "vc-message", "hero-gallery"
+  scope        PageScope
+  departmentId String
+  department   Department @relation(fields: [departmentId], references: [id])
+  data         Json
+  updatedAt    DateTime   @updatedAt
+  createdAt    DateTime   @default(now())
+  createdBy    String
+  creator      User       @relation("UserPages", fields: [createdBy], references: [id])
+
+  @@unique([pageKey, departmentId])
+  @@index([departmentId])
+  @@index([createdBy])
+}
+
+model Department {
+  id             String @id @default(uuid())
+  name           String
+  departmentCode String @unique // CSE, ECE, ADMIN
+
+  description       String?
+  establishmentYear Int?
+  location          String?
+
+  users   User[]
+  pages   Page[]
+  notices Notice[]
+}
+
+model Placements {
+  id          String  @id @default(uuid())
+  month       String?
+  passing     String?
+  studentName String?
+  course      String?
+  branch      String?
+  package     String?
+  jobTitle    String?
+  company     String?
+
+  createdAt DateTime @default(now())
+  createdBy String?
+  creator   User?    @relation("UserPlacements", fields: [createdBy], references: [id])
+}
+
+model LegacyWebsite {
+  id            Int      @id
+  category      Int?
+  name          String?
+  image         String?
+  company       String?
+  description   String?  @db.Text
+  address       String?
+  city          String?
+  state         String?
+  country       String?
+  contactNo     String?
+  email         String?
+  webSite       String?
+  advertisement String?
+  video         String?
+  type          Boolean?
+  approve       Boolean?
+
+  @@map("BusinessDetail")
+}

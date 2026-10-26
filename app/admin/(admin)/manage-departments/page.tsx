@@ -1,24 +1,9 @@
-import getData from "@/lib/getData";
 import prisma from "@/lib/prisma";
-import { Plus, Edit, Trash2 } from "lucide-react";
+import { Plus, Edit } from "lucide-react";
 import Link from "next/link";
+import DeleteDepartmentButton from "./DeleteDepartmentButton";
 
 export default async function DepartmentsPage() {
-  const handleDelete = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this department?")) return;
-
-    const res = await fetch(`/api/admin/departments?id=${id}`, {
-      method: "DELETE",
-    });
-
-    if (res.ok) {
-      alert("Department deleted successfully");
-    } else {
-      const msg = await res.text();
-      alert(`Failed: ${msg}`);
-    }
-  };
-
   const departments = await prisma.department.findMany({
     orderBy: { name: "asc" },
   });
@@ -80,25 +65,21 @@ export default async function DepartmentsPage() {
                         {dept.departmentCode}
                       </td>
                       <td className="px-6 py-4 text-gray-600">
-                        {dept.establishmentYear}
+                        {dept.establishmentYear || "N/A"}
                       </td>
                       <td className="px-6 py-4 text-gray-600">
-                        {dept.location}
+                        {dept.location || "N/A"}
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-2">
                           <Link
                             href={`/admin/manage-departments/${dept.id}`}
                             className="p-2 text-orange-600 hover:bg-orange-50 rounded-lg transition-colors"
+                            title="Edit Department"
                           >
                             <Edit className="w-4 h-4" />
                           </Link>
-                          <button
-                            // onClick={() => handleDelete(dept.id)}
-                            className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
+                          <DeleteDepartmentButton id={dept.id} name={dept.name} />
                         </div>
                       </td>
                     </tr>

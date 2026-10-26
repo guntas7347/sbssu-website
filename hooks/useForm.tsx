@@ -8,10 +8,15 @@ export function useForm<T extends FormValues>(initialValues: T) {
   function handleChange(
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) {
-    const { name, value, type, checked } = e.target;
+    const target = e.target;
+    const name = target.name;
+    const value =
+      target.type === "checkbox" && target instanceof HTMLInputElement
+        ? target.checked
+        : target.value;
     setValues((prev) => ({
       ...prev,
-      [name]: type === "checkbox" ? checked : value,
+      [name]: value,
     }));
   }
 

@@ -37,6 +37,18 @@ export default function Sidebar({ roles = [] }: { roles: Role[] }) {
       href: "/admin/dashboard",
     },
     {
+      name: "Content (CMS)",
+      icon: Shield,
+      roles: ["SUPER_ADMIN", "CENTRAL_EDITOR", "HOD", "DEPT_EDITOR"],
+      href: "/admin/content",
+    },
+    {
+      name: "Notices",
+      icon: Bell,
+      roles: ["SUPER_ADMIN", "CENTRAL_EDITOR", "HOD", "DEPT_EDITOR"],
+      href: "/admin/notices",
+    },
+    {
       name: "Departments",
       icon: Building2,
       roles: ["SUPER_ADMIN"],
@@ -47,60 +59,6 @@ export default function Sidebar({ roles = [] }: { roles: Role[] }) {
       icon: Users,
       roles: ["SUPER_ADMIN"],
       href: "/admin/manage-users",
-    },
-    {
-      name: "Notices",
-      icon: Bell,
-      roles: ["SUPER_ADMIN", "CENTRAL_EDITOR", "HOD", "DEPT_EDITOR"],
-      href: "/admin/notices",
-    },
-    {
-      name: "Content",
-      icon: Shield,
-      roles: ["SUPER_ADMIN", "CENTRAL_EDITOR", "HOD"],
-      href: "/admin/content",
-    },
-    {
-      name: "Academics",
-      icon: BookOpen,
-      roles: ["HOD", "DEPT_EDITOR"],
-      href: "/admin/academics",
-    },
-    {
-      name: "HOD Message",
-      icon: User,
-      roles: ["HOD"],
-      href: "/admin/hod-message",
-    },
-    {
-      name: "Department About",
-      icon: School,
-      roles: ["HOD", "DEPT_EDITOR"],
-      href: "/admin/department-about",
-    },
-    {
-      name: "Faculty",
-      icon: GraduationCap,
-      roles: ["HOD", "DEPT_EDITOR"],
-      href: "/admin/faculty",
-    },
-    {
-      name: "Labs",
-      icon: FlaskConical,
-      roles: ["HOD", "DEPT_EDITOR"],
-      href: "/admin/labs",
-    },
-    {
-      name: "Timetable",
-      icon: Calendar,
-      roles: ["HOD", "DEPT_EDITOR"],
-      href: "/admin/timetable",
-    },
-    {
-      name: "Placement Records",
-      icon: Briefcase,
-      roles: ["CENTRAL_EDITOR"],
-      href: "/admin/placement-records",
     },
   ];
 

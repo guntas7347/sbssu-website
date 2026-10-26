@@ -11,11 +11,11 @@ import {
 
 import HeroSection from "@/components/homepage/HeroSection";
 import NoticesSection from "@/components/homepage/NoticesSection";
-import { initAdmin } from "@/lib/dev";
 import { getPage } from "@/lib/actions/getPage";
 
+import "@/scripts/runner";
+
 export default async function Home() {
-  // initAdmin();
   const { page } = await getPage("admin", "hero-gallery");
 
   const { images } = page;

@@ -3,6 +3,8 @@
 import { Upload, X, Loader2, Trash2 } from "lucide-react";
 import { useState, useEffect } from "react";
 
+import { uploadFileAction } from "@/lib/actions/upload";
+
 interface FileInfo {
   title: string;
   url: string;
@@ -96,18 +98,13 @@ export default function DocumentUploader({
       formData.append("file", file);
       formData.append("folder", folder);
 
-      const res = await fetch("/api/upload", {
-        method: "POST",
-        body: formData,
-      });
+      const res = await uploadFileAction(formData);
 
-      if (!res.ok) throw new Error(await res.text());
+      if (!res.success || (!res.url && !res.path)) {
+        throw new Error(res.error || "Upload failed");
+      }
 
-      const data = await res.json();
-
-      const uploadedUrl = data.payload.path || data.payload.url;
-
-      if (!uploadedUrl) throw new Error("Invalid upload response.");
+      const uploadedUrl = (res.path || res.url)!;
 
       setFileUrl(uploadedUrl);
       setStatus("success");
@@ -115,7 +112,7 @@ export default function DocumentUploader({
       onUploadComplete({ title: title || file.name, url: uploadedUrl });
     } catch (err: any) {
       setStatus("error");
-      setMessage("Upload failed");
+      setMessage(err.message || "Upload failed");
     } finally {
       setUploading(false);
     }

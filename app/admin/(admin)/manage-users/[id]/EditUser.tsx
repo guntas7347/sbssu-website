@@ -2,6 +2,8 @@
 
 import { useForm } from "@/hooks/useForm";
 import { useButtonLoading } from "@/hooks/useButtonLoading";
+import { useRouter } from "next/navigation";
+import { updateUserAction } from "@/lib/actions/users";
 
 type Role = "SUPER_ADMIN" | "CENTRAL_EDITOR" | "HOD" | "DEPT_EDITOR";
 
@@ -12,19 +14,28 @@ const ALL_ROLES: Role[] = [
   "DEPT_EDITOR",
 ];
 
+interface DeptItem {
+  id: string;
+  name: string;
+  departmentCode: string;
+}
+
 export default function EditUser({
   editingUser,
   departments,
 }: {
   editingUser: any;
-  departments: Department[];
+  departments: DeptItem[];
 }) {
   const { values, handleChange, setField } = useForm({
-    username: editingUser.username,
-    email: editingUser.email,
-    department: editingUser.department.departmentCode,
-    roles: editingUser.roles as Role[],
-    loginEnabled: editingUser.loginEnabled,
+    username: editingUser?.username || "",
+    email: editingUser?.email || "",
+    department:
+      editingUser?.department?.departmentCode ||
+      departments[0]?.departmentCode ||
+      "",
+    roles: (editingUser?.roles || []) as Role[],
+    loginEnabled: editingUser?.loginEnabled ?? true,
   });
 
   const { loading, run, Spinner } = useButtonLoading();
@@ -38,31 +49,26 @@ export default function EditUser({
     );
   }
 
+  const router = useRouter();
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
     if (!confirm("Update user?")) return;
 
     try {
-      const res = await fetch("/api/admin/users", {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...values,
-          id: editingUser.id,
-        }),
-      });
+      const result = await updateUserAction(editingUser.id, values);
 
-      if (!res.ok) {
-        const msg = await res.text();
-        alert(msg || "Update failed");
+      if (!result.success) {
+        alert(result.error || "Update failed");
         return;
       }
 
-      alert("User updated");
-      window.location.reload();
-    } catch (err) {
-      alert("Error");
+      alert("User updated successfully");
+      router.push("/admin/manage-users");
+      router.refresh();
+    } catch (err: any) {
+      alert("Error: " + err.message);
       console.error(err);
     }
   }

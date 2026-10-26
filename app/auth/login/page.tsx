@@ -6,6 +6,8 @@ import { useForm } from "@/hooks/useForm";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
+import { loginAction } from "@/lib/actions/auth";
+
 export default function LoginPage() {
   const router = useRouter();
 
@@ -24,17 +26,17 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const res = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(values),
+      const res = await loginAction({
+        username: values.username,
+        password: values.password,
       });
 
-      if (!res.ok) throw new Error("Invalid username or password");
+      if (!res.success || !res.data) {
+        throw new Error(res.error || "Invalid username or password");
+      }
 
-      const { payload } = await res.json();
-      console.log("OTP: ", payload.otp);
-      router.push(`/auth/otp?login=${payload.tempToken}`);
+      console.log("OTP: ", res.data.otp);
+      router.push(`/auth/otp?login=${res.data.tempToken}`);
     } catch (err: any) {
       setError(err.message || "Login failed. Try again.");
     } finally {

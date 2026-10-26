@@ -12,7 +12,7 @@ export default function DepartmentalLayout({
   return (
     <div className="min-h-screen flex flex-col">
       <div className="flex flex-1">
-        <Sidebar portal="departmental" />
+        <Sidebar roles={["HOD", "DEPT_EDITOR"]} />
         {children}
       </div>
     </div>

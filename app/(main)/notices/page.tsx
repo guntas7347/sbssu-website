@@ -1,10 +1,10 @@
 import { Bell } from "lucide-react";
 
-import { getNotices } from "@/lib/db";
 import NoticeClient from "./NoticeClient";
+import { getAllNotices } from "@/lib/actions";
 
 export default async function NoticesPage() {
-  const notices = await getNotices(); // server-only call
+  const notices = await getAllNotices(); // server-only call
   return (
     <div>
       <div className="bg-linear-to-r from-orange-600 to-green-600 py-16 px-4">

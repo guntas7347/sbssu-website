@@ -2,12 +2,14 @@
 
 import { LogOut } from "lucide-react";
 
+import { logoutAction } from "@/lib/actions/auth";
+
 const Logout = () => {
   const handleLogout = async () => {
     const ask = confirm("Are you sure of it to Logout?");
     if (!ask) return;
-    await fetch("/api/auth/logout");
-    window.location.reload();
+    await logoutAction();
+    window.location.href = "/auth/login";
   };
 
   return (

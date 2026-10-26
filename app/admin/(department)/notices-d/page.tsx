@@ -4,15 +4,17 @@ import { useEffect, useState } from "react";
 import { Eye, Plus, Trash2 } from "lucide-react";
 import CreateNoticeModal from "@/components/Modals/CreateNoticeModal";
 
+import { getNoticesAction, deleteNoticeAction } from "@/lib/actions/notices";
+
 interface Notice {
-  id: number;
+  id: string;
   title: string;
   refNumber: string;
-  date: string;
-  showTill: string;
+  date: string | Date;
+  showTill: string | Date;
   category: string;
-  fileUrl: string;
-  status: "Active" | "Expired";
+  file?: any;
+  fileUrl?: string;
 }
 
 export default function DepartmentNoticesPage() {
@@ -20,43 +22,37 @@ export default function DepartmentNoticesPage() {
   const [notices, setNotices] = useState<Notice[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    async function fetchNotices() {
-      try {
-        const res = await fetch("/api/admin/central/notices");
-        if (!res.ok) throw new Error();
-        const data = await res.json();
-        setNotices(data);
-      } catch (err) {
-        console.error("Failed to fetch notices:", err);
-      } finally {
-        setLoading(false);
+  const loadNotices = async () => {
+    try {
+      const res = await getNoticesAction();
+      if (res.success && Array.isArray(res.data)) {
+        setNotices(res.data);
       }
+    } catch (err) {
+      console.error("Failed to fetch notices:", err);
+    } finally {
+      setLoading(false);
     }
-    fetchNotices();
-  }, []);
+  };
 
-  if (loading) return <p>Loading notices...</p>;
+  useEffect(() => {
+    loadNotices();
+  }, [showModal]);
 
-  async function handleDelete(id: number) {
+  if (loading) return <p className="p-8">Loading notices...</p>;
+
+  async function handleDelete(id: string) {
     if (!confirm("Are you sure you want to delete this notice?")) return;
 
     try {
-      const res = await fetch("/api/admin/department/notices", {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id }),
-      });
-
-      if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.error || "Failed to delete notice");
+      const res = await deleteNoticeAction(id);
+      if (!res.success) {
+        throw new Error(res.error || "Failed to delete notice");
       }
-
-      // remove from UI after successful deletion
       setNotices((prev) => prev.filter((n) => n.id !== id));
-    } catch (err) {
+    } catch (err: any) {
       console.error("Delete failed:", err);
+      alert(err.message || "Failed to delete notice");
     }
   }
 
@@ -147,16 +143,22 @@ export default function DepartmentNoticesPage() {
                     </td>
 
                     <td className="px-6 py-4 text-left flex gap-2">
-                      {notice.fileUrl && (
-                        <a
-                          href={`${notice.fileUrl}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                        >
-                          <Eye className="w-4 h-4" />
-                        </a>
-                      )}
+                      {(() => {
+                        const fileLink =
+                          typeof notice.file === "object" && notice.file !== null
+                            ? notice.file.url
+                            : notice.file || notice.fileUrl;
+                        return fileLink ? (
+                          <a
+                            href={fileLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                          >
+                            <Eye className="w-4 h-4" />
+                          </a>
+                        ) : null;
+                      })()}
 
                       <button
                         onClick={() => handleDelete(notice.id)}

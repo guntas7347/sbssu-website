@@ -12,7 +12,7 @@ export default function PlacementLayout({
   return (
     <div className="min-h-screen flex flex-col">
       <div className="flex flex-1">
-        <Sidebar portal="placement" />
+        <Sidebar roles={["CENTRAL_EDITOR"]} />
         {children}
       </div>
     </div>

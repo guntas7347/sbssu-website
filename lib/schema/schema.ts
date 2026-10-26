@@ -26,7 +26,7 @@ import {
   TimetablesSchema,
 } from "./department";
 
-type FieldType =
+export type FieldType =
   | "text"
   | "textarea"
   | "number"
@@ -35,22 +35,23 @@ type FieldType =
   | "image"
   | "file"
   | "array"
-  | "array-string";
+  | "array-string"
+  | (string & {});
 
-type FieldSchema = {
+export type FieldSchema = {
   type: FieldType;
   label?: string;
   placeholder?: string;
   required?: boolean;
-  options?: string[]; // for select
-  item?: Schema; // for array
+  options?: string[];
+  item?: { fields: Record<string, any> };
 };
 
 export type Schema = {
-  fields: Record<string, FieldSchema>;
+  fields: Record<string, FieldSchema | any>;
 };
 
-export const schemaRegistry = {
+export const schemaRegistry: Record<string, Schema> = {
   society: societySchema,
   "vc-message": viceChancellorSchema,
   bog: bogSchema,

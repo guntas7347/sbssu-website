@@ -1,9 +1,7 @@
-import getData from "@/lib/getData";
-
 import prisma from "@/lib/prisma";
 import EditUser from "./EditUser";
 
-const Page = async ({ params }) => {
+const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
   const { id } = await params;
 
   const departments = await prisma.department.findMany({

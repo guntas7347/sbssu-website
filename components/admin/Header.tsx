@@ -2,7 +2,15 @@ import { GraduationCap, User } from "lucide-react";
 import Link from "next/link";
 import Logout from "./Logout";
 
-export default function Header({ user }) {
+export default function Header({
+  user = null,
+}: {
+  user?: {
+    username?: string;
+    roles?: string[];
+    department?: { name?: string; departmentCode?: string } | null;
+  } | null;
+}) {
   return (
     <header className="bg-linear-to-r from-orange-600 to-orange-500 shadow-lg sticky top-0 z-50">
       <div className="px-6 py-4">
@@ -27,10 +35,12 @@ export default function Header({ user }) {
           <div className="flex items-center gap-6">
             <div className="flex items-center gap-3 text-white">
               <div className="text-right">
-                <p className="font-semibold text-sm">{user?.username}</p>
-                <p className="text-xs text-orange-100">{user?.roles}</p>
+                <p className="font-semibold text-sm">{user?.username || "Admin"}</p>
                 <p className="text-xs text-orange-100">
-                  {user?.department?.name}
+                  {user?.roles?.join(", ") || ""}
+                </p>
+                <p className="text-xs text-orange-100">
+                  {user?.department?.name || ""}
                 </p>
               </div>{" "}
               <div className="bg-white/20 p-2 rounded-full">

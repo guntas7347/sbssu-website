@@ -29,6 +29,8 @@ export default function AdminSidebarShell({
     { name: "Manage Users", href: "/admin/admin/users" },
     { name: "Legacy Manager", href: "/admin/admin/legacy-manager" },
     { name: "Gallery", href: "/admin/gallery" },
+    { name: "Notices", href: "/admin/notices" },
+    { name: "Page Entries", href: "/admin/page-entries" },
   ];
 
   return (

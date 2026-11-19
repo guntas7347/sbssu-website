@@ -68,8 +68,6 @@ export async function createGalleryItem(
     }
 
     const currentUser = await getCurrentUser().catch(() => null);
-    const resolvedDepartmentId =
-      currentUser?.departmentId ?? cleanNullableText(input.departmentId);
 
     const rawSr =
       typeof input.srNo === "number"
@@ -124,7 +122,7 @@ export async function createGalleryItem(
             desc: cleanNullableText(input.desc),
             path: cleanPath,
             category: cleanCategory,
-            departmentId: resolvedDepartmentId,
+            departmentId: currentUser?.departmentId,
             createdBy: currentUser?.id,
           })
           .returning();

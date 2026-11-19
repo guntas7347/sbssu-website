@@ -16,7 +16,7 @@ type Props = {
   }>;
 };
 
-export default async function LegacyWebsitePage({ searchParams }: Props) {
+export default async function LegacyWebsiteContent({ searchParams }: Props) {
   const { Id, mode } = await searchParams;
 
   if (!Id) {

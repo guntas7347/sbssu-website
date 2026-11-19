@@ -97,7 +97,116 @@ const navItems: NavItem[] = [
       },
       {
         label: "Syllabus",
-        // path: "/legacy-website?Id=0&mode=category",
+        children: [
+          {
+            label: "Engineering",
+            children: [
+              {
+                label: "Ist Year (Common)",
+                path: "/legacy-website?Id=1160&mode=category",
+              },
+              {
+                label: "Mechanical Engg.",
+                path: "/legacy-website?Id=1161&mode=category",
+              },
+              {
+                label: "Chemical Engg.",
+                path: "/legacy-website?Id=1162&mode=category",
+              },
+              {
+                label: "Computer Engg.",
+                path: "/legacy-website?Id=1163&mode=category",
+              },
+              {
+                label: "Electrical Engg.",
+                path: "/legacy-website?Id=1164&mode=category",
+              },
+              {
+                label: "Electronics Engg.",
+                path: "/legacy-website?Id=1165&mode=category",
+              },
+              {
+                label: "Civil Engg.",
+                path: "/legacy-website?Id=1166&mode=category",
+              },
+            ],
+          },
+          {
+            label: "Computer Application",
+            children: [
+              { label: "BCA", path: "/legacy-website?Id=1167&mode=category" },
+              { label: "MMCA", path: "/legacy-website?Id=1168&mode=category" },
+              { label: "PGDCA", path: "/legacy-website?Id=1169&mode=category" },
+            ],
+          },
+          {
+            label: "Applied Science",
+            children: [
+              { label: "B.SC", path: "/legacy-website?Id=1170&mode=category" },
+              { label: "B.COM", path: "/legacy-website?Id=1171&mode=category" },
+              { label: "M.COM", path: "/legacy-website?Id=1172&mode=category" },
+            ],
+          },
+          {
+            label: "Diploma",
+            children: [
+              {
+                label: "Electrical",
+                path: "/legacy-website?Id=1173&mode=category",
+              },
+              {
+                label: "Mechanical",
+                path: "/legacy-website?Id=1174&mode=category",
+              },
+              {
+                label: "Computer",
+                path: "/legacy-website?Id=1175&mode=category",
+              },
+              {
+                label: "Electronics",
+                path: "/legacy-website?Id=1176&mode=category",
+              },
+            ],
+          },
+          {
+            label: "M.Tech",
+            children: [
+              {
+                label: "Mechanical Engg.",
+                path: "/legacy-website?Id=1177&mode=category",
+              },
+              {
+                label: "Chemical Engg.",
+                path: "/legacy-website?Id=1178&mode=category",
+              },
+              {
+                label: "Computer Engg.",
+                path: "/legacy-website?Id=1179&mode=category",
+              },
+              {
+                label: "Electrical Engg.",
+                path: "/legacy-website?Id=1180&mode=category",
+              },
+              {
+                label: "Electronics Engg.",
+                path: "/legacy-website?Id=1181&mode=category",
+              },
+              {
+                label: "Civil Engg.",
+                path: "/legacy-website?Id=1182&mode=category",
+              },
+            ],
+          },
+          {
+            label: "Agriculture",
+            path: "/legacy-website?Id=1183&mode=category",
+          },
+          {
+            label: "Architecture",
+            path: "/legacy-website?Id=1184&mode=category",
+          },
+          { label: "P.HD", path: "/legacy-website?Id=1185&mode=category" },
+        ],
       },
       {
         label: "Fee Detail",

@@ -93,8 +93,10 @@ export async function GET(
     return new NextResponse("Invalid path", { status: 400 });
   }
 
-  const filePath = segments.map(encodeURIComponent).join("/");
-
+  const filePath = segments
+    .filter((segment) => segment !== "legacy")
+    .map(encodeURIComponent)
+    .join("/");
   return NextResponse.redirect(
     `https://sbssu.ac.in/BusinessImage/${filePath}`,
     302,

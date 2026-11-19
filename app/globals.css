@@ -1,0 +1,19 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  /* Primary Theme Color (Orange) */
+  --color-primary: #f97316; /* Vibrant Orange for light mode */
+  --color-primary-dark: #fb923c; /* Softer/Brighter Orange for dark mode */
+
+  /* Secondary Theme Color (Green) */
+  --color-secondary: #16a34a; /* Deep Green for light mode */
+  --color-secondary-dark: #4ade80; /* Vivid Green for dark mode */
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+}

@@ -46,26 +46,61 @@ export async function getDepartmentById(id: string) {
   }
 }
 
-// Create a new department
+async function assignHodDepartmentAndRight(
+  tx: Parameters<Parameters<typeof db.transaction>[0]>[0],
+  userId: string,
+  departmentId: string,
+) {
+  const [targetUser] = await tx
+    .select({ rights: usersTable.rights })
+    .from(usersTable)
+    .where(eq(usersTable.id, userId))
+    .limit(1);
+
+  const nextRights = Array.from(
+    new Set([...(targetUser?.rights ?? []), "hod"]),
+  );
+
+  await tx
+    .update(usersTable)
+    .set({
+      departmentId,
+      rights: nextRights,
+    })
+    .where(eq(usersTable.id, userId));
+}
+
 export async function createDepartment(data: DepartmentInput) {
   const user = await getCurrentUser();
   if (!user) {
     throw new Error("Unauthorized");
   }
 
-  if (!data.name || !data.code) {
+  const name = data.name?.trim();
+  const code = data.code?.trim();
+  const hodId = data.hodId?.trim() || null;
+
+  if (!name || !code) {
     throw new Error("Department name and code are required.");
   }
 
   try {
-    await db.insert(departmentsTable).values({
-      name: data.name,
-      code: data.code,
-      hodId: data.hodId || null,
-      createdBy: user.id,
+    await db.transaction(async (tx) => {
+      const [inserted] = await tx
+        .insert(departmentsTable)
+        .values({
+          name,
+          code,
+          hodId,
+          createdBy: user.id,
+        })
+        .returning({ id: departmentsTable.id });
+
+      if (hodId && inserted) {
+        await assignHodDepartmentAndRight(tx, hodId, inserted.id);
+      }
     });
 
-    revalidatePath("/admin/departments");
     return { success: true };
   } catch (error: any) {
     console.error("Failed to create department:", error);
@@ -76,29 +111,36 @@ export async function createDepartment(data: DepartmentInput) {
   }
 }
 
-// Update an existing department
 export async function updateDepartment(id: string, data: DepartmentInput) {
   const user = await getCurrentUser();
   if (!user) {
     throw new Error("Unauthorized");
   }
 
-  if (!data.name || !data.code) {
+  const name = data.name?.trim();
+  const code = data.code?.trim();
+  const hodId = data.hodId?.trim() || null;
+
+  if (!name || !code) {
     throw new Error("Department name and code are required.");
   }
 
   try {
-    await db
-      .update(departmentsTable)
-      .set({
-        name: data.name,
-        code: data.code,
-        hodId: data.hodId || null,
-      })
-      .where(eq(departmentsTable.id, id));
+    await db.transaction(async (tx) => {
+      await tx
+        .update(departmentsTable)
+        .set({
+          name,
+          code,
+          hodId,
+        })
+        .where(eq(departmentsTable.id, id));
 
-    revalidatePath("/admin/departments");
-    revalidatePath(`/admin/departments/${id}`);
+      if (hodId) {
+        await assignHodDepartmentAndRight(tx, hodId, id);
+      }
+    });
+
     return { success: true };
   } catch (error: any) {
     console.error(`Failed to update department ${id}:`, error);

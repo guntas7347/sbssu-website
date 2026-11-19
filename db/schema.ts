@@ -7,26 +7,38 @@ import {
   text,
   timestamp,
   varchar,
+  unique,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { createId } from "@paralleldrive/cuid2";
 
-export const departmentsTable = pgTable("departments", {
-  id: text("id")
-    .primaryKey()
-    .$defaultFn(() => createId()),
-  name: text("name").notNull(),
-  code: text("code").notNull(),
-  createdBy: text("created_by"),
-  hodId: text("hod_id"),
-  createdAt: timestamp("created_at", { withTimezone: true })
-    .defaultNow()
-    .notNull(),
-  updatedAt: timestamp("updated_at", { withTimezone: true })
-    .defaultNow()
-    .$onUpdate(() => new Date())
-    .notNull(),
-});
+export const departmentsTable = pgTable(
+  "departments",
+  {
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => createId()),
+
+    name: text("name").notNull(),
+    code: text("code").notNull(),
+
+    createdBy: text("created_by"),
+    hodId: text("hod_id"),
+
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .defaultNow()
+      .$onUpdate(() => new Date())
+      .notNull(),
+  },
+  (table) => [
+    unique("departments_code_unique").on(table.code),
+    unique("departments_hod_unique").on(table.hodId),
+  ],
+);
 
 export const usersTable = pgTable("users", {
   id: text("id")
@@ -161,3 +173,33 @@ export const placementRecords = pgTable(
 
 export type PlacementRecord = typeof placementRecords.$inferSelect;
 export type NewPlacementRecord = typeof placementRecords.$inferInsert;
+
+export const galleryItems = pgTable(
+  "gallery_items",
+  {
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => createId()),
+    srNo: integer("sr_no").notNull().default(1),
+    title: text("title"),
+    desc: text("desc"),
+    path: text("path").notNull(),
+    category: text("category").notNull(),
+    departmentId: text("department_id").references(() => departmentsTable.id, {
+      onDelete: "set null",
+    }),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    createdBy: text("created_by").references(() => usersTable.id, {
+      onDelete: "set null",
+    }),
+  },
+  (table) => [
+    index("gallery_category_sr_idx").on(table.category, table.srNo),
+    index("gallery_created_by_idx").on(table.createdBy),
+  ],
+);
+
+export type GalleryItem = typeof galleryItems.$inferSelect;
+export type NewGalleryItem = typeof galleryItems.$inferInsert;

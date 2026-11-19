@@ -16,7 +16,19 @@ const ALLOWED_TYPES = new Set([
   "application/pdf",
 ]);
 
-export async function uploadFile(formData: FormData) {
+function sanitizeFolder(folder?: string): string {
+  if (!folder) return "";
+  return folder
+    .trim()
+    .replace(/^\/+|\/+$/g, "")
+    .split("/")
+    .filter((segment) => segment && segment !== "." && segment !== "..")
+    .map((segment) => segment.replace(/[^a-zA-Z0-9_-]/g, "_"))
+    .filter(Boolean)
+    .join("/");
+}
+
+export async function uploadFile(formData: FormData, folder?: string) {
   try {
     const file = formData.get("file");
 
@@ -25,28 +37,34 @@ export async function uploadFile(formData: FormData) {
     }
 
     if (file.size > MAX_FILE_SIZE) {
-      throw new Error("File size must not exceed 10 MB.");
+      throw new Error("File size must not exceed 5 MB.");
     }
 
     if (!ALLOWED_TYPES.has(file.type.toLowerCase())) {
       throw new Error("File type is not allowed.");
     }
 
-    await mkdir(UPLOAD_DIR, { recursive: true });
+    const safeFolder = sanitizeFolder(folder);
+    const targetDir = safeFolder
+      ? path.join(/* turbopackIgnore: true */ UPLOAD_DIR, safeFolder)
+      : UPLOAD_DIR;
+
+    await mkdir(targetDir, { recursive: true });
 
     const extension = path.extname(file.name).toLowerCase();
     const filename = `${randomUUID()}${extension}`;
-    const filePath = path.join(
-      /* turbopackIgnore: true */ UPLOAD_DIR,
-      filename,
-    );
+    const filePath = path.join(/* turbopackIgnore: true */ targetDir, filename);
     const buffer = Buffer.from(await file.arrayBuffer());
 
     await writeFile(filePath, buffer, { flag: "wx" });
 
+    const publicPath = safeFolder
+      ? `/data/${safeFolder}/${filename}`
+      : `/data/${filename}`;
+
     return {
       success: true,
-      path: `/data/${filename}`,
+      path: publicPath,
       filename,
       error: null,
     };

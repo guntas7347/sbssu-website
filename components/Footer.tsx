@@ -79,6 +79,14 @@ export function Footer() {
                 >
                   Campus Facilities
                 </a>
+              </li>{" "}
+              <li>
+                <a
+                  href="/admin"
+                  className="hover:text-primary transition-colors"
+                >
+                  Admin
+                </a>
               </li>
             </ul>
           </div>

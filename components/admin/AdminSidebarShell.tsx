@@ -25,8 +25,10 @@ export default function AdminSidebarShell({
 
   const navLinks = [
     { name: "Dashboard", href: "/admin" },
-    { name: "Departments", href: "/admin/departments" },
-    { name: "Legacy Manager", href: "/admin/legacy-manager" },
+    { name: "Manage Departments", href: "/admin/admin/manage-departments" },
+    { name: "Manage Users", href: "/admin/admin/users" },
+    { name: "Legacy Manager", href: "/admin/admin/legacy-manager" },
+    { name: "Gallery", href: "/admin/gallery" },
   ];
 
   return (

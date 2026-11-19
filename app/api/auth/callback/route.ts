@@ -115,6 +115,9 @@ async function processCallback(req: NextRequest, code: string | null) {
       throw new Error("Empty or invalid user payload returned from SSO");
     }
 
+    if (ssoUser.role?.toLocaleLowerCase() === "student")
+      throw new Error("Student Login Not Allowed");
+
     // Upsert user into database with clean schema fields
     const user = await upsertUser(ssoUser);
 

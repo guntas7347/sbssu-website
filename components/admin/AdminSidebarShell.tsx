@@ -25,9 +25,8 @@ export default function AdminSidebarShell({
 
   const navLinks = [
     { name: "Dashboard", href: "/admin" },
-    { name: "Users", href: "/admin/users" },
     { name: "Departments", href: "/admin/departments" },
-    { name: "Notices", href: "/admin/notices" },
+    { name: "Legacy Manager", href: "/admin/legacy-manager" },
   ];
 
   return (
@@ -59,6 +58,17 @@ export default function AdminSidebarShell({
               </Link>
             );
           })}
+          <Link
+            href="/"
+            className="block px-4 py-2.5 rounded-lg text-sm font-medium transition-color text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
+          >
+            Main Website
+          </Link>
+          <button
+            className={`block px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${"text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"}`}
+          >
+            Sign Out
+          </button>
         </nav>
       </aside>
 

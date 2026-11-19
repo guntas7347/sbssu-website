@@ -125,6 +125,7 @@ export const legacyWebsites = pgTable("BusinessDetail", {
   video: varchar("video", { length: 255 }),
   type: boolean("type"),
   approve: boolean("approve"),
+  deleted: boolean("deleted").notNull().default(false),
 });
 
 export type LegacyWebsite = typeof legacyWebsites.$inferSelect;

@@ -1,3 +1,5 @@
+// /app/(public)/legacy-website/page.tsx
+
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import {

@@ -4,7 +4,7 @@ import React, { useEffect, useState, useTransition } from "react";
 import { PlusCircle, Save, Upload } from "lucide-react";
 import { uploadFile } from "@/lib/uploader";
 import type { LegacyWebsite } from "@/db/schema";
-import type { ParsedLegacyOption } from "@/lib/legacy-select-options";
+import type { ParsedLegacyOption } from "@/constants/legacy-select-options";
 import {
   createLegacyWebsiteRecord,
   updateLegacyWebsiteRecord,

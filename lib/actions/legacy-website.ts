@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { and, desc, eq, ne, or, isNull } from "drizzle-orm";
 import { db } from "@/db/drizzel";
 import { legacyWebsites, type LegacyWebsite } from "@/db/schema";
-import type { LegacyLookupMode } from "@/lib/legacy-select-options";
+import type { LegacyLookupMode } from "@/constants/legacy-select-options";
 
 export type LegacyManagerTabMode = "view" | "add" | "delete";
 

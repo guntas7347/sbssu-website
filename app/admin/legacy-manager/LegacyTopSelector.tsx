@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Layers } from "lucide-react";
-import type { ParsedLegacyOption } from "@/lib/legacy-select-options";
+import type { ParsedLegacyOption } from "@/constants/legacy-select-options";
 
 interface LegacyTopSelectorProps {
   options: ParsedLegacyOption[];

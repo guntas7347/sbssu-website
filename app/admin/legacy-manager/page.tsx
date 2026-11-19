@@ -2,7 +2,7 @@ import React from "react";
 import {
   getParsedLegacyOptions,
   resolveLegacyOptionByIdAndMode,
-} from "@/lib/legacy-select-options";
+} from "@/constants/legacy-select-options";
 import {
   getDeletedLegacyRecords,
   getLegacyRecordsBySelection,

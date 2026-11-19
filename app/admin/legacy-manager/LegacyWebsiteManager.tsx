@@ -13,7 +13,7 @@ import type { LegacyWebsite } from "@/db/schema";
 import {
   getParsedLegacyOptions,
   resolveLegacyOptionByIdAndMode,
-} from "@/lib/legacy-select-options";
+} from "@/constants/legacy-select-options";
 import { LegacyTopSelector } from "./LegacyTopSelector";
 import { LegacyRecordEditorForm } from "./LegacyRecordEditorForm";
 import { LegacyRecordsTable } from "./LegacyRecordsTable";

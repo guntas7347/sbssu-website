@@ -2,7 +2,7 @@
 
 "use server";
 
-import { SignJWT, jwtVerify } from "jose";
+import { JWTPayload, SignJWT, jwtVerify } from "jose";
 
 const secretKey = process.env.JWT_SECRET;
 
@@ -16,7 +16,7 @@ const encodedKey = new TextEncoder().encode(secretKey);
 /**
  * Payload interface for your token data
  */
-export interface SessionPayload {
+export interface SessionPayload extends JWTPayload {
   userId: string;
 }
 
@@ -46,8 +46,15 @@ export async function decrypt(token: string): Promise<SessionPayload> {
     const { payload } = await jwtVerify(token, encodedKey, {
       algorithms: ["HS256"],
     });
-    return payload as SessionPayload;
-  } catch (error) {
+
+    if (typeof payload.userId !== "string") {
+      throw new Error("Invalid token payload");
+    }
+
+    return {
+      userId: payload.userId,
+    };
+  } catch {
     throw new Error("Invalid or expired token");
   }
 }

@@ -334,7 +334,31 @@ const navItems: NavItem[] = [
     ],
   },
   { label: "Grievances", path: "https://grievances.sbssu.ac.in" },
-  { label: "Download", path: "/downloads" },
+  {
+    label: "Download",
+    children: [
+      {
+        label: "Information Brochure",
+        path: "/legacy-website?Id=24&mode=category",
+      },
+      {
+        label: "Tenders",
+        path: "/legacy-website?Id=25&mode=category",
+      },
+      {
+        label: "Staff Forms",
+        path: "/legacy-website?Id=25261&mode=category",
+      },
+      {
+        label: "Student Forms",
+        path: "/legacy-website?Id=26&mode=category",
+      },
+      {
+        label: "National Institutional Ranking Framework (NIRF)",
+        path: "/legacy-website?Id=25262&mode=category",
+      },
+    ],
+  },
   { label: "Contact", path: "/contact" },
 ];
 
@@ -413,33 +437,15 @@ export function Header() {
         {/* External Links & Utility Buttons */}
         <div className="flex flex-wrap items-center gap-2 text-xs">
           <a
-            href="/admin"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-primary hover:text-white dark:hover:bg-primary-dark transition-colors font-medium flex items-center gap-1.5"
-          >
-            <ShieldAlert className="w-3.5 h-3.5 text-primary dark:text-primary-dark group-hover:text-white" />
-            <span>Admin Portal</span>
-            <ExternalLink className="w-3 h-3 opacity-60" />
-          </a>
-
-          <a
-            href="https://sbssu.ac.in"
+            href="https://sbsexam.edu.in/"
             target="_blank"
             rel="noopener noreferrer"
             className="px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-primary hover:text-white dark:hover:bg-primary-dark transition-colors font-medium flex items-center gap-1.5"
           >
             <Laptop className="w-3.5 h-3.5 text-secondary-light" />
-            <span>Student ERP</span>
+            <span>SBS EXAM</span>
             <ExternalLink className="w-3 h-3 opacity-60" />
           </a>
-
-          <Link
-            href="/support"
-            className="px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors font-medium"
-          >
-            Help Desk
-          </Link>
         </div>
       </div>
 

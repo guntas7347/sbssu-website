@@ -97,25 +97,52 @@ export default function ViceChancellorPage() {
 
               <div className="space-y-4 text-slate-600 dark:text-slate-300 text-sm sm:text-base leading-relaxed">
                 <p>
-                  "Our mission is to nurture not only job-ready graduates but
+                  It is my proud privilege to lead Shaheed Bhagat Singh State
+                  University (SBSSU), Ferozepur, an institution inspired by the
+                  ideals of courage, excellence, and service to society. SBSSU
+                  is committed to becoming a preferred destination for
+                  professional and multidisciplinary education that is
+                  responsive to national priorities, global challenges, and
+                  societal needs.
+                </p>
+                <p>
+                  We are dedicated to provide world-class infrastructure, an
+                  intellectually vibrant campus, and mentorship from renowned
+                  academicians to foster teaching, research, innovation,
+                  consultancy, and entrepreneurship. Our curricula are designed
+                  in consonance with NEP 2020 and international standards,
+                  aligned with industry and civil society, and focused on
+                  creative thinking, critical analysis, and strong human and
+                  ethical values. In an era marked by rapid technological
+                  advancement, automation, and digital transformation, SBSSU
+                  places special emphasis on contemporary technical education.
+                  We focus on building strong foundations in engineering,
+                  science, AI/ML, Data Science, and emerging technologies,
+                  complemented by hands-on training, interdisciplinary learning,
+                  and problem-solving skills.
+                </p>
+                <p>
+                  Holistic student development lies at the heart of our
+                  approach. Through blended learning, corporate mentoring,
+                  professional grooming, flexible academic pathways, and a wide
+                  range of co-curricular and extra-curricular opportunities, we
+                  ensure that our students grow both academically and
+                  personally. A transparent, objective, and scientific
+                  evaluation system further strengthens the credibility and
+                  value of our certifications.
+                </p>
+                <p>
+                  Through strategic collaborations with leading national and
+                  international universities and corporates, we promote academic
+                  exchange, research excellence, and global exposure. We are
+                  dedicated to Institutional Social Responsibility by
+                  contributing to rural development, women empowerment,
+                  community service, health and environmental sustainability.
+                </p>
+                <p>
+                  Our mission is to nurture not only job-ready graduates but
                   also entrepreneurs, innovators, and responsible leaders who
-                  serve the nation and the world with integrity."
-                </p>
-                <p>
-                  At Shaheed Bhagat Singh State University (SBSSU), Ferozepur,
-                  we are steadfastly committed to elevating academic rigor,
-                  fostering high-impact research, and ensuring robust industry
-                  integrations. Our state-of-the-art labs, dedicated faculty,
-                  and dynamic curriculum are tailored to meet the evolving
-                  demands of modern technological landscapes.
-                </p>
-                <p>
-                  We strive to build a vibrant ecosystem where theoretical
-                  knowledge seamlessly translates into practical
-                  problem-solving. Whether through multi-disciplinary
-                  engineering programs, skill enhancement workshops, or
-                  entrepreneurial incubation, SBSSU empowers students to unlock
-                  their absolute fullest potential.
+                  serve the nation and the world with integrity.
                 </p>
                 <p className="font-semibold text-slate-900 dark:text-white pt-2">
                   I warmly invite students with ambition, vision, and a passion

@@ -46,6 +46,8 @@ export const navItems: NavItem[] = [
       },
 
       { label: "Committees", path: "/legacy-website?Id=213" },
+      { label: "RTI-Laws", path: "/legacy-website?Id=214" },
+      { label: "By-Laws", path: "/legacy-website?Id=1137&mode=category" },
     ],
   },
   {
@@ -355,7 +357,20 @@ export const navItems: NavItem[] = [
       },
       {
         label: "NAD",
-        path: "/legacy-website?Id=34&mode=category",
+        children: [
+          {
+            label: "Academic Bank of Credits",
+            path: "https://www.abc.gov.in/",
+          },
+          {
+            label: "Digilocker",
+            path: "https://digilocker.gov.in/",
+          },
+          {
+            label: "Notices",
+            path: "https://sbssu.ac.in/SDetail.aspx?Id=1401",
+          },
+        ],
       },
       {
         label: "Notices",

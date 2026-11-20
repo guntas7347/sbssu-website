@@ -12,9 +12,13 @@ import {
 } from "lucide-react";
 import { useForm } from "@/hooks/useForm";
 import { Uploader } from "@/components/Uploader";
-import { notice_categories, notice_levels } from "@/constants/categories";
+import {
+  getAllowedNoticeLevels,
+  notice_categories,
+} from "@/constants/categories";
 import { getNotices, createNotice, deleteNotice } from "@/lib/actions/notices";
 import type { Notice } from "@/db/schema";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
 
 interface NoticeFormValues {
   title: string;
@@ -36,12 +40,16 @@ export default function NoticesPage() {
     text: string;
   } | null>(null);
 
+  const { currentUser, loading: loadingUser, refresh } = useCurrentUser();
+
+  const allowedNoticeLevels = getAllowedNoticeLevels(currentUser?.rights);
+
   const { form, handleChange, resetFormFields, setFields } =
     useForm<NoticeFormValues>({
       title: "",
       refNumber: "",
       category: notice_categories[0] ?? "",
-      level: notice_levels[0] ?? "",
+      level: allowedNoticeLevels[0] ?? "",
       description: "",
       file: "",
     });
@@ -70,7 +78,7 @@ export default function NoticesPage() {
     resetFormFields();
     setFields({
       category: notice_categories[0] ?? "",
-      level: notice_levels[0] ?? "",
+      level: allowedNoticeLevels[0] ?? "",
     });
     setModalOpen(true);
   }
@@ -391,7 +399,7 @@ export default function NoticesPage() {
                     onChange={handleChange}
                     className="w-full cursor-pointer rounded-xl border border-slate-300 bg-slate-50 px-3 py-2 text-sm text-slate-900 outline-none focus:border-orange-500 dark:border-slate-700 dark:bg-slate-950 dark:text-white"
                   >
-                    {notice_levels.map((lvl) => (
+                    {allowedNoticeLevels.map((lvl) => (
                       <option key={lvl} value={lvl}>
                         {lvl}
                       </option>

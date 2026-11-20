@@ -17,7 +17,7 @@ export const navItems: NavItem[] = [
     label: "Administration",
     children: [
       { label: "Vice-Chancellor's Desk", path: "/vc" },
-      { label: "Board of Governors", path: "/legacy-website?Id=12" },
+      { label: "Board of Governors", path: "/administration/bog" },
       { label: "Authorities", path: "/administration/authorities" },
       {
         label: "Governance",

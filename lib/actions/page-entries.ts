@@ -2,7 +2,17 @@
 
 import { unlink } from "node:fs/promises";
 import path from "node:path";
-import { and, asc, desc, eq, ilike, or, sql } from "drizzle-orm";
+import {
+  and,
+  asc,
+  desc,
+  eq,
+  ilike,
+  inArray,
+  isNull,
+  or,
+  sql,
+} from "drizzle-orm";
 import { db } from "@/db/drizzel";
 import {
   departmentsTable,
@@ -14,6 +24,7 @@ import {
 } from "@/db/schema";
 import { getCurrentUser } from "@/lib/actions/auth";
 import { saveHtmlContentFile } from "@/lib/save-html-file";
+import { getAllowedPageCategories } from "@/constants/page-categories";
 
 const UPLOAD_DIR = path.resolve(
   process.env.UPLOAD_DIR || path.join(process.cwd(), "data"),
@@ -173,6 +184,44 @@ async function isDuplicateCustomSlug(params: {
 export async function getPageEntries(
   query: ListPageEntriesQuery = {},
 ): Promise<ListPageEntriesResult> {
+  const currentUser = await getCurrentUser().catch(() => null);
+  if (!currentUser) {
+    return {
+      items: [],
+      totalCount: 0,
+      page: 1,
+      pageSize: 20,
+      hasMore: false,
+    };
+  }
+
+  const rights = currentUser.rights ?? [];
+  const hasAdmin = rights.includes("admin");
+  const hasHod = rights.includes("hod");
+
+  if (!hasAdmin && !hasHod) {
+    return {
+      items: [],
+      totalCount: 0,
+      page: 1,
+      pageSize: 20,
+      hasMore: false,
+    };
+  }
+
+  const allowedCategories = getAllowedPageCategories(currentUser).map(
+    (c) => c.categoryNumber,
+  );
+  if (allowedCategories.length === 0) {
+    return {
+      items: [],
+      totalCount: 0,
+      page: 1,
+      pageSize: 20,
+      hasMore: false,
+    };
+  }
+
   const pageSize =
     query.pageSize && query.pageSize > 0
       ? Math.min(Math.floor(query.pageSize), 100)
@@ -180,7 +229,41 @@ export async function getPageEntries(
   const page = query.page && query.page >= 1 ? Math.floor(query.page) : 1;
   const offset = (page - 1) * pageSize;
 
-  const conditions = [];
+  const conditions = [inArray(pageEntries.category, allowedCategories)];
+
+  const userDeptId =
+    currentUser.departmentId ?? currentUser.department?.id ?? null;
+
+  // Scope enforcement based on rights
+  if (hasAdmin && hasHod) {
+    conditions.push(
+      userDeptId
+        ? or(
+            eq(pageEntries.scope, "university"),
+            and(
+              eq(pageEntries.scope, "department"),
+              eq(pageEntries.departmentId, userDeptId),
+            ),
+          )!
+        : eq(pageEntries.scope, "university"),
+    );
+  } else if (hasHod) {
+    if (!userDeptId) {
+      return {
+        items: [],
+        totalCount: 0,
+        page,
+        pageSize,
+        hasMore: false,
+      };
+    }
+    conditions.push(
+      eq(pageEntries.scope, "department"),
+      eq(pageEntries.departmentId, userDeptId),
+    );
+  } else {
+    conditions.push(eq(pageEntries.scope, "university"));
+  }
 
   if (query.type === "generic" || query.type === "custom") {
     conditions.push(eq(pageEntries.type, query.type));
@@ -194,7 +277,7 @@ export async function getPageEntries(
   const cleanDeptId = safeTrim(query.departmentId);
   if (cleanDeptId && cleanDeptId !== "all") {
     if (cleanDeptId === "none") {
-      conditions.push(sql`${pageEntries.departmentId} is null`);
+      conditions.push(isNull(pageEntries.departmentId));
     } else {
       conditions.push(eq(pageEntries.departmentId, cleanDeptId));
     }
@@ -209,11 +292,11 @@ export async function getPageEntries(
         ilike(pageEntries.slug, pattern),
         ilike(pageEntries.category, pattern),
         ilike(pageEntries.desc, pattern),
-      ),
+      )!,
     );
   }
 
-  const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
+  const whereClause = and(...conditions);
 
   const [rows, countRows] = await Promise.all([
     db
@@ -270,8 +353,52 @@ export async function getPageEntries(
 export async function getPageEntryById(
   id: string,
 ): Promise<PageEntryWithDept | null> {
-  const cleanId = safeTrim(id);
+  const cleanId = id.trim();
   if (!cleanId) return null;
+
+  const currentUser = await getCurrentUser().catch(() => null);
+  if (!currentUser) return null;
+
+  const rights = currentUser.rights ?? [];
+  const hasAdmin = rights.includes("admin");
+  const hasHod = rights.includes("hod");
+
+  if (!hasAdmin && !hasHod) return null;
+
+  const allowedCategories = getAllowedPageCategories(currentUser).map(
+    (c) => c.categoryNumber,
+  );
+  if (allowedCategories.length === 0) return null;
+
+  const userDeptId =
+    currentUser.departmentId ?? currentUser.department?.id ?? null;
+
+  const conditions = [
+    eq(pageEntries.id, cleanId),
+    inArray(pageEntries.category, allowedCategories),
+  ];
+
+  if (hasAdmin && hasHod) {
+    conditions.push(
+      userDeptId
+        ? or(
+            eq(pageEntries.scope, "university"),
+            and(
+              eq(pageEntries.scope, "department"),
+              eq(pageEntries.departmentId, userDeptId),
+            ),
+          )!
+        : eq(pageEntries.scope, "university"),
+    );
+  } else if (hasHod) {
+    if (!userDeptId) return null;
+    conditions.push(
+      eq(pageEntries.scope, "department"),
+      eq(pageEntries.departmentId, userDeptId),
+    );
+  } else {
+    conditions.push(eq(pageEntries.scope, "university"));
+  }
 
   const [row] = await db
     .select({
@@ -298,7 +425,7 @@ export async function getPageEntryById(
       departmentsTable,
       eq(pageEntries.departmentId, departmentsTable.id),
     )
-    .where(eq(pageEntries.id, cleanId))
+    .where(and(...conditions))
     .limit(1);
 
   return row ?? null;

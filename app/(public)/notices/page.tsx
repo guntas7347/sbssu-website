@@ -14,7 +14,7 @@ import {
   Layers,
   ShieldAlert,
 } from "lucide-react";
-import { notice_categories, notice_levels } from "@/constants/categories";
+import { notice_categories, NOTICE_LEVELS } from "@/constants/categories";
 import { getPublicNotices } from "@/lib/actions/notices";
 import type { Notice } from "@/db/schema";
 
@@ -129,7 +129,7 @@ export default function PublicNoticesPage() {
                 className="w-full cursor-pointer rounded-xl border border-slate-300 bg-slate-50 px-3.5 py-2.5 text-sm text-slate-900 outline-none transition focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 dark:border-slate-700 dark:bg-slate-950 dark:text-white"
               >
                 <option value="all">All Levels</option>
-                {notice_levels.map((lvl) => (
+                {NOTICE_LEVELS.map((lvl) => (
                   <option key={lvl} value={lvl}>
                     {lvl}
                   </option>

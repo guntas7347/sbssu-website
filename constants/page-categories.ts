@@ -3,7 +3,7 @@ export type PageCategoryLevel = "dept" | "central";
 export interface PageCategoryItem {
   label: string;
   categoryNumber: string; // Stored in page_entries.category (e.g. "101" or "1")
-  rights: string[]; // Required rights (empty [] = any user with "admin" or "hod" right)
+  rights: string[]; // Required rights (empty [] = any user with matching level right)
   level: PageCategoryLevel; // "dept" = requires "hod" right, "central" = requires "admin" right
   readonly isCustomPage?: boolean;
 }
@@ -83,8 +83,8 @@ export const PAGE_CATEGORY_MAP: readonly PageCategoryItem[] = [
 ] as const;
 
 export interface CurrentUserLike {
-  id?: string;
-  rights?: string[] | string | Record<string, boolean> | null;
+  id: string;
+  rights: string[] | null;
   departmentId?: string | null;
   departmentName?: string | null;
   departmentCode?: string | null;
@@ -95,47 +95,14 @@ export interface CurrentUserLike {
   } | null;
 }
 
-export function normalizeUserRights(
-  rawRights: CurrentUserLike["rights"],
-): Set<string> {
-  const result = new Set<string>();
-  if (!rawRights) return result;
-
-  if (Array.isArray(rawRights)) {
-    for (const r of rawRights) {
-      if (typeof r === "string" && r.trim()) {
-        result.add(r.trim().toLowerCase());
-      }
-    }
-    return result;
-  }
-
-  if (typeof rawRights === "string") {
-    for (const part of rawRights.split(",")) {
-      if (part.trim()) result.add(part.trim().toLowerCase());
-    }
-    return result;
-  }
-
-  if (typeof rawRights === "object") {
-    for (const [key, enabled] of Object.entries(rawRights)) {
-      if (enabled && key.trim()) {
-        result.add(key.trim().toLowerCase());
-      }
-    }
-  }
-
-  return result;
-}
-
 export function getAllowedPageCategories(
   user: CurrentUserLike | null | undefined,
 ): PageCategoryItem[] {
   if (!user) return [];
 
-  const userRights = normalizeUserRights(user.rights);
-  const canCentral = userRights.has("admin");
-  const canDept = userRights.has("hod");
+  const rights = user.rights ?? [];
+  const canCentral = rights.includes("admin");
+  const canDept = rights.includes("hod");
 
   if (!canCentral && !canDept) return [];
 
@@ -144,9 +111,7 @@ export function getAllowedPageCategories(
     if (item.level === "dept" && !canDept) return false;
     if (item.rights.length === 0) return true;
 
-    return item.rights.some((reqRight) =>
-      userRights.has(reqRight.trim().toLowerCase()),
-    );
+    return item.rights.some((reqRight) => rights.includes(reqRight));
   });
 }
 

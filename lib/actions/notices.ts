@@ -1,9 +1,10 @@
 "use server";
 
-import { and, desc, eq, sql } from "drizzle-orm";
+import { and, desc, eq, inArray, ne, or, sql } from "drizzle-orm";
 import { db } from "@/db/drizzel";
 import { noticesTable, type Notice } from "@/db/schema";
 import { getCurrentUser } from "@/lib/actions/auth";
+import { getAllowedNoticeLevels } from "@/constants/categories";
 
 export interface CreateNoticeInput {
   title: string;
@@ -27,9 +28,41 @@ function cleanNullable(val?: string | null): string | null {
 }
 
 export async function getNotices(): Promise<Notice[]> {
+  const currentUser = await getCurrentUser().catch(() => null);
+  if (!currentUser) return [];
+
+  const allowedLevels = getAllowedNoticeLevels(currentUser.rights);
+  if (allowedLevels.length === 0) return [];
+
+  const rights = currentUser.rights ?? [];
+  const hasHod = rights.includes("hod");
+  const hasAdmin = rights.includes("admin");
+  const userDeptId =
+    currentUser.departmentId ?? currentUser.department?.id ?? null;
+
+  const conditions = [inArray(noticesTable.level, allowedLevels)];
+
+  if (hasHod && !hasAdmin) {
+    if (!userDeptId) return [];
+    conditions.push(eq(noticesTable.departmentId, userDeptId));
+  } else if (hasAdmin && hasHod) {
+    conditions.push(
+      userDeptId
+        ? or(
+            ne(noticesTable.level, "department"),
+            and(
+              eq(noticesTable.level, "department"),
+              eq(noticesTable.departmentId, userDeptId),
+            ),
+          )!
+        : ne(noticesTable.level, "department"),
+    );
+  }
+
   return db
     .select()
     .from(noticesTable)
+    .where(and(...conditions))
     .orderBy(desc(noticesTable.createdAt), desc(noticesTable.id));
 }
 

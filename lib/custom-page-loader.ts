@@ -7,6 +7,7 @@ import { db } from "@/db/drizzel";
 import { departmentsTable, pageEntries } from "@/db/schema";
 
 const UPLOAD_DIR = path.resolve(
+  /* turbopackIgnore: true */
   process.env.UPLOAD_DIR || path.join(process.cwd(), "data"),
 );
 
@@ -42,7 +43,11 @@ function resolveSafeDiskPath(
     ? trimmed.slice("/data/".length)
     : trimmed.replace(/^\/+/, "");
 
-  const resolved = path.resolve(UPLOAD_DIR, relative);
+  const resolved = path.resolve(
+    /* turbopackIgnore: true */
+    UPLOAD_DIR,
+    relative,
+  );
   const rootWithSep = UPLOAD_DIR.endsWith(path.sep)
     ? UPLOAD_DIR
     : `${UPLOAD_DIR}${path.sep}`;
@@ -96,7 +101,11 @@ export async function loadUniversityCustomPage(
   if (!safeDiskPath) return null;
 
   try {
-    const rawHtml = await readFile(safeDiskPath, "utf-8");
+    const rawHtml = await readFile(
+      /* turbopackIgnore: true */
+      safeDiskPath,
+      "utf-8",
+    );
     return {
       id: record.id,
       title: record.title,
@@ -157,7 +166,11 @@ export async function loadDepartmentCustomPage(
   if (!safeDiskPath) return null;
 
   try {
-    const rawHtml = await readFile(safeDiskPath, "utf-8");
+    const rawHtml = await readFile(
+      /* turbopackIgnore: true */
+      safeDiskPath,
+      "utf-8",
+    );
     return {
       id: record.id,
       title: record.title,

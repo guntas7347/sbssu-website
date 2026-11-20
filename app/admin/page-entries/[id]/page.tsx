@@ -20,7 +20,6 @@ import {
 import {
   findCategoryByNumber,
   getAllowedPageCategories,
-  normalizeUserRights,
   type CurrentUserLike,
 } from "@/constants/page-categories";
 import {
@@ -129,13 +128,26 @@ export default function PageEntryEditorPage() {
     };
   }, [rawId, isEditing, setFields]);
 
+  if (!currentUser) return null;
+
+  const rights = currentUser.rights ?? [];
+  const hasAdmin = rights.includes("admin");
+  const hasHod = rights.includes("hod");
+
+  const hasBothRights = hasAdmin && hasHod;
+
   const allowedCategories = getAllowedPageCategories(currentUser);
   const selectedCategory = findCategoryByNumber(form.category);
-  const userRights = normalizeUserRights(currentUser?.rights);
 
   const isDeptScope = selectedCategory
-    ? selectedCategory.level === "dept"
-    : userRights.has("hod") && !userRights.has("admin");
+    ? hasBothRights
+      ? selectedCategory.level === "dept"
+      : hasHod
+        ? true
+        : false
+    : hasHod && !hasAdmin;
+
+  const isScopeLocked = !hasBothRights && (hasAdmin || hasHod);
 
   const resolvedDeptId =
     currentUser?.departmentId ?? currentUser?.department?.id ?? null;
@@ -144,9 +156,21 @@ export default function PageEntryEditorPage() {
   const resolvedDeptCode =
     currentUser?.departmentCode ?? currentUser?.department?.code ?? null;
 
-  const scopeLabel = isDeptScope
-    ? `${resolvedDeptName || "Department"} (Auto)`
-    : "Central / University (Auto)";
+  const deptLabel = resolvedDeptName || "Department";
+
+  const scopeLabel = hasBothRights
+    ? `University Wide & ${deptLabel}`
+    : isDeptScope
+      ? deptLabel
+      : "University Wide";
+
+  // Optional: if your getAllowedPageCategories already filters by rights, keep it;
+  // otherwise filter when locked to a single role:
+  const filteredCategories = hasBothRights
+    ? allowedCategories
+    : isDeptScope
+      ? allowedCategories.filter((c) => c.level === "dept")
+      : allowedCategories.filter((c) => c.level !== "dept");
 
   function handleSelectCategory(categoryNumber: string) {
     const picked = findCategoryByNumber(categoryNumber);
@@ -304,7 +328,7 @@ export default function PageEntryEditorPage() {
 
             <GenericEntryFields
               pageTitle={form.title}
-              allowedCategories={allowedCategories}
+              allowedCategories={filteredCategories}
               selectedCategory={selectedCategory}
               scopeLabel={scopeLabel}
               isDeptScope={isDeptScope}

@@ -44,16 +44,17 @@ export const navItems: NavItem[] = [
           },
         ],
       },
-      {
-        label: "Academic Council Committee",
-        path: "/legacy-website?Id=1150&mode=category",
-      },
+
       { label: "Committees", path: "/legacy-website?Id=213" },
     ],
   },
   {
     label: "Academics",
     children: [
+      {
+        label: "Academic Council",
+        path: "/academics/council",
+      },
       {
         label: "Office Bearers",
         path: "/legacy-website?Id=31&mode=category",

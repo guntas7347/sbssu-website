@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { getGalleryByCategory } from "@/lib/actions/gallery";
+import { getGalleryCarousel } from "@/lib/actions/gallery";
 import type { GalleryItem } from "@/db/schema";
 
 interface CarouselSlide {
@@ -56,7 +56,7 @@ export function GalleryCarousel() {
   const loadCentralSlides = useCallback(async () => {
     setLoading(true);
     try {
-      const items = await getGalleryByCategory("central");
+      const items = await getGalleryCarousel("central");
       if (items.length > 0) {
         setSlides(mapItemsToSlides(items));
         setCurrent(0);

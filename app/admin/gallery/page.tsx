@@ -18,7 +18,8 @@ import {
   deleteGalleryItem,
 } from "@/lib/actions/gallery";
 import type { GalleryItem } from "@/db/schema";
-import { gallery_categories } from "@/constants/categories";
+import { getAllowedGalleryCategory } from "@/constants/categories";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
 
 interface GalleryFormValues {
   srNo: string;
@@ -30,11 +31,15 @@ interface GalleryFormValues {
 }
 
 export default function GalleryPage() {
+  const { currentUser } = useCurrentUser();
+
+  const galleryCategories = getAllowedGalleryCategory(currentUser?.rights);
+
   const [selectedCategory, setSelectedCategory] = useState<string>(
-    gallery_categories[0],
+    galleryCategories[0],
   );
   const [categoryInput, setCategoryInput] = useState<string>(
-    gallery_categories[0],
+    galleryCategories[0],
   );
   const [items, setItems] = useState<GalleryItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -50,7 +55,7 @@ export default function GalleryPage() {
   const { form, handleChange, resetFormFields, setFields } =
     useForm<GalleryFormValues>({
       srNo: "",
-      category: gallery_categories[0],
+      category: galleryCategories[0],
       title: "",
       desc: "",
       path: "",
@@ -60,7 +65,7 @@ export default function GalleryPage() {
   async function loadCategoryItems(cat: string) {
     setLoading(true);
     try {
-      const data = await getGalleryByCategory(cat);
+      const data = await getGalleryByCategory();
       setItems(data);
     } catch (err) {
       setBanner({
@@ -228,7 +233,7 @@ export default function GalleryPage() {
             }}
             className="w-full cursor-pointer rounded-xl border border-slate-300 bg-slate-50 px-3.5 py-2 text-sm text-slate-900 outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 sm:max-w-xs dark:border-slate-700 dark:bg-slate-950 dark:text-white"
           >
-            {gallery_categories.map((cat) => (
+            {galleryCategories.map((cat) => (
               <option key={cat} value={cat}>
                 {cat}
               </option>
@@ -415,11 +420,11 @@ export default function GalleryPage() {
                     id="form-category"
                     name="category"
                     required
-                    value={form.category || gallery_categories[0] || ""}
+                    value={form.category || galleryCategories[0] || ""}
                     onChange={handleChange}
                     className="w-full cursor-pointer rounded-xl border border-slate-300 bg-slate-50 px-3.5 py-2 text-sm text-slate-900 outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 dark:border-slate-700 dark:bg-slate-950 dark:text-white"
                   >
-                    {gallery_categories.map((cat) => (
+                    {galleryCategories.map((cat) => (
                       <option key={cat} value={cat}>
                         {cat}
                       </option>

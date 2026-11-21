@@ -27,6 +27,7 @@ import { saveHtmlContentFile } from "@/lib/save-html-file";
 import { getAllowedPageCategories } from "@/constants/page-categories";
 
 const UPLOAD_DIR = path.resolve(
+  /* turbopackIgnore: true */
   process.env.UPLOAD_DIR || path.join(process.cwd(), "data"),
 );
 
@@ -181,47 +182,31 @@ async function isDuplicateCustomSlug(params: {
 // READ (Paginated List + Single by ID)
 // ---------------------------------------------------------------------------
 
+function buildUserScopeCondition(
+  hasAdmin: boolean,
+  hasHod: boolean,
+  userDeptId: string | null,
+) {
+  if (hasAdmin && hasHod) {
+    return userDeptId
+      ? or(
+          isNull(pageEntries.departmentId),
+          eq(pageEntries.departmentId, userDeptId),
+        )!
+      : isNull(pageEntries.departmentId);
+  }
+
+  if (hasHod) {
+    if (!userDeptId) return null;
+    return eq(pageEntries.departmentId, userDeptId);
+  }
+
+  return isNull(pageEntries.departmentId);
+}
+
 export async function getPageEntries(
   query: ListPageEntriesQuery = {},
 ): Promise<ListPageEntriesResult> {
-  const currentUser = await getCurrentUser().catch(() => null);
-  if (!currentUser) {
-    return {
-      items: [],
-      totalCount: 0,
-      page: 1,
-      pageSize: 20,
-      hasMore: false,
-    };
-  }
-
-  const rights = currentUser.rights ?? [];
-  const hasAdmin = rights.includes("admin");
-  const hasHod = rights.includes("hod");
-
-  if (!hasAdmin && !hasHod) {
-    return {
-      items: [],
-      totalCount: 0,
-      page: 1,
-      pageSize: 20,
-      hasMore: false,
-    };
-  }
-
-  const allowedCategories = getAllowedPageCategories(currentUser).map(
-    (c) => c.categoryNumber,
-  );
-  if (allowedCategories.length === 0) {
-    return {
-      items: [],
-      totalCount: 0,
-      page: 1,
-      pageSize: 20,
-      hasMore: false,
-    };
-  }
-
   const pageSize =
     query.pageSize && query.pageSize > 0
       ? Math.min(Math.floor(query.pageSize), 100)
@@ -229,41 +214,37 @@ export async function getPageEntries(
   const page = query.page && query.page >= 1 ? Math.floor(query.page) : 1;
   const offset = (page - 1) * pageSize;
 
-  const conditions = [inArray(pageEntries.category, allowedCategories)];
+  const emptyResult: ListPageEntriesResult = {
+    items: [],
+    totalCount: 0,
+    page,
+    pageSize,
+    hasMore: false,
+  };
+
+  const currentUser = await getCurrentUser().catch(() => null);
+  if (!currentUser) return emptyResult;
+
+  const rights = currentUser.rights ?? [];
+  const hasAdmin = rights.includes("admin");
+  const hasHod = rights.includes("hod");
+  if (!hasAdmin && !hasHod) return emptyResult;
+
+  const allowedCategories = getAllowedPageCategories(currentUser).map(
+    (c) => c.categoryNumber,
+  );
+  if (allowedCategories.length === 0) return emptyResult;
 
   const userDeptId =
     currentUser.departmentId ?? currentUser.department?.id ?? null;
 
-  // Scope enforcement based on rights
-  if (hasAdmin && hasHod) {
-    conditions.push(
-      userDeptId
-        ? or(
-            eq(pageEntries.scope, "university"),
-            and(
-              eq(pageEntries.scope, "department"),
-              eq(pageEntries.departmentId, userDeptId),
-            ),
-          )!
-        : eq(pageEntries.scope, "university"),
-    );
-  } else if (hasHod) {
-    if (!userDeptId) {
-      return {
-        items: [],
-        totalCount: 0,
-        page,
-        pageSize,
-        hasMore: false,
-      };
-    }
-    conditions.push(
-      eq(pageEntries.scope, "department"),
-      eq(pageEntries.departmentId, userDeptId),
-    );
-  } else {
-    conditions.push(eq(pageEntries.scope, "university"));
-  }
+  const scopeCondition = buildUserScopeCondition(hasAdmin, hasHod, userDeptId);
+  if (!scopeCondition) return emptyResult;
+
+  const conditions = [
+    inArray(pageEntries.category, allowedCategories),
+    scopeCondition,
+  ];
 
   if (query.type === "generic" || query.type === "custom") {
     conditions.push(eq(pageEntries.type, query.type));
@@ -306,7 +287,6 @@ export async function getPageEntries(
         departmentId: pageEntries.departmentId,
         title: pageEntries.title,
         category: pageEntries.category,
-        srNo: pageEntries.srNo,
         desc: pageEntries.desc,
         file: pageEntries.file,
         link: pageEntries.link,
@@ -325,16 +305,16 @@ export async function getPageEntries(
         eq(pageEntries.departmentId, departmentsTable.id),
       )
       .where(whereClause)
-      .orderBy(
-        asc(pageEntries.srNo),
-        desc(pageEntries.createdAt),
-        desc(pageEntries.id),
-      )
+      .orderBy(desc(pageEntries.createdAt), desc(pageEntries.id))
       .limit(pageSize)
       .offset(offset),
     db
       .select({ count: sql<number>`count(*)::int` })
       .from(pageEntries)
+      .leftJoin(
+        departmentsTable,
+        eq(pageEntries.departmentId, departmentsTable.id),
+      )
       .where(whereClause),
   ]);
 
@@ -362,7 +342,6 @@ export async function getPageEntryById(
   const rights = currentUser.rights ?? [];
   const hasAdmin = rights.includes("admin");
   const hasHod = rights.includes("hod");
-
   if (!hasAdmin && !hasHod) return null;
 
   const allowedCategories = getAllowedPageCategories(currentUser).map(
@@ -373,32 +352,8 @@ export async function getPageEntryById(
   const userDeptId =
     currentUser.departmentId ?? currentUser.department?.id ?? null;
 
-  const conditions = [
-    eq(pageEntries.id, cleanId),
-    inArray(pageEntries.category, allowedCategories),
-  ];
-
-  if (hasAdmin && hasHod) {
-    conditions.push(
-      userDeptId
-        ? or(
-            eq(pageEntries.scope, "university"),
-            and(
-              eq(pageEntries.scope, "department"),
-              eq(pageEntries.departmentId, userDeptId),
-            ),
-          )!
-        : eq(pageEntries.scope, "university"),
-    );
-  } else if (hasHod) {
-    if (!userDeptId) return null;
-    conditions.push(
-      eq(pageEntries.scope, "department"),
-      eq(pageEntries.departmentId, userDeptId),
-    );
-  } else {
-    conditions.push(eq(pageEntries.scope, "university"));
-  }
+  const scopeCondition = buildUserScopeCondition(hasAdmin, hasHod, userDeptId);
+  if (!scopeCondition) return null;
 
   const [row] = await db
     .select({
@@ -407,7 +362,6 @@ export async function getPageEntryById(
       departmentId: pageEntries.departmentId,
       title: pageEntries.title,
       category: pageEntries.category,
-      srNo: pageEntries.srNo,
       desc: pageEntries.desc,
       file: pageEntries.file,
       link: pageEntries.link,
@@ -425,7 +379,13 @@ export async function getPageEntryById(
       departmentsTable,
       eq(pageEntries.departmentId, departmentsTable.id),
     )
-    .where(and(...conditions))
+    .where(
+      and(
+        eq(pageEntries.id, cleanId),
+        inArray(pageEntries.category, allowedCategories),
+        scopeCondition,
+      ),
+    )
     .limit(1);
 
   return row ?? null;
@@ -452,16 +412,7 @@ export async function createPageEntry(
     }
 
     const cleanTitle = safeTrim(input.title);
-    if (!cleanTitle) {
-      return { ok: false, message: "Title is required." };
-    }
-
     const cleanCategory = safeTrim(input.category) || null;
-    const parsedSrNo = Number(input.srNo ?? 1);
-    const cleanSrNo =
-      Number.isFinite(parsedSrNo) && parsedSrNo >= 1
-        ? Math.floor(parsedSrNo)
-        : 1;
     const cleanDesc = safeTrim(input.desc) || null;
 
     const pastedHtml = safeTrim(input.rawHtml);
@@ -556,7 +507,6 @@ export async function createPageEntry(
         slug: cleanSlug,
         path: resolvedPath,
         category: cleanCategory,
-        srNo: cleanSrNo,
         desc: cleanDesc,
         file: null,
         link: null,
@@ -600,7 +550,6 @@ export async function createPageEntry(
       title: cleanTitle,
       departmentId: resolvedDeptId,
       category: cleanCategory,
-      srNo: cleanSrNo,
       desc: cleanDesc,
       file: safeTrim(input.file) || null,
       link: normalizeOptionalLink(input.link),
@@ -662,9 +611,6 @@ export async function updatePageEntry(
 
     const cleanTitle =
       input.title !== undefined ? safeTrim(input.title) : existing.title;
-    if (!cleanTitle) {
-      return { ok: false, message: "Title is required." };
-    }
 
     const rawDeptId =
       input.departmentId !== undefined
@@ -683,13 +629,6 @@ export async function updatePageEntry(
         };
       }
 
-      const parsedSrNo =
-        input.srNo !== undefined ? Number(input.srNo) : existing.srNo;
-      const cleanSrNo =
-        Number.isFinite(parsedSrNo) && parsedSrNo >= 1
-          ? Math.floor(parsedSrNo)
-          : existing.srNo;
-
       const nextDesc =
         input.desc !== undefined ? safeTrim(input.desc) || null : existing.desc;
       const nextFile =
@@ -706,7 +645,6 @@ export async function updatePageEntry(
           title: cleanTitle,
           departmentId: rawDeptId || null,
           category: cleanCategory,
-          srNo: cleanSrNo,
           desc: nextDesc,
           file: nextFile,
           link: nextLink,
@@ -804,7 +742,6 @@ export async function updatePageEntry(
           slug: cleanSlug,
           path: nextPath,
           category: null,
-          srNo: 1,
           desc: null,
           file: null,
           link: null,
@@ -885,4 +822,128 @@ export async function getDepartmentsForSelect(): Promise<
     })
     .from(departmentsTable)
     .orderBy(departmentsTable.name);
+}
+
+/**
+ * Public action to fetch page entries by category ID (always returns an array, newest first).
+ * - Pass `departmentId` or `deptCode` for department-scoped entries.
+ * - Omit both (or pass null) for university-wide (central) entries.
+ * - For `mode: "single"` categories, access `entries[0] ?? null` in the caller.
+ */
+export async function getPublicPageEntriesByCategory({
+  category,
+  departmentId,
+  deptCode,
+}: GetPublicPageEntriesParams): Promise<PublicPageEntryItem[]> {
+  const cleanCategory = category.trim();
+  if (!cleanCategory) return [];
+
+  let resolvedDeptId = departmentId?.trim() || null;
+
+  if (!resolvedDeptId && deptCode?.trim()) {
+    const cleanCode = deptCode.trim().toLowerCase();
+    const [dept] = await db
+      .select({ id: departmentsTable.id })
+      .from(departmentsTable)
+      .where(sql`lower(${departmentsTable.code}) = ${cleanCode}`)
+      .limit(1);
+
+    if (!dept) return [];
+    resolvedDeptId = dept.id;
+  }
+
+  const scopeCondition = resolvedDeptId
+    ? eq(pageEntries.departmentId, resolvedDeptId)
+    : isNull(pageEntries.departmentId);
+
+  return db
+    .select({
+      id: pageEntries.id,
+      type: pageEntries.type,
+      departmentId: pageEntries.departmentId,
+      title: pageEntries.title,
+      category: pageEntries.category,
+      desc: pageEntries.desc,
+      file: pageEntries.file,
+      link: pageEntries.link,
+      slug: pageEntries.slug,
+      path: pageEntries.path,
+      scope: pageEntries.scope,
+      createdAt: pageEntries.createdAt,
+      updatedAt: pageEntries.updatedAt,
+    })
+    .from(pageEntries)
+    .where(and(eq(pageEntries.category, cleanCategory), scopeCondition))
+    .orderBy(desc(pageEntries.createdAt), desc(pageEntries.id));
+}
+
+export interface PublicPageEntryItem {
+  id: string;
+  type: "generic" | "custom";
+  departmentId: string | null;
+  title: string | null;
+  category: string | null;
+  desc: string | null;
+  file: string | null;
+  link: string | null;
+  slug: string | null;
+  path: string | null;
+  scope: "university" | "department" | null;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface GetPublicPageEntriesParams {
+  category: string;
+  departmentId?: string | null;
+  deptCode?: string | null;
+}
+
+/**
+ * Public action to fetch ALL entries for a department in one query (newest first).
+ * Useful on /departments/[deptCode]/page.tsx so you can slice categories in memory
+ * via `entries.filter((e) => e.category === "208")[0]` without N+1 DB calls.
+ */
+export async function getAllPublicDepartmentEntries(deptCode: string): Promise<{
+  department: { id: string; name: string; code: string } | null;
+  entries: PublicPageEntryItem[];
+}> {
+  const cleanCode = deptCode.trim().toLowerCase();
+  if (!cleanCode) return { department: null, entries: [] };
+
+  const [department] = await db
+    .select({
+      id: departmentsTable.id,
+      name: departmentsTable.name,
+      code: departmentsTable.code,
+    })
+    .from(departmentsTable)
+    .where(sql`lower(${departmentsTable.code}) = ${cleanCode}`)
+    .limit(1);
+
+  if (!department) {
+    return { department: null, entries: [] };
+  }
+
+  const entries = await db
+    .select({
+      id: pageEntries.id,
+      type: pageEntries.type,
+      departmentId: pageEntries.departmentId,
+      title: pageEntries.title,
+      category: pageEntries.category,
+      desc: pageEntries.desc,
+      file: pageEntries.file,
+      link: pageEntries.link,
+      slug: pageEntries.slug,
+      path: pageEntries.path,
+      scope: pageEntries.scope,
+      createdAt: pageEntries.createdAt,
+      updatedAt: pageEntries.updatedAt,
+    })
+    .from(pageEntries)
+    .where(eq(pageEntries.departmentId, department.id))
+    .orderBy(desc(pageEntries.createdAt), desc(pageEntries.id));
+
+  return { department, entries };
 }

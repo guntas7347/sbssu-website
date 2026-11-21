@@ -40,7 +40,7 @@ export default function NoticesPage() {
     text: string;
   } | null>(null);
 
-  const { currentUser, loading: loadingUser, refresh } = useCurrentUser();
+  const { currentUser } = useCurrentUser();
 
   const allowedNoticeLevels = getAllowedNoticeLevels(currentUser?.rights);
 

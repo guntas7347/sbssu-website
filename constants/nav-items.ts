@@ -218,6 +218,7 @@ export const navItems: NavItem[] = [
   },
   {
     label: "Departments",
+    path: "/departments",
     children: [
       {
         label: "Chemical Engineering",
@@ -249,7 +250,7 @@ export const navItems: NavItem[] = [
       },
       {
         label: "Applied Sciences & Humanities",
-        path: "/departments/legacy/applied",
+        path: "/departments/legacy/dash",
       },
       {
         label: "Computer Applications",

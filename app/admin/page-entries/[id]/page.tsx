@@ -14,16 +14,19 @@ import { useForm } from "@/hooks/useForm";
 import { getCurrentUser } from "@/lib/actions/auth";
 import {
   createPageEntry,
+  getPageEntries,
   getPageEntryById,
   updatePageEntry,
 } from "@/lib/actions/page-entries";
 import {
   findCategoryByNumber,
-  getAllowedPageCategories,
+  PAGE_CATEGORY_MAP,
   type CurrentUserLike,
+  type PageCategoryItem,
 } from "@/constants/page-categories";
 import {
   GenericEntryFields,
+  type ExistingScopeEntrySummary,
   type GenericAttachmentMode,
   type GenericFieldsValues,
 } from "./GenericEntryFields";
@@ -35,7 +38,6 @@ interface EditorFormState extends GenericFieldsValues {
 const INITIAL_FORM: EditorFormState = {
   title: "",
   category: "",
-  srNo: "1",
   desc: "",
   attachmentMode: "file",
   file: "",
@@ -44,6 +46,25 @@ const INITIAL_FORM: EditorFormState = {
   rawHtml: "",
 };
 
+const SCOPE_CHECK_PAGE_SIZE = 50;
+
+function filterCategoriesByUserRights(
+  user: CurrentUserLike | null,
+): PageCategoryItem[] {
+  const rights = user?.rights ?? [];
+  if (rights.length === 0) return [];
+
+  const hasAdmin = rights.includes("admin");
+  const hasHod = rights.includes("hod");
+
+  return PAGE_CATEGORY_MAP.filter((item) => {
+    if (item.level === "central" && !hasAdmin) return false;
+    if (item.level === "dept" && !hasHod) return false;
+    if (item.rights.length === 0) return true;
+    return item.rights.some((reqRight) => rights.includes(reqRight));
+  });
+}
+
 export default function PageEntryEditorPage() {
   const params = useParams<{ id: string }>();
   const router = useRouter();
@@ -51,8 +72,12 @@ export default function PageEntryEditorPage() {
   const isEditing = rawId !== "new";
 
   const [currentUser, setCurrentUser] = useState<CurrentUserLike | null>(null);
+  const [scopeEntries, setScopeEntries] = useState<ExistingScopeEntrySummary[]>(
+    [],
+  );
   const [loadingPage, setLoadingPage] = useState<boolean>(true);
   const [notFoundRecord, setNotFoundRecord] = useState<boolean>(false);
+  const [hasSingleConflict, setHasSingleConflict] = useState<boolean>(false);
   const [banner, setBanner] = useState<{
     type: "success" | "error";
     text: string;
@@ -70,11 +95,24 @@ export default function PageEntryEditorPage() {
     void Promise.all([
       getCurrentUser().catch(() => null),
       isEditing ? getPageEntryById(rawId) : Promise.resolve(null),
+      getPageEntries({ page: 1, pageSize: SCOPE_CHECK_PAGE_SIZE }).catch(
+        () => null,
+      ),
     ])
-      .then(([user, entry]) => {
+      .then(([user, entry, listResult]) => {
         if (!active) return;
 
         setCurrentUser(user as CurrentUserLike | null);
+
+        const existingRows: ExistingScopeEntrySummary[] = (
+          listResult?.items ?? []
+        ).map((item) => ({
+          id: item.id,
+          title: item.title,
+          category: item.category,
+          departmentId: item.departmentId,
+        }));
+        setScopeEntries(existingRows);
 
         if (isEditing) {
           if (!entry) {
@@ -101,7 +139,6 @@ export default function PageEntryEditorPage() {
                   ? "901"
                   : "900"
                 : ""),
-            srNo: String(entry.srNo ?? 1),
             desc: entry.desc ?? "",
             attachmentMode: initialMode,
             file: entry.file ?? "",
@@ -133,21 +170,16 @@ export default function PageEntryEditorPage() {
   const rights = currentUser.rights ?? [];
   const hasAdmin = rights.includes("admin");
   const hasHod = rights.includes("hod");
-
   const hasBothRights = hasAdmin && hasHod;
 
-  const allowedCategories = getAllowedPageCategories(currentUser);
+  const allowedCategories = filterCategoriesByUserRights(currentUser);
   const selectedCategory = findCategoryByNumber(form.category);
 
   const isDeptScope = selectedCategory
     ? hasBothRights
       ? selectedCategory.level === "dept"
       : hasHod
-        ? true
-        : false
     : hasHod && !hasAdmin;
-
-  const isScopeLocked = !hasBothRights && (hasAdmin || hasHod);
 
   const resolvedDeptId =
     currentUser?.departmentId ?? currentUser?.department?.id ?? null;
@@ -157,15 +189,12 @@ export default function PageEntryEditorPage() {
     currentUser?.departmentCode ?? currentUser?.department?.code ?? null;
 
   const deptLabel = resolvedDeptName || "Department";
-
   const scopeLabel = hasBothRights
     ? `University Wide & ${deptLabel}`
     : isDeptScope
       ? deptLabel
       : "University Wide";
 
-  // Optional: if your getAllowedPageCategories already filters by rights, keep it;
-  // otherwise filter when locked to a single role:
   const filteredCategories = hasBothRights
     ? allowedCategories
     : isDeptScope
@@ -205,6 +234,14 @@ export default function PageEntryEditorPage() {
       return;
     }
 
+    if (!isEditing && hasSingleConflict) {
+      setBanner({
+        type: "error",
+        text: "This single-entry category already has an entry for this scope.",
+      });
+      return;
+    }
+
     const isCustomPage = Boolean(selectedCategory?.isCustomPage);
     const usesHtml = isCustomPage || form.attachmentMode === "html";
 
@@ -226,7 +263,6 @@ export default function PageEntryEditorPage() {
         type: (usesHtml ? "custom" : "generic") as "custom" | "generic",
         title: form.title,
         category: form.category,
-        srNo: Number(form.srNo || 1),
         desc: form.desc,
         file: !usesHtml && form.attachmentMode === "file" ? form.file : null,
         link: !usesHtml && form.attachmentMode === "link" ? form.link : null,
@@ -252,6 +288,8 @@ export default function PageEntryEditorPage() {
       router.refresh();
     });
   }
+
+  const submitDisabled = isPending || (!isEditing && hasSingleConflict);
 
   return (
     <main className="min-h-screen bg-slate-50 px-4 py-8 text-slate-900 sm:px-6 lg:px-8 dark:bg-slate-950 dark:text-slate-100">
@@ -312,13 +350,12 @@ export default function PageEntryEditorPage() {
                 htmlFor="entry-title"
                 className="mb-1 block text-[11px] font-bold tracking-wider text-slate-600 uppercase dark:text-slate-300"
               >
-                Title *
+                Title
               </label>
               <input
                 id="entry-title"
                 name="title"
                 type="text"
-                required
                 value={form.title}
                 onChange={handleChange}
                 placeholder="e.g. B.Tech Odd Sem Timetable"
@@ -332,10 +369,13 @@ export default function PageEntryEditorPage() {
               selectedCategory={selectedCategory}
               scopeLabel={scopeLabel}
               isDeptScope={isDeptScope}
+              targetDepartmentId={resolvedDeptId}
               deptCode={resolvedDeptCode}
+              existingEntries={scopeEntries}
+              editingEntryId={isEditing ? rawId : null}
+              onSingleConflictChange={setHasSingleConflict}
               values={{
                 category: form.category,
-                srNo: form.srNo,
                 desc: form.desc,
                 attachmentMode: form.attachmentMode,
                 file: form.file,
@@ -360,7 +400,7 @@ export default function PageEntryEditorPage() {
 
               <button
                 type="submit"
-                disabled={isPending}
+                disabled={submitDisabled}
                 className="inline-flex cursor-pointer items-center gap-1.5 rounded-xl bg-orange-600 px-5 py-2 text-xs font-semibold text-white transition hover:bg-orange-700 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-orange-500 dark:text-slate-950 dark:hover:bg-orange-400"
               >
                 <Save className="h-3.5 w-3.5" />

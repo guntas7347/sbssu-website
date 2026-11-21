@@ -37,9 +37,7 @@ export async function getCurrentUser() {
       },
     });
 
-    if (!user) {
-      return null;
-    }
+    if (!user) return null;
 
     return user;
   } catch (error) {

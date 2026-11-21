@@ -307,11 +307,10 @@ export const pageEntries = pgTable(
     departmentId: text("department_id").references(() => departmentsTable.id, {
       onDelete: "cascade",
     }),
-    title: text("title").notNull(),
+    title: text("title"),
 
     // Generic entry fields (type = "generic")
     category: text("category"),
-    srNo: integer("sr_no").notNull().default(1),
     desc: text("desc"),
     file: text("file"),
     link: text("link"),
@@ -346,10 +345,10 @@ export const pageEntries = pgTable(
       .on(table.slug)
       .where(sql`${table.type} = 'custom' and ${table.departmentId} is null`),
     index("page_entries_type_idx").on(table.type),
-    index("page_entries_dept_cat_sr_idx").on(
+    index("page_entries_dept_cat_created_idx").on(
       table.departmentId,
       table.category,
-      table.srNo,
+      table.createdAt,
     ),
     index("page_entries_created_by_idx").on(table.createdBy),
   ],

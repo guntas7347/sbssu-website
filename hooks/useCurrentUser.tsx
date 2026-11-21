@@ -2,18 +2,19 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { getCurrentUser } from "@/lib/actions/auth";
-import type { CurrentUserLike } from "@/constants/page-categories";
+
+type CurrentUser = Awaited<ReturnType<typeof getCurrentUser>>;
 
 interface UseCurrentUserResult {
-  currentUser: CurrentUserLike | null;
+  currentUser: CurrentUser;
   loading: boolean;
   error: string | null;
-  refresh: () => Promise<CurrentUserLike | null>;
+  refresh: () => Promise<CurrentUser>;
 }
 
 export function useCurrentUser(): UseCurrentUserResult {
-  const [user, setUser] = useState<CurrentUserLike | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [user, setUser] = useState<CurrentUser>(null);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const loadUser = useCallback(async () => {
@@ -21,12 +22,13 @@ export function useCurrentUser(): UseCurrentUserResult {
     setError(null);
 
     try {
-      const data = (await getCurrentUser()) as CurrentUserLike | null;
+      const data = await getCurrentUser();
       setUser(data);
       return data;
     } catch (err) {
       const message =
         err instanceof Error ? err.message : "Failed to load current user.";
+
       setError(message);
       setUser(null);
       return null;
@@ -36,29 +38,8 @@ export function useCurrentUser(): UseCurrentUserResult {
   }, []);
 
   useEffect(() => {
-    let active = true;
-
-    getCurrentUser()
-      .then((data) => {
-        if (!active) return;
-        setUser((data as CurrentUserLike | null) ?? null);
-        setError(null);
-      })
-      .catch((err) => {
-        if (!active) return;
-        setUser(null);
-        setError(
-          err instanceof Error ? err.message : "Failed to load current user.",
-        );
-      })
-      .finally(() => {
-        if (active) setLoading(false);
-      });
-
-    return () => {
-      active = false;
-    };
-  }, []);
+    loadUser();
+  }, [loadUser]);
 
   return {
     currentUser: user,

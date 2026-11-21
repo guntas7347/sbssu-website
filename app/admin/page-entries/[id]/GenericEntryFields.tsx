@@ -1,7 +1,17 @@
 "use client";
 
-import React, { useState } from "react";
-import { Upload, Link2, Code, Eye, EyeOff } from "lucide-react";
+import React, { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
+import {
+  Upload,
+  Link2,
+  Code,
+  Eye,
+  EyeOff,
+  AlertTriangle,
+  Pencil,
+  Sparkles,
+} from "lucide-react";
 import { Uploader } from "@/components/Uploader";
 import { HtmlPromptCopyBox } from "@/app/admin/page-entries/[id]/HtmlPromptCopyBox";
 import { sanitizeHtmlClient } from "@/lib/sanitize-html";
@@ -11,7 +21,6 @@ export type GenericAttachmentMode = "file" | "link" | "html";
 
 export interface GenericFieldsValues {
   category: string;
-  srNo: string;
   desc: string;
   attachmentMode: GenericAttachmentMode;
   file: string;
@@ -20,14 +29,27 @@ export interface GenericFieldsValues {
   rawHtml: string;
 }
 
+export interface ExistingScopeEntrySummary {
+  id: string;
+  title: string | null;
+  category: string | null;
+  departmentId: string | null;
+}
+
 interface GenericEntryFieldsProps {
   pageTitle: string;
   allowedCategories: PageCategoryItem[];
   selectedCategory?: PageCategoryItem;
   scopeLabel: string;
   isDeptScope: boolean;
+  targetDepartmentId?: string | null;
   deptCode?: string | null;
   values: GenericFieldsValues;
+  /** Pass existing entries (or entries already in scope) so single-mode categories can detect duplicates */
+  existingEntries?: ExistingScopeEntrySummary[];
+  /** When editing an existing entry, pass its ID so it doesn't flag itself as a duplicate */
+  editingEntryId?: string | null;
+  onSingleConflictChange?: (hasConflict: boolean) => void;
   onChange: (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
@@ -45,8 +67,12 @@ export function GenericEntryFields({
   selectedCategory,
   scopeLabel,
   isDeptScope,
+  targetDepartmentId = null,
   deptCode,
   values,
+  existingEntries = [],
+  editingEntryId = null,
+  onSingleConflictChange,
   onChange,
   onSelectCategory,
   onSwitchAttachmentMode,
@@ -55,14 +81,46 @@ export function GenericEntryFields({
 }: GenericEntryFieldsProps) {
   const [previewOpen, setPreviewOpen] = useState(false);
 
+  const isSingleCategory = selectedCategory?.mode === "single";
+
+  const existingSingleEntry = useMemo(() => {
+    if (!isSingleCategory || !values.category) return null;
+
+    return (
+      existingEntries.find((entry) => {
+        if (editingEntryId && entry.id === editingEntryId) return false;
+        if ((entry.category ?? "").trim() !== values.category.trim()) {
+          return false;
+        }
+
+        const entryDept = entry.departmentId ?? null;
+        const activeDept = isDeptScope ? (targetDepartmentId ?? null) : null;
+        return entryDept === activeDept;
+      }) ?? null
+    );
+  }, [
+    isSingleCategory,
+    values.category,
+    existingEntries,
+    editingEntryId,
+    isDeptScope,
+    targetDepartmentId,
+  ]);
+
+  const hasSingleConflict = Boolean(existingSingleEntry);
+
+  useEffect(() => {
+    onSingleConflictChange?.(hasSingleConflict);
+  }, [hasSingleConflict, onSingleConflictChange]);
+
   const isCustomPageCategory = Boolean(selectedCategory?.isCustomPage);
   const showHtmlEditor =
     isCustomPageCategory || values.attachmentMode === "html";
 
   const previewRoute =
     isDeptScope && deptCode
-      ? `/departments/${deptCode.toLowerCase()}/pages/${values.slug || "auto-slug"}`
-      : `/pages/${values.slug || "auto-slug"}`;
+      ? `/departments/${deptCode.toLowerCase()}/custom-pages/${values.slug || "auto-slug"}`
+      : `/custom-pages/${values.slug || "auto-slug"}`;
 
   return (
     <div className="space-y-4 rounded-2xl border border-slate-200 bg-slate-50/70 p-4 dark:border-slate-800 dark:bg-slate-950/60">
@@ -86,30 +144,65 @@ export function GenericEntryFields({
             {allowedCategories.map((cat) => (
               <option key={cat.categoryNumber} value={cat.categoryNumber}>
                 {cat.label} (#{cat.categoryNumber})
+                {cat.mode === "single" ? " · Single Entry" : ""}
               </option>
             ))}
           </select>
+
+          {isSingleCategory && (
+            <div className="mt-1.5 flex items-center gap-1.5 text-[11px] font-medium text-green-700 dark:text-green-400">
+              <Sparkles className="h-3.5 w-3.5 shrink-0" />
+              <span>
+                Single-entry category: only one entry is allowed for{" "}
+                <strong>{scopeLabel}</strong>.
+              </span>
+            </div>
+          )}
         </div>
 
-        <div>
-          <label
-            htmlFor="entry-sr-no"
-            className="mb-1 block text-[11px] font-bold tracking-wider text-slate-600 uppercase dark:text-slate-300"
-          >
-            Serial Order (`srNo`)
-          </label>
-          <input
-            id="entry-sr-no"
-            name="srNo"
-            type="number"
-            min={1}
-            step={1}
-            value={values.srNo}
-            onChange={onChange}
-            className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2 font-mono text-xs text-slate-900 outline-none focus:border-orange-500 dark:border-slate-700 dark:bg-slate-900 dark:text-white"
-          />
-        </div>
+        {selectedCategory?.note && (
+          <div className="rounded-xl border border-green-600/25 bg-green-600/5 p-3 text-xs dark:border-green-400/25 dark:bg-green-500/10">
+            <span className="block text-[10px] font-bold tracking-wider text-green-700 uppercase dark:text-green-400">
+              Category Note
+            </span>
+            <p className="mt-1 leading-relaxed text-slate-700 dark:text-slate-200">
+              {selectedCategory.note}
+            </p>
+          </div>
+        )}
       </div>
+      {/* Single-Entry Conflict Guard Banner */}
+      {existingSingleEntry && (
+        <div
+          role="alert"
+          className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-orange-500/40 bg-orange-500/10 p-3.5 text-xs text-orange-950 dark:border-orange-400/30 dark:bg-orange-500/15 dark:text-orange-100"
+        >
+          <div className="flex items-start gap-2.5">
+            <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-orange-600 dark:text-orange-400" />
+            <div>
+              <p className="font-bold">
+                An entry already exists for {selectedCategory?.label} in{" "}
+                {scopeLabel}
+              </p>
+              <p className="mt-0.5 text-[11px] text-orange-800 dark:text-orange-200/90">
+                Existing entry:{" "}
+                <span className="font-semibold">
+                  {existingSingleEntry.title}
+                </span>
+                . Edit that entry instead of creating a duplicate.
+              </p>
+            </div>
+          </div>
+
+          <Link
+            href={`/admin/page-entries/${existingSingleEntry.id}`}
+            className="inline-flex shrink-0 items-center gap-1.5 rounded-lg bg-orange-600 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-orange-700 dark:bg-orange-500 dark:text-slate-950 dark:hover:bg-orange-400"
+          >
+            <Pencil className="h-3.5 w-3.5" />
+            Edit Existing
+          </Link>
+        </div>
+      )}
 
       <div>
         <label
@@ -121,7 +214,7 @@ export function GenericEntryFields({
         <textarea
           id="entry-desc"
           name="desc"
-          rows={2}
+          rows={10}
           value={values.desc}
           onChange={onChange}
           placeholder="Optional summary shown in category listings..."
@@ -147,7 +240,7 @@ export function GenericEntryFields({
               }`}
             >
               <Upload className="h-3.5 w-3.5" />
-              Upload File
+              File
             </button>
 
             <button

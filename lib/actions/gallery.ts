@@ -1,9 +1,10 @@
 "use server";
 
-import { and, asc, eq, max } from "drizzle-orm";
+import { and, asc, eq, inArray, max } from "drizzle-orm";
 import { db } from "@/db/drizzel";
 import { galleryItems, usersTable, type GalleryItem } from "@/db/schema";
 import { getCurrentUser } from "@/lib/actions/auth"; // adjust import path if different
+import { getAllowedGalleryCategory } from "@/constants/categories";
 
 export interface CreateGalleryInput {
   srNo?: number | string | null;
@@ -27,16 +28,17 @@ function cleanNullableText(val?: string | null): string | null {
   return trimmed === "" ? null : trimmed;
 }
 
-export async function getGalleryByCategory(
-  category: string,
-): Promise<GalleryItem[]> {
-  const cleanCategory = category.trim();
-  if (!cleanCategory) return [];
+export async function getGalleryByCategory(): Promise<GalleryItem[]> {
+  const currentUser = await getCurrentUser();
+
+  const galleryCategories = getAllowedGalleryCategory(currentUser?.rights);
+
+  if (galleryCategories.length === 0) return [];
 
   return db
     .select()
     .from(galleryItems)
-    .where(eq(galleryItems.category, cleanCategory))
+    .where(inArray(galleryItems.category, galleryCategories))
     .orderBy(asc(galleryItems.srNo), asc(galleryItems.createdAt));
 }
 
@@ -182,4 +184,17 @@ export async function deleteGalleryItem(
         err instanceof Error ? err.message : "Failed to delete gallery item.",
     };
   }
+}
+
+export async function getGalleryCarousel(
+  category: string,
+): Promise<GalleryItem[]> {
+  const cleanCategory = category.trim();
+  if (!cleanCategory) return [];
+
+  return db
+    .select()
+    .from(galleryItems)
+    .where(eq(galleryItems.category, cleanCategory))
+    .orderBy(asc(galleryItems.srNo), asc(galleryItems.createdAt));
 }

@@ -16,6 +16,7 @@ import {
   CheckCircle2,
   AlertCircle,
 } from "lucide-react";
+import { findCategoryByNumber } from "@/constants/page-categories";
 import {
   deletePageEntry,
   getDepartmentsForSelect,
@@ -55,6 +56,17 @@ function getSafeHref(raw: string | null | undefined): string | null {
     return trimmed;
   }
   return null;
+}
+
+function formatCreatedAtIst(value: Date | string | null | undefined): string {
+  if (!value) return "—";
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) return "—";
+  return parsed.toLocaleString("en-IN", {
+    timeZone: "Asia/Kolkata",
+    dateStyle: "medium",
+    timeStyle: "short",
+  });
 }
 
 export default function PageEntriesAdminPage() {
@@ -100,7 +112,12 @@ export default function PageEntriesAdminPage() {
         });
 
         if (!active) return;
-        setItems(res.items);
+        const sortedItems = [...res.items].sort((a, b) => {
+          const tA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+          const tB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+          return tB - tA;
+        });
+        setItems(sortedItems);
         setTotalCount(res.totalCount);
         setHasMore(res.hasMore);
       } catch (err) {
@@ -179,7 +196,7 @@ export default function PageEntriesAdminPage() {
               <strong className="text-slate-700 dark:text-slate-200">
                 {PAGE_SIZE}
               </strong>{" "}
-              records per page
+              records per page (newest first)
             </p>
           </div>
 
@@ -280,7 +297,7 @@ export default function PageEntriesAdminPage() {
                 htmlFor="filter-category"
                 className="mb-1 block text-[11px] font-bold tracking-wider text-slate-500 uppercase dark:text-slate-400"
               >
-                Category (Generic)
+                Category Number
               </label>
               <input
                 id="filter-category"
@@ -290,7 +307,7 @@ export default function PageEntriesAdminPage() {
                   setPage(1);
                   setCategoryFilter(e.target.value);
                 }}
-                placeholder="e.g. fees, timetable, syllabus"
+                placeholder="e.g. 201, 202, 2008"
                 className="w-full rounded-xl border border-slate-300 bg-slate-50 px-3 py-2 text-xs text-slate-900 outline-none focus:border-orange-500 dark:border-slate-700 dark:bg-slate-950 dark:text-white"
               />
             </div>
@@ -362,12 +379,12 @@ export default function PageEntriesAdminPage() {
             <table className="w-full text-left text-xs">
               <thead className="border-b border-slate-200 bg-slate-50 font-semibold tracking-wider text-slate-500 uppercase dark:border-slate-800 dark:bg-slate-950/60 dark:text-slate-400">
                 <tr>
-                  <th className="px-4 py-3.5">Sr.</th>
                   <th className="px-4 py-3.5">Type</th>
                   <th className="px-4 py-3.5">Title & Details</th>
                   <th className="px-4 py-3.5">Department</th>
                   <th className="px-4 py-3.5">Category / Slug</th>
                   <th className="px-4 py-3.5">File / Link / Path</th>
+                  <th className="px-4 py-3.5">Created</th>
                   <th className="px-4 py-3.5 text-right">Actions</th>
                 </tr>
               </thead>
@@ -395,16 +412,13 @@ export default function PageEntriesAdminPage() {
                     const customRoute = getCustomPageRoute(entry);
                     const safeFileHref = getSafeHref(entry.file);
                     const safeLinkHref = getSafeHref(entry.link);
+                    const catMeta = findCategoryByNumber(entry.category);
 
                     return (
                       <tr
                         key={entry.id}
                         className="transition hover:bg-orange-50/40 dark:hover:bg-orange-500/5"
                       >
-                        <td className="px-4 py-3.5 font-mono text-slate-500 dark:text-slate-400">
-                          {entry.type === "generic" ? entry.srNo : "—"}
-                        </td>
-
                         <td className="px-4 py-3.5 whitespace-nowrap">
                           {entry.type === "custom" ? (
                             <span className="rounded-full bg-orange-500/10 px-2.5 py-0.5 text-[11px] font-bold text-orange-700 dark:bg-orange-400/15 dark:text-orange-300">
@@ -435,15 +449,18 @@ export default function PageEntriesAdminPage() {
                         </td>
 
                         <td className="px-4 py-3.5">
-                          {entry.type === "custom" ? (
-                            <span className="font-mono text-[11px] text-orange-700 dark:text-orange-300">
-                              {customRoute ?? entry.slug ?? "—"}
+                          <div className="flex flex-col gap-0.5">
+                            <span className="font-medium text-slate-800 dark:text-slate-200">
+                              {catMeta
+                                ? `${catMeta.label} (#${catMeta.categoryNumber})`
+                                : entry.category || "—"}
                             </span>
-                          ) : (
-                            <span className="font-medium text-slate-700 dark:text-slate-300">
-                              {entry.category || "—"}
-                            </span>
-                          )}
+                            {entry.type === "custom" && (
+                              <span className="font-mono text-[11px] text-orange-700 dark:text-orange-300">
+                                {customRoute ?? entry.slug ?? "—"}
+                              </span>
+                            )}
+                          </div>
                         </td>
 
                         <td className="max-w-xs px-4 py-3.5">
@@ -495,6 +512,10 @@ export default function PageEntriesAdminPage() {
                                 </span>
                               )}
                           </div>
+                        </td>
+
+                        <td className="px-4 py-3.5 whitespace-nowrap text-slate-500 dark:text-slate-400">
+                          {formatCreatedAtIst(entry.createdAt)}
                         </td>
 
                         <td className="px-4 py-3.5 text-right whitespace-nowrap">

@@ -61,7 +61,7 @@ function resolveSafeDiskPath(
 
 export interface LoadedCustomPage {
   id: string;
-  title: string;
+  title: string | null;
   slug: string;
   type: "university" | "department";
   departmentId: string | null;

@@ -53,7 +53,7 @@ export const DEPARTMENT_CATEGORY_MAP: Record<string, DepartmentLegacyMapping> =
       name: "School of Architecture",
       categoryId: 1,
     },
-    applied: {
+    dash: {
       name: "Applied Sciences & Humanities",
       categoryId: 3,
     },

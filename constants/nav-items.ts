@@ -222,51 +222,51 @@ export const navItems: NavItem[] = [
     children: [
       {
         label: "Chemical Engineering",
-        path: "/departments/legacy/chemical",
+        path: "/departments/chemical",
       },
       {
         label: "Civil Engineering",
-        path: "/departments/legacy/civil",
+        path: "/departments/civil",
       },
       {
         label: "Computer Science & Engineering",
-        path: "/departments/legacy/cse",
+        path: "/departments/cse",
       },
       {
         label: "Electronics & Communication Engineering",
-        path: "/departments/legacy/ece",
+        path: "/departments/ece",
       },
       {
         label: "Electrical Engineering",
-        path: "/departments/legacy/electrical",
+        path: "/departments/electrical",
       },
       {
         label: "Mechanical Engineering",
-        path: "/departments/legacy/mechanical",
+        path: "/departments/mechanical",
       },
       {
         label: "School of Architecture",
-        path: "/departments/legacy/arch",
+        path: "/departments/arch",
       },
       {
         label: "Applied Sciences & Humanities",
-        path: "/departments/legacy/dash",
+        path: "/departments/dash",
       },
       {
         label: "Computer Applications",
-        path: "/departments/legacy/ca",
+        path: "/departments/ca",
       },
       {
         label: "University Business School",
-        path: "/departments/legacy/ubs",
+        path: "/departments/ubs",
       },
       {
         label: "PolyWing",
-        path: "/departments/legacy/polywing",
+        path: "/departments/polywing",
       },
       {
         label: "Agriculture Department",
-        path: "/departments/legacy/agriculture",
+        path: "/departments/agriculture",
       },
     ],
   },

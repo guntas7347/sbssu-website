@@ -19,12 +19,10 @@ import {
 } from "lucide-react";
 import { Tier2Navigation } from "./Dropdown";
 import { navItems } from "@/constants/nav-items";
+import FontSizeChanger from "./FontSizeChanger";
 
 export function Header() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
-  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
-  const [mobileOpenSub, setMobileOpenSub] = useState<string | null>(null);
 
   const toggleDarkMode = () => {
     setDarkMode(!darkMode);
@@ -32,7 +30,7 @@ export function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 shadow-sm transition-colors">
+    <header className="static md:sticky top-0 z-50 w-full bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 shadow-sm transition-colors">
       {/* Top Utility Bar */}
       <div className="bg-slate-900 text-slate-300 text-xs py-2 px-4 sm:px-8 border-b border-slate-800">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-2">
@@ -56,6 +54,9 @@ export function Header() {
               Grievance Portal <ExternalLink className="w-3 h-3" />
             </a>
             <span>|</span>
+
+            <FontSizeChanger />
+
             <Link href="/support" className="hover:text-white">
               Help & Support
             </Link>

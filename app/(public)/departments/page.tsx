@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, Building2, Layers } from "lucide-react";
-import { getAllPublicDepartments } from "@/lib/actions/public-page-entries";
+import { getAllPublicDepartments } from "@/lib/actions/public/public-page-entries";
 
 export const dynamic = "force-dynamic";
 

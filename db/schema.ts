@@ -182,11 +182,11 @@ export const galleryItems = pgTable(
     id: text("id")
       .primaryKey()
       .$defaultFn(() => createId()),
-    srNo: integer("sr_no").notNull().default(1),
     title: text("title"),
     desc: text("desc"),
     path: text("path").notNull(),
     category: text("category").notNull(),
+    album: text("album").notNull(),
     departmentId: text("department_id").references(() => departmentsTable.id, {
       onDelete: "set null",
     }),
@@ -198,7 +198,8 @@ export const galleryItems = pgTable(
     }),
   },
   (table) => [
-    index("gallery_category_sr_idx").on(table.category, table.srNo),
+    index("gallery_dept_album_idx").on(table.departmentId, table.album),
+    index("gallery_category_created_idx").on(table.category, table.createdAt),
     index("gallery_created_by_idx").on(table.createdBy),
   ],
 );
@@ -206,94 +207,32 @@ export const galleryItems = pgTable(
 export type GalleryItem = typeof galleryItems.$inferSelect;
 export type NewGalleryItem = typeof galleryItems.$inferInsert;
 
-export const pageDetails = pgTable(
-  "page_details",
+export const pageCategories = pgTable(
+  "page_categories",
   {
     id: text("id")
       .primaryKey()
       .$defaultFn(() => createId()),
-    departmentId: text("department_id").references(() => departmentsTable.id, {
-      onDelete: "cascade",
-    }),
-    category: text("category").notNull(),
-    srNo: integer("sr_no").notNull().default(1),
-    title: text("title").notNull(),
-    desc: text("desc"),
-    file: text("file"),
-    link: text("link"),
-    createdBy: text("created_by")
-      .notNull()
-      .references(() => usersTable.id, {
-        onDelete: "restrict",
-      }),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .defaultNow()
-      .$onUpdate(() => new Date())
-      .notNull(),
+    name: text("name").notNull(),
+    code: text("code").notNull(),
+    note: text("note"), // guidance on what to fill where
+    permanent: boolean("permanent").default(false).notNull(),
+    singleEntry: boolean("single_entry").default(false).notNull(),
+    scope: text("scope").default("university").notNull(), // "university" | "department" | "academics" | "coe" ...
+    departmentId: text("department_id"), // null = University Wide, non-null = Department
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at").defaultNow().notNull(),
   },
   (table) => [
-    index("page_details_dept_cat_sr_idx").on(
-      table.departmentId,
-      table.category,
-      table.srNo,
-    ),
-    index("page_details_category_idx").on(table.category),
-    index("page_details_created_by_idx").on(table.createdBy),
+    index("page_categories_department_idx").on(table.departmentId),
+    uniqueIndex("page_categories_global_code_uidx")
+      .on(table.code)
+      .where(sql`${table.departmentId} IS NULL`),
+    uniqueIndex("page_categories_dept_code_uidx")
+      .on(table.departmentId, table.code)
+      .where(sql`${table.departmentId} IS NOT NULL`),
   ],
 );
-
-export type PageDetail = typeof pageDetails.$inferSelect;
-export type NewPageDetail = typeof pageDetails.$inferInsert;
-
-// for HTML based pages
-export const customPages = pgTable(
-  "custom_pages",
-  {
-    id: text("id")
-      .primaryKey()
-      .$defaultFn(() => createId()),
-    title: text("title").notNull(),
-    slug: text("slug").notNull(),
-    path: text("path").notNull(),
-    type: text("type").$type<"university" | "department">().notNull(),
-    departmentId: text("department_id").references(() => departmentsTable.id, {
-      onDelete: "cascade",
-    }),
-    createdBy: text("created_by")
-      .notNull()
-      .references(() => usersTable.id, {
-        onDelete: "restrict",
-      }),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .defaultNow()
-      .$onUpdate(() => new Date())
-      .notNull(),
-  },
-  (table) => [
-    // Unique slug per department when departmentId is set
-    uniqueIndex("custom_pages_dept_slug_uq")
-      .on(table.departmentId, table.slug)
-      .where(sql`${table.departmentId} is not null`),
-    // Unique slug across university-wide pages when departmentId is null
-    uniqueIndex("custom_pages_uni_slug_uq")
-      .on(table.slug)
-      .where(sql`${table.departmentId} is null`),
-    index("custom_pages_type_idx").on(table.type),
-    index("custom_pages_created_by_idx").on(table.createdBy),
-  ],
-);
-
-export type CustomPage = typeof customPages.$inferSelect;
-export type NewCustomPage = typeof customPages.$inferInsert;
-
-export type PageEntryType = "custom" | "generic";
-export type CustomPageScope = "university" | "department";
 
 export const pageEntries = pgTable(
   "page_entries",
@@ -301,58 +240,44 @@ export const pageEntries = pgTable(
     id: text("id")
       .primaryKey()
       .$defaultFn(() => createId()),
-    type: text("type").$type<PageEntryType>().notNull().default("generic"),
-
-    // Scope & shared identity
-    departmentId: text("department_id").references(() => departmentsTable.id, {
-      onDelete: "cascade",
-    }),
-    title: text("title"),
-
-    // Generic entry fields (type = "generic")
-    category: text("category"),
-    desc: text("desc"),
-    file: text("file"),
-    link: text("link"),
-
-    // Custom HTML page fields (type = "custom")
-    slug: text("slug"),
-    path: text("path"),
-    scope: text("scope").$type<CustomPageScope>(),
-
-    createdBy: text("created_by")
+    pageCategoryId: text("page_category_id")
       .notNull()
-      .references(() => usersTable.id, {
-        onDelete: "restrict",
-      }),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .defaultNow()
-      .$onUpdate(() => new Date())
-      .notNull(),
+      .references(() => pageCategories.id, { onDelete: "restrict" }),
+    departmentId: text("department_id"), // nullable for university-wide entries
+    title: text("title"),
+    desc: text("desc"),
+    file1: text("file1"),
+    file2: text("file2"),
+    link1: text("link1"),
+    link2: text("link2"),
+    slug: text("slug"),
+    htmlPath: text("html_path"), // disk-backed sanitized .html path inside UPLOAD_DIR
+    createdById: text("created_by_id"),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at").defaultNow().notNull(),
   },
   (table) => [
-    // Unique slug per department for custom pages
-    uniqueIndex("page_entries_custom_dept_slug_uq")
-      .on(table.departmentId, table.slug)
-      .where(
-        sql`${table.type} = 'custom' and ${table.departmentId} is not null`,
-      ),
-    // Unique slug across university-wide custom pages
-    uniqueIndex("page_entries_custom_uni_slug_uq")
-      .on(table.slug)
-      .where(sql`${table.type} = 'custom' and ${table.departmentId} is null`),
-    index("page_entries_type_idx").on(table.type),
-    index("page_entries_dept_cat_created_idx").on(
-      table.departmentId,
-      table.category,
-      table.createdAt,
-    ),
-    index("page_entries_created_by_idx").on(table.createdBy),
+    index("page_entries_category_idx").on(table.pageCategoryId),
+    index("page_entries_department_idx").on(table.departmentId),
+    index("page_entries_slug_idx").on(table.slug),
   ],
 );
 
-export type PageEntry = typeof pageEntries.$inferSelect;
-export type NewPageEntry = typeof pageEntries.$inferInsert;
+export const pageCategoriesRelations = relations(
+  pageCategories,
+  ({ many }) => ({
+    entries: many(pageEntries),
+  }),
+);
+
+export const pageEntriesRelations = relations(pageEntries, ({ one }) => ({
+  category: one(pageCategories, {
+    fields: [pageEntries.pageCategoryId],
+    references: [pageCategories.id],
+  }),
+}));
+
+export type PageCategoryRow = typeof pageCategories.$inferSelect;
+export type NewPageCategoryRow = typeof pageCategories.$inferInsert;
+export type PageEntryRow = typeof pageEntries.$inferSelect;
+export type NewPageEntryRow = typeof pageEntries.$inferInsert;

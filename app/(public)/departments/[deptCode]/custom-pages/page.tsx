@@ -5,7 +5,7 @@ import { ArrowLeft, ExternalLink, FileCode2, Layers } from "lucide-react";
 import {
   getAllPublicDepartmentEntries,
   getPublicCustomPagesByDept,
-} from "@/lib/actions/public-page-entries";
+} from "@/lib/actions/public/public-page-entries";
 
 export const dynamic = "force-dynamic";
 

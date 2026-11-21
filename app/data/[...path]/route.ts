@@ -48,6 +48,8 @@ export async function GET(
       const ext = path.extname(filePath).toLowerCase();
       const contentType = MIME_MAP[ext] || "application/octet-stream";
 
+      const safeFilename = path.basename(filePath).replace(/["\r\n]/g, "_");
+
       return new NextResponse(new Uint8Array(buffer), {
         status: 200,
         headers: {
@@ -55,7 +57,7 @@ export async function GET(
           "Content-Length": buffer.length.toString(),
           "Cache-Control": "private, max-age=3600",
           "X-Content-Type-Options": "nosniff",
-          "Content-Disposition": "inline",
+          "Content-Disposition": `inline; filename="${safeFilename}"`,
         },
       });
     } catch (error) {

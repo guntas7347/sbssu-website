@@ -14,19 +14,16 @@ import {
   GraduationCap,
   Landmark,
   Layers,
+  Link2,
   Target,
   UserCheck,
   Users,
 } from "lucide-react";
 import { LegacyInfoBanner } from "@/components/LegacyInfoBanner";
 import {
-  findCategoryByNumber,
-  PAGE_CATEGORY_MAP,
-} from "@/constants/page-categories";
-import {
   getAllPublicDepartmentEntries,
-  type PublicPageEntryItem,
-} from "@/lib/actions/public-page-entries";
+  type PublicDepartmentEntryItem,
+} from "@/lib/actions/public/public-page-entries";
 
 export const dynamic = "force-dynamic";
 
@@ -34,44 +31,72 @@ interface DeptPageProps {
   params: Promise<{ deptCode: string }>;
 }
 
-const HOME_CATEGORY_NUMBERS = new Set([
+const HOME_CATEGORY_CODES = new Set([
   "205", // About Department (single)
   "206", // Vision (single)
   "207", // Mission (single)
   "208", // HOD Details (single)
-  "209", // Courses Offered (categorical)
+  "209", // Courses Offered (list)
   "210", // PEOs, POs & PSOs (single)
-  "211", // Faculty Directory (categorical)
-  "212", // Board of Studies (BoS) (categorical)
-  "213", // Research, Publications & Grants (categorical)
+  "211", // Faculty Directory (list)
+  "212", // Board of Studies (BoS) (list)
+  "213", // Research, Publications & Grants (list)
 ]);
 
-function resolveEntryHref(
-  entry: PublicPageEntryItem,
+interface EntryActionLink {
+  href: string;
+  label: string;
+  isExternal: boolean;
+}
+
+function getEntryLinks(
+  entry: PublicDepartmentEntryItem,
   deptSlug: string,
-): { href: string | null; isExternal: boolean; label: string } {
-  if (entry.type === "custom" && entry.slug) {
-    return {
-      href: `/departments/${deptSlug}/pages/${entry.slug}`,
-      isExternal: false,
+): EntryActionLink[] {
+  const links: EntryActionLink[] = [];
+  const isCustom = Boolean(entry.slug || entry.htmlPath);
+
+  if (isCustom && entry.slug) {
+    links.push({
+      href: `/departments/${deptSlug}/custom-pages/${entry.slug}`,
       label: "Open Page",
-    };
+      isExternal: false,
+    });
   }
-  if (entry.file) {
-    return {
-      href: entry.file,
-      isExternal: /^https?:\/\//i.test(entry.file),
-      label: "View Document",
-    };
+
+  if (entry.file1) {
+    links.push({
+      href: entry.file1,
+      label: entry.file2 ? "File 1" : "View Document",
+      isExternal: /^https?:\/\//i.test(entry.file1),
+    });
   }
-  if (entry.link) {
-    return {
-      href: entry.link,
-      isExternal: /^https?:\/\//i.test(entry.link),
-      label: "Visit Link",
-    };
+
+  if (entry.file2) {
+    links.push({
+      href: entry.file2,
+      label: "File 2",
+      isExternal: /^https?:\/\//i.test(entry.file2),
+    });
   }
-  return { href: null, isExternal: false, label: "" };
+
+  if (entry.link1) {
+    links.push({
+      href: entry.link1,
+      label: entry.link2 ? "Link 1" : "Visit Link",
+      isExternal: /^https?:\/\//i.test(entry.link1),
+    });
+  }
+
+  if (entry.link2) {
+    links.push({
+      href: entry.link2,
+      label: "Link 2",
+      isExternal: /^https?:\/\//i.test(entry.link2),
+    });
+  }
+
+  return links;
 }
 
 export async function generateMetadata({
@@ -101,42 +126,42 @@ export default async function DepartmentPublicPage({ params }: DeptPageProps) {
   const deptSlug = department.code.toLowerCase();
   const legacyUrl = `/departments/legacy/${encodeURIComponent(deptSlug)}`;
 
-  const byCategory = (catNum: string): PublicPageEntryItem[] =>
-    entries.filter((e) => (e.category ?? "").trim() === catNum);
+  const byCategoryCode = (code: string): PublicDepartmentEntryItem[] =>
+    entries.filter((e) => (e.categoryCode ?? "").trim() === code);
 
-  // Single-entry department home sections (always accessing [0] from array)
-  const aboutEntry = byCategory("205")[0] ?? null;
-  const visionEntry = byCategory("206")[0] ?? null;
-  const missionEntry = byCategory("207")[0] ?? null;
-  const hodEntry = byCategory("208")[0] ?? null;
-  const peoEntry = byCategory("210")[0] ?? null;
+  // Single-entry department home sections
+  const aboutEntry = byCategoryCode("205")[0] ?? null;
+  const visionEntry = byCategoryCode("206")[0] ?? null;
+  const missionEntry = byCategoryCode("207")[0] ?? null;
+  const hodEntry = byCategoryCode("208")[0] ?? null;
+  const peoEntry = byCategoryCode("210")[0] ?? null;
 
-  // Categorical department home sections
-  const coursesEntries = byCategory("209");
-  const facultyEntries = byCategory("211");
-  const bosEntries = byCategory("212");
-  const researchEntries = byCategory("213");
+  // Multi-entry department home sections
+  const coursesEntries = byCategoryCode("209");
+  const facultyEntries = byCategoryCode("211");
+  const bosEntries = byCategoryCode("212");
+  const researchEntries = byCategoryCode("213");
 
   // Remaining department categories (Timetable 201, Syllabus 202, Labs 203, Committees 204, Custom Pages 901, etc.)
   const otherGroupsMap = new Map<
     string,
-    { code: string; label: string; items: PublicPageEntryItem[] }
+    { code: string; label: string; items: PublicDepartmentEntryItem[] }
   >();
 
   for (const entry of entries) {
-    const code = (entry.category ?? "").trim();
-    if (HOME_CATEGORY_NUMBERS.has(code)) continue;
+    const code = (entry.categoryCode ?? "").trim();
+    if (HOME_CATEGORY_CODES.has(code)) continue;
 
-    const key = code || "general";
-    const meta = findCategoryByNumber(code);
+    const key = entry.pageCategoryId || code || "general";
     const label =
-      meta?.label ?? (code ? `Category ${code}` : "Department Resources");
+      entry.categoryName?.trim() ||
+      (code ? `Category ${code}` : "Department Resources");
 
     const existing = otherGroupsMap.get(key);
     if (existing) {
       existing.items.push(entry);
     } else {
-      otherGroupsMap.set(key, { code: key, label, items: [entry] });
+      otherGroupsMap.set(key, { code: code || key, label, items: [entry] });
     }
   }
 
@@ -233,7 +258,9 @@ export default async function DepartmentPublicPage({ params }: DeptPageProps) {
                     <Compass className="h-5 w-5" />
                   </div>
                   <h2 className="text-base font-bold text-slate-900 sm:text-lg dark:text-white">
-                    {aboutEntry.title?.trim() || "About the Department"}
+                    {aboutEntry.title?.trim() ||
+                      aboutEntry.categoryName ||
+                      "About the Department"}
                   </h2>
                 </div>
                 {aboutEntry.desc && (
@@ -253,7 +280,9 @@ export default async function DepartmentPublicPage({ params }: DeptPageProps) {
                         <Eye className="h-5 w-5" />
                       </div>
                       <h2 className="text-base font-bold text-slate-900 sm:text-lg dark:text-white">
-                        {visionEntry.title?.trim() || "Vision"}
+                        {visionEntry.title?.trim() ||
+                          visionEntry.categoryName ||
+                          "Vision"}
                       </h2>
                     </div>
                     {visionEntry.desc && (
@@ -271,7 +300,9 @@ export default async function DepartmentPublicPage({ params }: DeptPageProps) {
                         <Target className="h-5 w-5" />
                       </div>
                       <h2 className="text-base font-bold text-slate-900 sm:text-lg dark:text-white">
-                        {missionEntry.title?.trim() || "Mission"}
+                        {missionEntry.title?.trim() ||
+                          missionEntry.categoryName ||
+                          "Mission"}
                       </h2>
                     </div>
                     {missionEntry.desc && (
@@ -307,10 +338,10 @@ export default async function DepartmentPublicPage({ params }: DeptPageProps) {
             </div>
 
             <div className="mt-6 flex flex-col gap-6 sm:flex-row sm:items-start">
-              {hodEntry.file && (
+              {hodEntry.file1 && (
                 <div className="shrink-0">
                   <img
-                    src={hodEntry.file}
+                    src={hodEntry.file1}
                     alt={hodEntry.title?.trim() || "Head of Department"}
                     className="h-36 w-36 rounded-2xl border border-slate-200 object-cover shadow-xs dark:border-slate-700"
                   />
@@ -354,7 +385,7 @@ export default async function DepartmentPublicPage({ params }: DeptPageProps) {
 
             <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {coursesEntries.map((course) => {
-                const action = resolveEntryHref(course, deptSlug);
+                const links = getEntryLinks(course, deptSlug);
                 return (
                   <div
                     key={course.id}
@@ -371,21 +402,24 @@ export default async function DepartmentPublicPage({ params }: DeptPageProps) {
                       )}
                     </div>
 
-                    {action.href && (
-                      <div className="mt-4 pt-2">
-                        <Link
-                          href={action.href}
-                          target={action.isExternal ? "_blank" : undefined}
-                          rel={
-                            action.isExternal
-                              ? "noopener noreferrer"
-                              : undefined
-                          }
-                          className="inline-flex items-center gap-1 text-xs font-semibold text-orange-700 hover:underline dark:text-orange-400"
-                        >
-                          <span>{action.label}</span>
-                          <ExternalLink className="h-3 w-3" />
-                        </Link>
+                    {links.length > 0 && (
+                      <div className="mt-4 flex flex-wrap gap-3 border-t border-slate-200/70 pt-2.5 dark:border-slate-800">
+                        {links.map((action) => (
+                          <Link
+                            key={`${course.id}-${action.label}`}
+                            href={action.href}
+                            target={action.isExternal ? "_blank" : undefined}
+                            rel={
+                              action.isExternal
+                                ? "noopener noreferrer"
+                                : undefined
+                            }
+                            className="inline-flex items-center gap-1 text-xs font-semibold text-orange-700 hover:underline dark:text-orange-400"
+                          >
+                            <span>{action.label}</span>
+                            <ExternalLink className="h-3 w-3" />
+                          </Link>
+                        ))}
                       </div>
                     )}
                   </div>
@@ -409,6 +443,7 @@ export default async function DepartmentPublicPage({ params }: DeptPageProps) {
                 <div>
                   <h2 className="text-base font-bold text-slate-900 sm:text-lg dark:text-white">
                     {peoEntry.title?.trim() ||
+                      peoEntry.categoryName ||
                       "PEOs, POs & PSOs (Outcome Framework)"}
                   </h2>
                   <p className="text-xs text-slate-500 dark:text-slate-400">
@@ -417,11 +452,10 @@ export default async function DepartmentPublicPage({ params }: DeptPageProps) {
                 </div>
               </div>
 
-              {(() => {
-                const action = resolveEntryHref(peoEntry, deptSlug);
-                if (!action.href) return null;
-                return (
+              <div className="flex flex-wrap gap-2">
+                {getEntryLinks(peoEntry, deptSlug).map((action) => (
                   <Link
+                    key={`${peoEntry.id}-${action.label}`}
                     href={action.href}
                     target={action.isExternal ? "_blank" : undefined}
                     rel={action.isExternal ? "noopener noreferrer" : undefined}
@@ -430,8 +464,8 @@ export default async function DepartmentPublicPage({ params }: DeptPageProps) {
                     <span>{action.label}</span>
                     <ExternalLink className="h-3.5 w-3.5" />
                   </Link>
-                );
-              })()}
+                ))}
+              </div>
             </div>
 
             {peoEntry.desc && (
@@ -464,10 +498,12 @@ export default async function DepartmentPublicPage({ params }: DeptPageProps) {
 
             <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {facultyEntries.map((member) => {
-                const action = resolveEntryHref(member, deptSlug);
-                const isImage = Boolean(
-                  member.file &&
-                  /\.(png|jpe?g|webp|gif)$/i.test(member.file.trim()),
+                const isPhoto = Boolean(
+                  member.file1 &&
+                  /\.(png|jpe?g|webp|gif)$/i.test(member.file1.trim()),
+                );
+                const extraLinks = getEntryLinks(member, deptSlug).filter(
+                  (l) => !(isPhoto && l.href === member.file1),
                 );
 
                 return (
@@ -476,9 +512,9 @@ export default async function DepartmentPublicPage({ params }: DeptPageProps) {
                     className="flex flex-col justify-between rounded-2xl border border-slate-200 bg-slate-50/70 p-4 dark:border-slate-800 dark:bg-slate-950/60"
                   >
                     <div className="flex items-start gap-3.5">
-                      {isImage && member.file && (
+                      {isPhoto && member.file1 && (
                         <img
-                          src={member.file}
+                          src={member.file1}
                           alt={member.title?.trim() || "Faculty member"}
                           className="h-14 w-14 shrink-0 rounded-xl border border-slate-200 object-cover dark:border-slate-700"
                         />
@@ -495,21 +531,24 @@ export default async function DepartmentPublicPage({ params }: DeptPageProps) {
                       </div>
                     </div>
 
-                    {action.href && !isImage && (
-                      <div className="mt-3 border-t border-slate-200/70 pt-2.5 dark:border-slate-800">
-                        <Link
-                          href={action.href}
-                          target={action.isExternal ? "_blank" : undefined}
-                          rel={
-                            action.isExternal
-                              ? "noopener noreferrer"
-                              : undefined
-                          }
-                          className="inline-flex items-center gap-1 text-xs font-semibold text-orange-700 hover:underline dark:text-orange-400"
-                        >
-                          <FileText className="h-3.5 w-3.5" />
-                          <span>{action.label}</span>
-                        </Link>
+                    {extraLinks.length > 0 && (
+                      <div className="mt-3 flex flex-wrap gap-3 border-t border-slate-200/70 pt-2.5 dark:border-slate-800">
+                        {extraLinks.map((action) => (
+                          <Link
+                            key={`${member.id}-${action.label}`}
+                            href={action.href}
+                            target={action.isExternal ? "_blank" : undefined}
+                            rel={
+                              action.isExternal
+                                ? "noopener noreferrer"
+                                : undefined
+                            }
+                            className="inline-flex items-center gap-1 text-xs font-semibold text-orange-700 hover:underline dark:text-orange-400"
+                          >
+                            <FileText className="h-3.5 w-3.5" />
+                            <span>{action.label}</span>
+                          </Link>
+                        ))}
                       </div>
                     )}
                   </div>
@@ -536,7 +575,7 @@ export default async function DepartmentPublicPage({ params }: DeptPageProps) {
 
             <ul className="mt-4 divide-y divide-slate-200 dark:divide-slate-800">
               {bosEntries.map((item) => {
-                const action = resolveEntryHref(item, deptSlug);
+                const links = getEntryLinks(item, deptSlug);
                 return (
                   <li
                     key={item.id}
@@ -553,18 +592,25 @@ export default async function DepartmentPublicPage({ params }: DeptPageProps) {
                       )}
                     </div>
 
-                    {action.href && (
-                      <Link
-                        href={action.href}
-                        target={action.isExternal ? "_blank" : undefined}
-                        rel={
-                          action.isExternal ? "noopener noreferrer" : undefined
-                        }
-                        className="inline-flex shrink-0 items-center gap-1 rounded-lg border border-orange-500/30 bg-orange-500/10 px-3 py-1.5 text-xs font-semibold text-orange-700 transition hover:bg-orange-500/20 dark:text-orange-300"
-                      >
-                        <span>{action.label}</span>
-                        <ExternalLink className="h-3 w-3" />
-                      </Link>
+                    {links.length > 0 && (
+                      <div className="flex flex-wrap gap-2">
+                        {links.map((action) => (
+                          <Link
+                            key={`${item.id}-${action.label}`}
+                            href={action.href}
+                            target={action.isExternal ? "_blank" : undefined}
+                            rel={
+                              action.isExternal
+                                ? "noopener noreferrer"
+                                : undefined
+                            }
+                            className="inline-flex shrink-0 items-center gap-1 rounded-lg border border-orange-500/30 bg-orange-500/10 px-3 py-1.5 text-xs font-semibold text-orange-700 transition hover:bg-orange-500/20 dark:text-orange-300"
+                          >
+                            <span>{action.label}</span>
+                            <ExternalLink className="h-3 w-3" />
+                          </Link>
+                        ))}
+                      </div>
                     )}
                   </li>
                 );
@@ -595,7 +641,7 @@ export default async function DepartmentPublicPage({ params }: DeptPageProps) {
 
             <ul className="mt-4 divide-y divide-slate-200 dark:divide-slate-800">
               {researchEntries.map((item) => {
-                const action = resolveEntryHref(item, deptSlug);
+                const links = getEntryLinks(item, deptSlug);
                 return (
                   <li
                     key={item.id}
@@ -612,18 +658,25 @@ export default async function DepartmentPublicPage({ params }: DeptPageProps) {
                       )}
                     </div>
 
-                    {action.href && (
-                      <Link
-                        href={action.href}
-                        target={action.isExternal ? "_blank" : undefined}
-                        rel={
-                          action.isExternal ? "noopener noreferrer" : undefined
-                        }
-                        className="inline-flex shrink-0 items-center gap-1 rounded-lg border border-green-600/30 bg-green-600/10 px-3 py-1.5 text-xs font-semibold text-green-700 transition hover:bg-green-600/20 dark:text-green-300"
-                      >
-                        <span>{action.label}</span>
-                        <ExternalLink className="h-3 w-3" />
-                      </Link>
+                    {links.length > 0 && (
+                      <div className="flex flex-wrap gap-2">
+                        {links.map((action) => (
+                          <Link
+                            key={`${item.id}-${action.label}`}
+                            href={action.href}
+                            target={action.isExternal ? "_blank" : undefined}
+                            rel={
+                              action.isExternal
+                                ? "noopener noreferrer"
+                                : undefined
+                            }
+                            className="inline-flex shrink-0 items-center gap-1 rounded-lg border border-green-600/30 bg-green-600/10 px-3 py-1.5 text-xs font-semibold text-green-700 transition hover:bg-green-600/20 dark:text-green-300"
+                          >
+                            <span>{action.label}</span>
+                            <ExternalLink className="h-3 w-3" />
+                          </Link>
+                        ))}
+                      </div>
                     )}
                   </li>
                 );
@@ -655,7 +708,7 @@ export default async function DepartmentPublicPage({ params }: DeptPageProps) {
 
             <ul className="mt-4 divide-y divide-slate-200 dark:divide-slate-800">
               {section.items.map((item) => {
-                const action = resolveEntryHref(item, deptSlug);
+                const links = getEntryLinks(item, deptSlug);
                 return (
                   <li
                     key={item.id}
@@ -663,7 +716,10 @@ export default async function DepartmentPublicPage({ params }: DeptPageProps) {
                   >
                     <div className="min-w-0 flex-1">
                       <p className="text-sm font-semibold text-slate-900 dark:text-white">
-                        {item.title?.trim() || item.desc?.trim() || "Entry"}
+                        {item.title?.trim() ||
+                          item.desc?.trim() ||
+                          item.categoryName ||
+                          "Entry"}
                       </p>
                       {item.title && item.desc && (
                         <p className="mt-0.5 text-xs text-slate-600 dark:text-slate-400">
@@ -672,18 +728,26 @@ export default async function DepartmentPublicPage({ params }: DeptPageProps) {
                       )}
                     </div>
 
-                    {action.href && (
-                      <Link
-                        href={action.href}
-                        target={action.isExternal ? "_blank" : undefined}
-                        rel={
-                          action.isExternal ? "noopener noreferrer" : undefined
-                        }
-                        className="inline-flex shrink-0 items-center gap-1 rounded-lg border border-orange-500/30 bg-orange-500/10 px-3 py-1.5 text-xs font-semibold text-orange-700 transition hover:bg-orange-500/20 dark:text-orange-300"
-                      >
-                        <span>{action.label}</span>
-                        <ExternalLink className="h-3 w-3" />
-                      </Link>
+                    {links.length > 0 && (
+                      <div className="flex flex-wrap gap-2">
+                        {links.map((action) => (
+                          <Link
+                            key={`${item.id}-${action.label}`}
+                            href={action.href}
+                            target={action.isExternal ? "_blank" : undefined}
+                            rel={
+                              action.isExternal
+                                ? "noopener noreferrer"
+                                : undefined
+                            }
+                            className="inline-flex shrink-0 items-center gap-1 rounded-lg border border-orange-500/30 bg-orange-500/10 px-3 py-1.5 text-xs font-semibold text-orange-700 transition hover:bg-orange-500/20 dark:text-orange-300"
+                          >
+                            <Link2 className="h-3 w-3" />
+                            <span>{action.label}</span>
+                            <ExternalLink className="h-3 w-3" />
+                          </Link>
+                        ))}
+                      </div>
                     )}
                   </li>
                 );

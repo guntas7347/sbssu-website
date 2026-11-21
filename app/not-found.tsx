@@ -1,12 +1,8 @@
 import Link from "next/link";
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
 
 export default function NotFound() {
   return (
     <div className="flex min-h-screen flex-col bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100">
-      <Header />
-
       <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col items-center justify-center px-4 py-16 text-center sm:px-6 lg:px-8">
         <div className="w-full rounded-3xl border border-slate-200 bg-white p-8 shadow-xs sm:p-12 dark:border-slate-800 dark:bg-slate-900">
           <p className="font-mono text-xs font-bold tracking-widest text-orange-600 uppercase dark:text-orange-400">
@@ -39,8 +35,6 @@ export default function NotFound() {
           </div>
         </div>
       </main>
-
-      <Footer />
     </div>
   );
 }

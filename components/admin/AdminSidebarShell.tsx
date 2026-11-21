@@ -21,7 +21,9 @@ import {
   Sun,
   Users,
   X,
+  ListSortAscending,
 } from "lucide-react";
+import { RevalidateSidebarButton } from "./RevalidateSidebarButton";
 
 export interface DepartmentInfo {
   id: string;
@@ -72,7 +74,6 @@ const NAV_CATEGORIES: NavCategory[] = [
   "Administration",
   "Content & Media",
 ];
-
 const NAV_ITEMS: NavItem[] = [
   {
     name: "Dashboard",
@@ -85,57 +86,49 @@ const NAV_ITEMS: NavItem[] = [
     href: "/admin/admin/manage-departments",
     category: "Administration",
     icon: Building2,
-    requiredRights: ["MANAGE_DEPARTMENTS", "ADMIN_DEPARTMENTS", "SUPER_ADMIN"],
+    requiredRights: ["admin"],
   },
   {
     name: "Manage Users",
     href: "/admin/admin/users",
     category: "Administration",
     icon: Users,
-    requiredRights: ["MANAGE_USERS", "ADMIN_USERS", "SUPER_ADMIN"],
+    requiredRights: ["admin"],
   },
   {
     name: "Legacy Manager",
     href: "/admin/admin/legacy-manager",
     category: "Administration",
     icon: History,
-    requiredRights: ["MANAGE_LEGACY", "LEGACY_MANAGER", "SUPER_ADMIN"],
+    requiredRights: ["admin"],
   },
   {
     name: "Gallery",
     href: "/admin/gallery",
     category: "Content & Media",
     icon: ImageIcon,
-    requiredRights: [
-      "MANAGE_GALLERY",
-      "GALLERY",
-      "CONTENT_MANAGER",
-      "SUPER_ADMIN",
-    ],
+    requiredRights: ["admin", "hod"],
   },
   {
     name: "Notices",
     href: "/admin/notices",
     category: "Content & Media",
     icon: Megaphone,
-    requiredRights: [
-      "MANAGE_NOTICES",
-      "NOTICES",
-      "CONTENT_MANAGER",
-      "SUPER_ADMIN",
-    ],
+    requiredRights: ["admin", "hod"],
+  },
+  {
+    name: "Page Categories",
+    href: "/admin/page-categories",
+    category: "Content & Media",
+    icon: ListSortAscending,
+    requiredRights: ["admin", "hod"],
   },
   {
     name: "Page Entries",
     href: "/admin/page-entries",
     category: "Content & Media",
     icon: FileText,
-    requiredRights: [
-      "MANAGE_PAGES",
-      "PAGE_ENTRIES",
-      "CONTENT_MANAGER",
-      "SUPER_ADMIN",
-    ],
+    requiredRights: ["admin", "hod"],
   },
 ];
 
@@ -318,6 +311,7 @@ export default function AdminSidebarShell({
 
         {/* SIDEBAR FOOTER ACTIONS */}
         <div className="p-3 border-t border-slate-200 dark:border-slate-800 space-y-1 shrink-0">
+          <RevalidateSidebarButton />
           <Link
             href="/"
             target="_blank"
@@ -329,7 +323,6 @@ export default function AdminSidebarShell({
             <ExternalLink className="w-4 h-4 shrink-0 text-secondary dark:text-secondary-dark" />
             {!isCollapsed && <span className="truncate">Main Website</span>}
           </Link>
-
           <button
             type="button"
             onClick={onSignOut}

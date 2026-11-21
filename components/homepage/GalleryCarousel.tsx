@@ -2,8 +2,10 @@
 
 import React, { useState, useEffect, useCallback } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { getGalleryCarousel } from "@/lib/actions/gallery";
-import type { GalleryItem } from "@/db/schema";
+import {
+  getPublicGallery,
+  type PublicGalleryItem,
+} from "@/lib/actions/public/public-gallery";
 
 interface CarouselSlide {
   id: string;
@@ -21,29 +23,13 @@ const FALLBACK_SLIDES: CarouselSlide[] = [
     subtitle:
       "State-of-the-art engineering laboratories and interactive lecture halls.",
   },
-  {
-    id: "fallback-2",
-    image:
-      "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=1600&q=80",
-    title: "Vibrant Campus Community",
-    subtitle:
-      "Fostering leadership, technical innovation, and lifelong friendships.",
-  },
-  {
-    id: "fallback-3",
-    image:
-      "https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=1600&q=80",
-    title: "Central Library & Resource Hub",
-    subtitle:
-      "Housing thousands of research journals, books, and digital archives.",
-  },
 ];
 
-function mapItemsToSlides(items: GalleryItem[]): CarouselSlide[] {
+function mapItemsToSlides(items: PublicGalleryItem[]): CarouselSlide[] {
   return items.map((item, idx) => ({
-    id: item.id || `central-${item.srNo}-${idx}`,
+    id: item.id || `central-${idx}`,
     image: item.path,
-    title: item.title || `Slide #${item.srNo}`,
+    title: item.title || item.album || `Slide #${idx + 1}`,
     subtitle: item.desc || "",
   }));
 }
@@ -56,9 +42,14 @@ export function GalleryCarousel() {
   const loadCentralSlides = useCallback(async () => {
     setLoading(true);
     try {
-      const items = await getGalleryCarousel("central");
-      if (items.length > 0) {
-        setSlides(mapItemsToSlides(items));
+      const res = await getPublicGallery({
+        category: "homepage",
+        universityOnly: true,
+        page: 1,
+        pageSize: 20,
+      });
+      if (res.items.length > 0) {
+        setSlides(mapItemsToSlides(res.items));
         setCurrent(0);
       } else {
         setSlides(FALLBACK_SLIDES);

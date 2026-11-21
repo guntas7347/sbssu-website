@@ -17,58 +17,24 @@ import {
   editUserAccess,
   type UserRecord,
   type DepartmentOption,
-  type UserRight,
 } from "@/lib/actions/users";
-
-const ALL_RIGHTS: ReadonlyArray<{
-  key: UserRight;
-  label: string;
-  description: string;
-}> = [
-  {
-    key: "admin",
-    label: "admin",
-    description: "Full administrative access across portal",
-  },
-  {
-    key: "allow_login",
-    label: "allow_login",
-    description: "Permitted to sign in to the application",
-  },
-  {
-    key: "hod",
-    label: "hod",
-    description: "Head of Department privileges",
-  },
-  {
-    key: "academics",
-    label: "academics",
-    description: "Academic records and curriculum access",
-  },
-  {
-    key: "placements",
-    label: "placements",
-    description: "Training & placement cell management",
-  },
-];
-
-function isValidRight(r: string): r is UserRight {
-  return ALL_RIGHTS.some((item) => item.key === r);
-}
+import { getAllRights, RightOption } from "@/lib/actions/configs";
+import Link from "next/link";
 
 export default function UsersPage() {
   const [users, setUsers] = useState<UserRecord[]>([]);
   const [departments, setDepartments] = useState<DepartmentOption[]>([]);
+  const [availableRights, setAvailableRights] = useState<RightOption[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
 
   const [searchName, setSearchName] = useState("");
-  const [rightFilter, setRightFilter] = useState<"all" | UserRight>("all");
+  const [rightFilter, setRightFilter] = useState<string>("all");
 
   // Modal state
   const [editingUser, setEditingUser] = useState<UserRecord | null>(null);
   const [modalDepartmentId, setModalDepartmentId] = useState<string>("");
-  const [modalRights, setModalRights] = useState<UserRight[]>([]);
+  const [modalRights, setModalRights] = useState<string[]>([]);
   const [isSaving, startTransition] = useTransition();
 
   const [banner, setBanner] = useState<{
@@ -80,9 +46,13 @@ export default function UsersPage() {
     setLoading(true);
     setLoadError(null);
     try {
-      const res = await getAllUsersAndDepartments();
+      const [res, rightsList] = await Promise.all([
+        getAllUsersAndDepartments(),
+        getAllRights(),
+      ]);
       setUsers(res.users);
       setDepartments(res.departments);
+      setAvailableRights(rightsList);
     } catch (err) {
       setLoadError(
         err instanceof Error ? err.message : "Failed to load users.",
@@ -95,6 +65,19 @@ export default function UsersPage() {
   useEffect(() => {
     void loadData();
   }, []);
+
+  const validRightCodes = useMemo(
+    () => new Set(availableRights.map((r) => r.code)),
+    [availableRights],
+  );
+
+  const rightLabelMap = useMemo(() => {
+    const map = new Map<string, string>();
+    for (const r of availableRights) {
+      map.set(r.code, r.label);
+    }
+    return map;
+  }, [availableRights]);
 
   const departmentMap = useMemo(() => {
     const map = new Map<string, string>();
@@ -124,7 +107,9 @@ export default function UsersPage() {
     setBanner(null);
     setEditingUser(user);
     setModalDepartmentId(user.departmentId ?? "");
-    const currentRights = (user.rights ?? []).filter(isValidRight);
+    const currentRights = (user.rights ?? []).filter((r) =>
+      validRightCodes.has(r),
+    );
     setModalRights(currentRights);
   };
 
@@ -133,9 +118,11 @@ export default function UsersPage() {
     setEditingUser(null);
   };
 
-  const toggleRightCheckbox = (right: UserRight) => {
+  const toggleRightCheckbox = (rightCode: string) => {
     setModalRights((prev) =>
-      prev.includes(right) ? prev.filter((r) => r !== right) : [...prev, right],
+      prev.includes(rightCode)
+        ? prev.filter((r) => r !== rightCode)
+        : [...prev, rightCode],
     );
   };
 
@@ -161,7 +148,6 @@ export default function UsersPage() {
       }
     });
   };
-
   return (
     <main className="min-h-screen bg-slate-50 px-4 py-8 text-slate-900 sm:px-6 lg:px-8 dark:bg-slate-950 dark:text-slate-100">
       <div className="mx-auto max-w-7xl space-y-6">
@@ -251,16 +237,14 @@ export default function UsersPage() {
               <Filter className="h-4 w-4 shrink-0 text-green-700 dark:text-green-400" />
               <select
                 value={rightFilter}
-                onChange={(e) =>
-                  setRightFilter(e.target.value as "all" | UserRight)
-                }
+                onChange={(e) => setRightFilter(e.target.value)}
                 aria-label="Filter users by right"
                 className="w-full cursor-pointer rounded-xl border border-slate-300 bg-slate-50 px-3.5 py-2.5 text-sm text-slate-900 outline-none transition focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 dark:border-slate-700 dark:bg-slate-950 dark:text-white"
               >
                 <option value="all">All Rights</option>
-                {ALL_RIGHTS.map((r) => (
-                  <option key={r.key} value={r.key}>
-                    Right: {r.label}
+                {availableRights.map((r) => (
+                  <option key={r.code} value={r.code}>
+                    {r.label}
                   </option>
                 ))}
               </select>
@@ -313,7 +297,12 @@ export default function UsersPage() {
                             {user.fullName || "Unnamed User"}
                           </div>
                           <div className="font-mono text-xs text-slate-500 dark:text-slate-400">
-                            @{user.username || user.id}
+                            <Link
+                              href={`/admin/admin/users/${user.id}`}
+                              className="font-mono underline-offset-2 text-orange-400 hover:text-orange-600 hover:underline dark:text-orange-200 dark:hover:text-orange-400"
+                            >
+                              {user.id}
+                            </Link>
                           </div>
                         </td>
                         <td className="px-4 py-3.5 text-xs text-slate-600 dark:text-slate-300">
@@ -438,25 +427,25 @@ export default function UsersPage() {
                   Rights
                 </span>
                 <div className="space-y-2 rounded-xl border border-slate-200 bg-slate-50/70 p-3.5 dark:border-slate-800 dark:bg-slate-950/60">
-                  {ALL_RIGHTS.map((rightItem) => {
-                    const checked = modalRights.includes(rightItem.key);
+                  {availableRights.map((rightItem) => {
+                    const checked = modalRights.includes(rightItem.code);
                     return (
                       <label
-                        key={rightItem.key}
+                        key={rightItem.code}
                         className="flex cursor-pointer items-start gap-3 rounded-lg p-1.5 transition hover:bg-white dark:hover:bg-slate-900"
                       >
                         <input
                           type="checkbox"
                           checked={checked}
-                          onChange={() => toggleRightCheckbox(rightItem.key)}
+                          onChange={() => toggleRightCheckbox(rightItem.code)}
                           className="mt-0.5 h-4 w-4 cursor-pointer rounded border-slate-300 text-green-600 focus:ring-green-500 dark:border-slate-700 dark:bg-slate-900"
                         />
                         <div className="min-w-0 flex-1">
                           <span className="block font-mono text-xs font-bold text-slate-900 dark:text-white">
-                            {rightItem.label}
+                            {rightItem.code}
                           </span>
                           <span className="block text-xs text-slate-500 dark:text-slate-400">
-                            {rightItem.description}
+                            {rightItem.label}
                           </span>
                         </div>
                       </label>

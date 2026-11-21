@@ -15,8 +15,10 @@ import {
   ShieldAlert,
 } from "lucide-react";
 import { notice_categories, NOTICE_LEVELS } from "@/constants/categories";
-import { getPublicNotices } from "@/lib/actions/notices";
-import type { Notice } from "@/db/schema";
+import {
+  getPublicNotices,
+  PublicNoticeItem,
+} from "@/lib/actions/public/public-notices";
 
 const PAGE_SIZE = 20;
 
@@ -25,10 +27,12 @@ export default function PublicNoticesPage() {
   const [category, setCategory] = useState<string>("all");
   const [page, setPage] = useState<number>(1);
 
-  const [notices, setNotices] = useState<Notice[]>([]);
+  const [notices, setNotices] = useState<PublicNoticeItem[]>([]);
   const [totalCount, setTotalCount] = useState<number>(0);
   const [hasMore, setHasMore] = useState<boolean>(false);
-  const [selectedNotice, setSelectedNotice] = useState<Notice | null>(null);
+  const [selectedNotice, setSelectedNotice] = useState<PublicNoticeItem | null>(
+    null,
+  );
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 

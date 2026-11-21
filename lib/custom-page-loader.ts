@@ -2,7 +2,7 @@ import "server-only";
 
 import { readFile } from "node:fs/promises";
 import path from "node:path";
-import { and, eq, sql } from "drizzle-orm";
+import { and, eq, isNotNull, isNull, sql } from "drizzle-orm";
 import { db } from "@/db/drizzel";
 import { departmentsTable, pageEntries } from "@/db/schema";
 
@@ -38,7 +38,7 @@ function resolveSafeDiskPath(
   const trimmed = (storedPath ?? "").trim();
   if (!trimmed) return null;
 
-  // Support both "/data/custom-pages/abc.html" and "custom-pages/abc.html"
+  // Support both "/data/custom-pages/..." and "custom-pages/..."
   const relative = trimmed.startsWith("/data/")
     ? trimmed.slice("/data/".length)
     : trimmed.replace(/^\/+/, "");
@@ -63,7 +63,7 @@ export interface LoadedCustomPage {
   id: string;
   title: string | null;
   slug: string;
-  type: "university" | "department";
+  scope: "university" | "department";
   departmentId: string | null;
   departmentName: string | null;
   departmentCode: string | null;
@@ -81,23 +81,22 @@ export async function loadUniversityCustomPage(
       id: pageEntries.id,
       title: pageEntries.title,
       slug: pageEntries.slug,
-      path: pageEntries.path,
-      scope: pageEntries.scope,
+      htmlPath: pageEntries.htmlPath,
       departmentId: pageEntries.departmentId,
     })
     .from(pageEntries)
     .where(
       and(
-        eq(pageEntries.type, "custom"),
         eq(pageEntries.slug, cleanSlug),
-        sql`${pageEntries.departmentId} is null`,
+        isNotNull(pageEntries.htmlPath),
+        isNull(pageEntries.departmentId),
       ),
     )
     .limit(1);
 
   if (!record || !record.slug) return null;
 
-  const safeDiskPath = resolveSafeDiskPath(record.path);
+  const safeDiskPath = resolveSafeDiskPath(record.htmlPath);
   if (!safeDiskPath) return null;
 
   try {
@@ -110,7 +109,7 @@ export async function loadUniversityCustomPage(
       id: record.id,
       title: record.title,
       slug: record.slug,
-      type: "university",
+      scope: "university",
       departmentId: null,
       departmentName: null,
       departmentCode: null,
@@ -146,23 +145,22 @@ export async function loadDepartmentCustomPage(
       id: pageEntries.id,
       title: pageEntries.title,
       slug: pageEntries.slug,
-      path: pageEntries.path,
-      scope: pageEntries.scope,
+      htmlPath: pageEntries.htmlPath,
       departmentId: pageEntries.departmentId,
     })
     .from(pageEntries)
     .where(
       and(
-        eq(pageEntries.type, "custom"),
         eq(pageEntries.departmentId, dept.id),
         eq(pageEntries.slug, cleanSlug),
+        isNotNull(pageEntries.htmlPath),
       ),
     )
     .limit(1);
 
   if (!record || !record.slug) return null;
 
-  const safeDiskPath = resolveSafeDiskPath(record.path);
+  const safeDiskPath = resolveSafeDiskPath(record.htmlPath);
   if (!safeDiskPath) return null;
 
   try {
@@ -175,7 +173,7 @@ export async function loadDepartmentCustomPage(
       id: record.id,
       title: record.title,
       slug: record.slug,
-      type: "department",
+      scope: "department",
       departmentId: dept.id,
       departmentName: dept.name,
       departmentCode: dept.code,

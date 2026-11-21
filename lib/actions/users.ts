@@ -8,6 +8,8 @@ import { revalidatePath } from "next/cache";
 import { asc } from "drizzle-orm";
 import { departmentsTable } from "@/db/schema";
 import type { SSOUserPayload } from "@/app/api/auth/callback/route";
+import { getCurrentUser } from "./auth";
+import { getUserAllowedScopes } from "./configs";
 
 export async function upsertUser(ssoUser: SSOUserPayload) {
   if (!ssoUser.email)
@@ -48,13 +50,6 @@ export async function upsertUser(ssoUser: SSOUserPayload) {
   }
 }
 
-export type UserRight =
-  | "admin"
-  | "allow_login"
-  | "hod"
-  | "academics"
-  | "placements";
-
 export interface UserRecord {
   id: string;
   username: string | null;
@@ -75,7 +70,7 @@ export interface DepartmentOption {
 export interface UpdateUserAccessInput {
   id: string;
   departmentId: string | null;
-  rights: UserRight[];
+  rights: string[];
 }
 
 export interface UserActionResult {
@@ -147,5 +142,131 @@ export async function editUserAccess(
       message:
         err instanceof Error ? err.message : "Failed to update user access.",
     };
+  }
+}
+
+export interface UserDepartmentDetail {
+  name: string;
+  id: string;
+  code: string;
+  createdBy: string | null;
+  hodId: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface ReadOnlyUserDetail {
+  id: string;
+  createdAt: Date;
+  updatedAt: Date;
+  username: string | null;
+  fullName: string | null;
+  email: string | null;
+  phone: string | null;
+  departmentId: string | null;
+  rights: string[] | null;
+  department: UserDepartmentDetail | null;
+}
+
+export async function getUserProfileById(
+  targetUserId: string,
+): Promise<ReadOnlyUserDetail | null> {
+  const currentUser = await getCurrentUser();
+  if (!currentUser) throw new Error("Unauthorized: Please log in.");
+
+  const cleanId = targetUserId.trim();
+  if (!cleanId) return null;
+
+  const [row] = await db
+    .select({
+      id: usersTable.id,
+      createdAt: usersTable.createdAt,
+      updatedAt: usersTable.updatedAt,
+      username: usersTable.username,
+      fullName: usersTable.fullName,
+      email: usersTable.email,
+      phone: usersTable.phone,
+      departmentId: usersTable.departmentId,
+      rights: usersTable.rights,
+      deptId: departmentsTable.id,
+      deptName: departmentsTable.name,
+      deptCode: departmentsTable.code,
+      deptCreatedBy: departmentsTable.createdBy,
+      deptHodId: departmentsTable.hodId,
+      deptCreatedAt: departmentsTable.createdAt,
+      deptUpdatedAt: departmentsTable.updatedAt,
+    })
+    .from(usersTable)
+    .leftJoin(
+      departmentsTable,
+      eq(usersTable.departmentId, departmentsTable.id),
+    )
+    .where(eq(usersTable.id, cleanId))
+    .limit(1);
+
+  if (!row) {
+    return null;
+  }
+
+  const department: UserDepartmentDetail | null =
+    row.deptId &&
+    row.deptName &&
+    row.deptCode &&
+    row.deptCreatedAt &&
+    row.deptUpdatedAt
+      ? {
+          id: row.deptId,
+          name: row.deptName,
+          code: row.deptCode,
+          createdBy: row.deptCreatedBy,
+          hodId: row.deptHodId,
+          createdAt: row.deptCreatedAt,
+          updatedAt: row.deptUpdatedAt,
+        }
+      : null;
+
+  return {
+    id: row.id,
+    createdAt: row.createdAt,
+    updatedAt: row.updatedAt,
+    username: row.username,
+    fullName: row.fullName,
+    email: row.email,
+    phone: row.phone,
+    departmentId: row.departmentId,
+    rights: Array.isArray(row.rights) ? row.rights : null,
+    department,
+  };
+}
+
+export async function revalidateCurrentScopeCache(): Promise<void> {
+  const user = await getCurrentUser();
+  const rights = Array.isArray(user?.rights) ? user.rights : [];
+  const allowedScopes = await getUserAllowedScopes();
+
+  if (!user || allowedScopes.length === 0) {
+    return;
+  }
+
+  if (user.departmentId) {
+    const [dept] = await db
+      .select({ code: departmentsTable.code })
+      .from(departmentsTable)
+      .where(eq(departmentsTable.id, user.departmentId))
+      .limit(1);
+
+    if (dept?.code) {
+      const basePath = `/departments/${dept.code.trim().toLowerCase()}`;
+      revalidatePath(basePath, "layout");
+      revalidatePath(basePath);
+      revalidatePath(`${basePath}/page`, "layout");
+      revalidatePath(`${basePath}/custom-pages`, "layout");
+    }
+  }
+
+  if (rights.includes("admin")) {
+    revalidatePath("/", "layout");
+    revalidatePath("/page", "layout");
+    revalidatePath("/custom-pages", "layout");
   }
 }

@@ -10,11 +10,13 @@ import {
   Calendar,
   FileText,
 } from "lucide-react";
-import { getLatestNoticesCarousel } from "@/lib/actions/notices";
-import type { Notice } from "@/db/schema";
+import {
+  getPublicNotices,
+  type PublicNoticeItem,
+} from "@/lib/actions/public/public-notices";
 
 export function NoticesSection() {
-  const [notices, setNotices] = useState<Notice[]>([]);
+  const [notices, setNotices] = useState<PublicNoticeItem[]>([]);
   const [offset, setOffset] = useState<number>(0);
   const [paused, setPaused] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
@@ -24,9 +26,9 @@ export function NoticesSection() {
 
     async function loadLatest() {
       try {
-        const rows = await getLatestNoticesCarousel(20);
+        const res = await getPublicNotices({ page: 1, pageSize: 20 });
         if (active) {
-          setNotices(rows);
+          setNotices(res.notices);
           setOffset(0);
         }
       } catch (err) {

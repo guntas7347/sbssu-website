@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft, ExternalLink, FileCode2, Layers } from "lucide-react";
-import { getPublicUniversityCustomPages } from "@/lib/actions/public-page-entries";
+import { getPublicUniversityCustomPages } from "@/lib/actions/public/public-page-entries";
 
 export const dynamic = "force-dynamic";
 

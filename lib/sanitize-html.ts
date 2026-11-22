@@ -1,5 +1,3 @@
-"use client";
-
 const BLOCKED_TAGS = new Set([
   "SCRIPT",
   "IFRAME",

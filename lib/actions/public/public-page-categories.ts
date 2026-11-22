@@ -1,101 +1,64 @@
+"use server";
+
+import { and, asc, eq, isNull } from "drizzle-orm";
 import { db } from "@/db/drizzel";
-import { departmentsTable, pageCategories, pageEntries } from "@/db/schema";
-import { and, eq, isNull } from "drizzle-orm";
-import { notFound } from "next/navigation";
+import { pageCategories, pageEntries } from "@/db/schema";
 
-export async function getPublicCategoryPage(params: {
-  code: string;
-  deptCode?: string;
-}) {
-  const normalizedCode = params.code.trim().toLowerCase();
-  const normalizedDept = params.deptCode?.trim().toLowerCase();
+export type PublicCategoryScope =
+  | "university"
+  | "all-departments"
+  | "department"
+  | "academics"
+  | "coe"
+  | (string & {});
 
-  if (normalizedDept) {
-    const [dept] = await db
-      .select({
-        id: departmentsTable.id,
-        code: departmentsTable.code,
-        name: departmentsTable.name,
-      })
-      .from(departmentsTable)
-      .where(eq(departmentsTable.code, normalizedDept))
-      .limit(1);
+export type PublicPageCategory = typeof pageCategories.$inferSelect;
+export type PublicPageEntry = typeof pageEntries.$inferSelect;
 
-    if (!dept) {
-      notFound();
-    }
+export interface PublicPageCategoryWithEntries {
+  category: PublicPageCategory | null;
+  entries: PublicPageEntry[];
+}
 
-    const [category] = await db
-      .select({
-        id: pageCategories.id,
-        name: pageCategories.name,
-        code: pageCategories.code,
-        note: pageCategories.note,
-        permanent: pageCategories.permanent,
-      })
-      .from(pageCategories)
-      .where(
-        and(
-          eq(pageCategories.departmentId, dept.id),
-          eq(pageCategories.code, normalizedCode),
-          eq(pageCategories.permanent, false),
-        ),
-      )
-      .limit(1);
-
-    if (!category) {
-      notFound();
-    }
-
-    const entries = await db
-      .select()
-      .from(pageEntries)
-      .where(
-        and(
-          eq(pageEntries.pageCategoryId, category.id),
-          eq(pageEntries.departmentId, dept.id),
-        ),
-      );
-
-    return {
-      scope: "department" as const,
-      department: dept,
-      category,
-      entries,
-    };
+export async function getPageCategory(
+  code: string,
+  scope: PublicCategoryScope = "university",
+  departmentId?: string | null,
+): Promise<PublicPageCategoryWithEntries> {
+  const normalizedCode = code.trim().toLowerCase();
+  if (!normalizedCode) {
+    return { category: null, entries: [] };
   }
 
+  const deptCondition =
+    scope === "department" && departmentId
+      ? eq(pageCategories.departmentId, departmentId)
+      : isNull(pageCategories.departmentId);
+
   const [category] = await db
-    .select({
-      id: pageCategories.id,
-      name: pageCategories.name,
-      code: pageCategories.code,
-      note: pageCategories.note,
-      permanent: pageCategories.permanent,
-    })
+    .select()
     .from(pageCategories)
     .where(
       and(
-        isNull(pageCategories.departmentId),
         eq(pageCategories.code, normalizedCode),
-        eq(pageCategories.permanent, false),
+        eq(pageCategories.scope, scope),
+        deptCondition,
       ),
     )
     .limit(1);
 
   if (!category) {
-    notFound();
+    return { category: null, entries: [] };
   }
 
   const entries = await db
     .select()
     .from(pageEntries)
-    .where(
-      and(
-        eq(pageEntries.pageCategoryId, category.id),
-        isNull(pageEntries.departmentId),
-      ),
-    );
+    .where(eq(pageEntries.pageCategoryId, category.id))
+    .orderBy(asc(pageEntries.createdAt));
 
-  return { scope: "university" as const, department: null, category, entries };
+  return {
+    category,
+    entries,
+  };
 }

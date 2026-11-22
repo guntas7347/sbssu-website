@@ -8,28 +8,36 @@ export interface PublicDepartmentEntryItem {
   categoryCode: string;
   categoryName: string;
   departmentId: string | null;
-  title: string | null;
-  desc: string | null;
+  displayOrder: number;
+  field1: string | null;
+  field2: string | null;
+  field3: string | null;
+  field4: string | null;
+  field5: string | null;
   file1: string | null;
   file2: string | null;
   link1: string | null;
   link2: string | null;
   slug: string | null;
-  htmlPath: string | null;
+  htmlContent: string | null;
   createdAt: Date;
   updatedAt: Date;
 }
 
 export interface PublicCategoryPageEntryItem {
   id: string;
-  title: string | null;
-  desc: string | null;
+  displayOrder: number;
+  field1: string | null;
+  field2: string | null;
+  field3: string | null;
+  field4: string | null;
+  field5: string | null;
   file1: string | null;
   file2: string | null;
   link1: string | null;
   link2: string | null;
   slug: string | null;
-  htmlPath: string | null;
+  htmlContent: string | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -42,10 +50,14 @@ export interface PublicDepartmentBasic {
 
 export interface PublicCustomPageLinkItem {
   id: string;
-  title: string | null;
-  desc: string | null;
+  displayOrder: number;
+  field1: string | null;
+  field2: string | null;
+  field3: string | null;
+  field4: string | null;
+  field5: string | null;
   slug: string;
-  htmlPath: string | null;
+  htmlContent: string | null;
   pageCategoryId: string;
   categoryCode: string;
   categoryName: string;
@@ -59,10 +71,14 @@ export interface PublicCustomPageLinkItem {
 
 export interface PublicUniversityCustomPageItem {
   id: string;
-  title: string | null;
-  desc: string | null;
+  displayOrder: number;
+  field1: string | null;
+  field2: string | null;
+  field3: string | null;
+  field4: string | null;
+  field5: string | null;
   slug: string;
-  htmlPath: string | null;
+  htmlContent: string | null;
   pageCategoryId: string;
   categoryCode: string;
   categoryName: string;
@@ -102,14 +118,18 @@ export async function getAllPublicDepartmentEntries(deptCode: string): Promise<{
       categoryCode: pageCategories.code,
       categoryName: pageCategories.name,
       departmentId: pageEntries.departmentId,
-      title: pageEntries.title,
-      desc: pageEntries.desc,
+      displayOrder: pageEntries.displayOrder,
+      field1: pageEntries.field1,
+      field2: pageEntries.field2,
+      field3: pageEntries.field3,
+      field4: pageEntries.field4,
+      field5: pageEntries.field5,
       file1: pageEntries.file1,
       file2: pageEntries.file2,
       link1: pageEntries.link1,
       link2: pageEntries.link2,
       slug: pageEntries.slug,
-      htmlPath: pageEntries.htmlPath,
+      htmlContent: pageEntries.htmlContent,
       createdAt: pageEntries.createdAt,
       updatedAt: pageEntries.updatedAt,
     })
@@ -119,7 +139,11 @@ export async function getAllPublicDepartmentEntries(deptCode: string): Promise<{
       eq(pageEntries.pageCategoryId, pageCategories.id),
     )
     .where(eq(pageEntries.departmentId, department.id))
-    .orderBy(desc(pageEntries.createdAt), desc(pageEntries.id));
+    .orderBy(
+      asc(pageEntries.displayOrder),
+      desc(pageEntries.createdAt),
+      desc(pageEntries.id),
+    );
 
   return { department, entries };
 }
@@ -190,14 +214,18 @@ export async function getPublicCategoryEntries(params: {
     const entries = await db
       .select({
         id: pageEntries.id,
-        title: pageEntries.title,
-        desc: pageEntries.desc,
+        displayOrder: pageEntries.displayOrder,
+        field1: pageEntries.field1,
+        field2: pageEntries.field2,
+        field3: pageEntries.field3,
+        field4: pageEntries.field4,
+        field5: pageEntries.field5,
         file1: pageEntries.file1,
         file2: pageEntries.file2,
         link1: pageEntries.link1,
         link2: pageEntries.link2,
         slug: pageEntries.slug,
-        htmlPath: pageEntries.htmlPath,
+        htmlContent: pageEntries.htmlContent,
         createdAt: pageEntries.createdAt,
         updatedAt: pageEntries.updatedAt,
       })
@@ -208,7 +236,11 @@ export async function getPublicCategoryEntries(params: {
           eq(pageEntries.departmentId, department.id),
         ),
       )
-      .orderBy(desc(pageEntries.createdAt), desc(pageEntries.id));
+      .orderBy(
+        asc(pageEntries.displayOrder),
+        desc(pageEntries.createdAt),
+        desc(pageEntries.id),
+      );
 
     return { department, category, entries };
   }
@@ -237,14 +269,18 @@ export async function getPublicCategoryEntries(params: {
   const entries = await db
     .select({
       id: pageEntries.id,
-      title: pageEntries.title,
-      desc: pageEntries.desc,
+      displayOrder: pageEntries.displayOrder,
+      field1: pageEntries.field1,
+      field2: pageEntries.field2,
+      field3: pageEntries.field3,
+      field4: pageEntries.field4,
+      field5: pageEntries.field5,
       file1: pageEntries.file1,
       file2: pageEntries.file2,
       link1: pageEntries.link1,
       link2: pageEntries.link2,
       slug: pageEntries.slug,
-      htmlPath: pageEntries.htmlPath,
+      htmlContent: pageEntries.htmlContent,
       createdAt: pageEntries.createdAt,
       updatedAt: pageEntries.updatedAt,
     })
@@ -255,7 +291,11 @@ export async function getPublicCategoryEntries(params: {
         isNull(pageEntries.departmentId),
       ),
     )
-    .orderBy(desc(pageEntries.createdAt), desc(pageEntries.id));
+    .orderBy(
+      asc(pageEntries.displayOrder),
+      desc(pageEntries.createdAt),
+      desc(pageEntries.id),
+    );
 
   return { department: null, category, entries };
 }
@@ -292,7 +332,7 @@ export async function getPublicCustomPagesByDept(
 
   const customFilter = or(
     isNotNull(pageEntries.slug),
-    isNotNull(pageEntries.htmlPath),
+    isNotNull(pageEntries.htmlContent),
   );
 
   const whereClause = resolvedDeptId
@@ -302,10 +342,14 @@ export async function getPublicCustomPagesByDept(
   const rows = await db
     .select({
       id: pageEntries.id,
-      title: pageEntries.title,
-      desc: pageEntries.desc,
+      displayOrder: pageEntries.displayOrder,
+      field1: pageEntries.field1,
+      field2: pageEntries.field2,
+      field3: pageEntries.field3,
+      field4: pageEntries.field4,
+      field5: pageEntries.field5,
       slug: pageEntries.slug,
-      htmlPath: pageEntries.htmlPath,
+      htmlContent: pageEntries.htmlContent,
       pageCategoryId: pageEntries.pageCategoryId,
       categoryCode: pageCategories.code,
       categoryName: pageCategories.name,
@@ -324,7 +368,11 @@ export async function getPublicCustomPagesByDept(
       eq(pageEntries.departmentId, departmentsTable.id),
     )
     .where(whereClause)
-    .orderBy(desc(pageEntries.createdAt), desc(pageEntries.id));
+    .orderBy(
+      asc(pageEntries.displayOrder),
+      desc(pageEntries.createdAt),
+      desc(pageEntries.id),
+    );
 
   return rows
     .filter((r): r is typeof r & { slug: string } => Boolean(r.slug?.trim()))
@@ -338,10 +386,14 @@ export async function getPublicCustomPagesByDept(
 
       return {
         id: r.id,
-        title: r.title,
-        desc: r.desc,
+        displayOrder: r.displayOrder,
+        field1: r.field1,
+        field2: r.field2,
+        field3: r.field3,
+        field4: r.field4,
+        field5: r.field5,
         slug: cleanSlug,
-        htmlPath: r.htmlPath,
+        htmlContent: r.htmlContent,
         pageCategoryId: r.pageCategoryId,
         categoryCode: r.categoryCode,
         categoryName: r.categoryName,
@@ -361,10 +413,14 @@ export async function getPublicUniversityCustomPages(): Promise<
   const rows = await db
     .select({
       id: pageEntries.id,
-      title: pageEntries.title,
-      desc: pageEntries.desc,
+      displayOrder: pageEntries.displayOrder,
+      field1: pageEntries.field1,
+      field2: pageEntries.field2,
+      field3: pageEntries.field3,
+      field4: pageEntries.field4,
+      field5: pageEntries.field5,
       slug: pageEntries.slug,
-      htmlPath: pageEntries.htmlPath,
+      htmlContent: pageEntries.htmlContent,
       pageCategoryId: pageEntries.pageCategoryId,
       categoryCode: pageCategories.code,
       categoryName: pageCategories.name,
@@ -378,10 +434,14 @@ export async function getPublicUniversityCustomPages(): Promise<
     .where(
       and(
         isNull(pageEntries.departmentId),
-        or(isNotNull(pageEntries.slug), isNotNull(pageEntries.htmlPath)),
+        or(isNotNull(pageEntries.slug), isNotNull(pageEntries.htmlContent)),
       ),
     )
-    .orderBy(desc(pageEntries.createdAt), desc(pageEntries.id));
+    .orderBy(
+      asc(pageEntries.displayOrder),
+      desc(pageEntries.createdAt),
+      desc(pageEntries.id),
+    );
 
   return rows
     .filter((r): r is typeof r & { slug: string } => Boolean(r.slug?.trim()))
@@ -389,10 +449,14 @@ export async function getPublicUniversityCustomPages(): Promise<
       const cleanSlug = r.slug.trim();
       return {
         id: r.id,
-        title: r.title,
-        desc: r.desc,
+        displayOrder: r.displayOrder,
+        field1: r.field1,
+        field2: r.field2,
+        field3: r.field3,
+        field4: r.field4,
+        field5: r.field5,
         slug: cleanSlug,
-        htmlPath: r.htmlPath,
+        htmlContent: r.htmlContent,
         pageCategoryId: r.pageCategoryId,
         categoryCode: r.categoryCode,
         categoryName: r.categoryName,

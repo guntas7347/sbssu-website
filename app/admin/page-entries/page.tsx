@@ -15,7 +15,7 @@ export default function AdminPageEntriesPage() {
   const [allowedScopes, setAllowedScopes] = useState<ScopeConfig[]>([]);
   const [dbSearch, setDbSearch] = useState("");
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(50);
+  const [pageSize, setPageSize] = useState(100);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 

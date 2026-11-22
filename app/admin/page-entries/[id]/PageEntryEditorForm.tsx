@@ -25,8 +25,12 @@ export function PageEntryEditorForm({ entryId }: PageEntryEditorFormProps) {
 
   const [data, setData] = useState<PageEntryEditorData | null>(null);
   const [selectedCategoryId, setSelectedCategoryId] = useState("");
-  const [title, setTitle] = useState("");
-  const [desc, setDesc] = useState("");
+  const [displayOrder, setDisplayOrder] = useState(0);
+  const [field1, setField1] = useState("");
+  const [field2, setField2] = useState("");
+  const [field3, setField3] = useState("");
+  const [field4, setField4] = useState("");
+  const [field5, setField5] = useState("");
   const [file1, setFile1] = useState("");
   const [file2, setFile2] = useState("");
   const [link1, setLink1] = useState("");
@@ -34,7 +38,6 @@ export function PageEntryEditorForm({ entryId }: PageEntryEditorFormProps) {
   const [isCustomPage, setIsCustomPage] = useState(false);
   const [slug, setSlug] = useState("");
   const [htmlContent, setHtmlContent] = useState("");
-  const [htmlPath, setHtmlPath] = useState("");
   const [isSingleEntryBlocked, setIsSingleEntryBlocked] = useState(false);
 
   const [isLoading, setIsLoading] = useState(true);
@@ -54,15 +57,19 @@ export function PageEntryEditorForm({ entryId }: PageEntryEditorFormProps) {
         if (!active) return;
 
         setData(loaded);
-        setTitle(loaded.title ?? "");
-        setDesc(loaded.desc);
-        setFile1(loaded.file1);
-        setFile2(loaded.file2);
-        setLink1(loaded.link1);
-        setLink2(loaded.link2);
-        setSlug(loaded.slug);
-        setHtmlPath(loaded.htmlPath);
-        setIsCustomPage(Boolean(loaded.slug || loaded.htmlPath));
+        setDisplayOrder(loaded.displayOrder ?? 0);
+        setField1(loaded.field1 ?? "");
+        setField2(loaded.field2 ?? "");
+        setField3(loaded.field3 ?? "");
+        setField4(loaded.field4 ?? "");
+        setField5(loaded.field5 ?? "");
+        setFile1(loaded.file1 ?? "");
+        setFile2(loaded.file2 ?? "");
+        setLink1(loaded.link1 ?? "");
+        setLink2(loaded.link2 ?? "");
+        setSlug(loaded.slug ?? "");
+        setHtmlContent(loaded.htmlContent ?? "");
+        setIsCustomPage(Boolean(loaded.slug || loaded.htmlContent));
         setSelectedCategoryId(loaded.pageCategoryId);
       } catch (err) {
         if (active) {
@@ -114,15 +121,19 @@ export function PageEntryEditorForm({ entryId }: PageEntryEditorFormProps) {
       if (isNew) {
         await createPageEntry({
           pageCategoryId: selectedCategoryId,
-          title: title.trim() || null,
-          desc,
+          displayOrder,
+          field1,
+          field2,
+          field3,
+          field4,
+          field5,
           file1,
           file2,
           link1,
           link2,
           isCustomPage,
           slug,
-          htmlPath,
+          htmlContent,
         });
         router.push("/admin/page-entries");
         return;
@@ -130,18 +141,20 @@ export function PageEntryEditorForm({ entryId }: PageEntryEditorFormProps) {
 
       await updatePageEntry({
         id: entryId,
-        title: title.trim() || null,
-        desc,
+        field1,
+        field2,
+        field3,
+        field4,
+        field5,
         file1,
         file2,
         link1,
         link2,
         isCustomPage,
         slug,
-        htmlPath,
+        htmlContent,
       });
 
-      setHtmlContent("");
       setSuccess("Page entry saved.");
     } catch (err) {
       setError(
@@ -155,8 +168,9 @@ export function PageEntryEditorForm({ entryId }: PageEntryEditorFormProps) {
   async function handleDelete() {
     if (isNew || isDeleting || isSaving) return;
 
+    const label = field1 || entryId;
     const confirmed = window.confirm(
-      `Delete entry "${title || entryId}"? This cannot be undone.`,
+      `Delete entry "${label}"? This cannot be undone.`,
     );
     if (!confirmed) return;
 
@@ -221,15 +235,22 @@ export function PageEntryEditorForm({ entryId }: PageEntryEditorFormProps) {
         onSlugChange={setSlug}
         htmlContent={htmlContent}
         onHtmlContentChange={setHtmlContent}
-        htmlPath={htmlPath}
         deptCode={effectiveDeptCode}
       />
 
       <AssetsSection
-        title={title}
-        onTitleChange={setTitle}
-        desc={desc}
-        onDescChange={setDesc}
+        displayOrder={displayOrder}
+        onDisplayOrderChange={setDisplayOrder}
+        field1={field1}
+        onField1Change={setField1}
+        field2={field2}
+        onField2Change={setField2}
+        field3={field3}
+        onField3Change={setField3}
+        field4={field4}
+        onField4Change={setField4}
+        field5={field5}
+        onField5Change={setField5}
         file1={file1}
         onFile1Change={setFile1}
         file2={file2}
@@ -238,6 +259,7 @@ export function PageEntryEditorForm({ entryId }: PageEntryEditorFormProps) {
         onLink1Change={setLink1}
         link2={link2}
         onLink2Change={setLink2}
+        categoryNote={activeCategory?.note}
         uploadFolder={uploadFolder}
         onUploadError={(msg) => setError(msg)}
       />

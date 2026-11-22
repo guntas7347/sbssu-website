@@ -1,13 +1,10 @@
 "use server";
 
-import { asc, desc, eq, inArray } from "drizzle-orm";
+import { asc, eq, inArray } from "drizzle-orm";
 import { db } from "@/db/drizzel";
 import { departmentsTable, pageCategories, pageEntries } from "@/db/schema";
 import { getCurrentUser } from "@/lib/actions/auth";
-import {
-  getAllowedScopesForRights,
-  getScopesConfig,
-} from "@/lib/actions/configs";
+import { getUserAllowedScopes } from "@/lib/actions/configs";
 
 export interface CategoryChoice {
   id: string;
@@ -26,14 +23,18 @@ export interface CategoryChoice {
 
 export interface PageEntryEditorData {
   id: string | null;
-  title: string | null;
-  desc: string;
+  displayOrder: number;
+  field1: string;
+  field2: string;
+  field3: string;
+  field4: string;
+  field5: string;
   pageCategoryId: string;
   departmentId: string | null;
   departmentCode: string | null;
   departmentName: string | null;
   slug: string;
-  htmlPath: string;
+  htmlContent: string;
   file1: string;
   file2: string;
   link1: string;
@@ -54,11 +55,7 @@ export async function getPageEntryForEditor(
     throw new Error("Unauthorized: Portal access required.");
   }
 
-  const [scopes, allowedScopes] = await Promise.all([
-    getScopesConfig(),
-    getAllowedScopesForRights(rights),
-  ]);
-
+  const allowedScopes = await getUserAllowedScopes();
   const isAdmin = rights.includes("admin");
   const isHod = rights.includes("hod");
 
@@ -67,7 +64,7 @@ export async function getPageEntryForEditor(
     effectiveScopeKeys.add("all-departments");
   }
 
-  const scopeLabelMap = new Map(scopes.map((s) => [s.key, s.label]));
+  const scopeLabelMap = new Map(allowedScopes.map((s) => [s.key, s.label]));
 
   function canAccessScopeAndDept(
     scopeKey: string,
@@ -126,7 +123,7 @@ export async function getPageEntryForEditor(
     canAccessScopeAndDept(row.scope || "university", row.departmentId),
   );
 
-  // 3. Find latest entry per singleEntry category
+  // 3. Find existing entry per singleEntry category
   const visibleCatIds = visibleCats.map((r) => r.id);
   const existingByCat = new Map<string, string>();
 
@@ -187,14 +184,18 @@ export async function getPageEntryForEditor(
     return {
       ...baseReturn,
       id: null,
-      title: null,
-      desc: "",
+      displayOrder: 0,
+      field1: "",
+      field2: "",
+      field3: "",
+      field4: "",
+      field5: "",
       pageCategoryId: first?.id ?? "",
       departmentId: first?.departmentId ?? userDept?.id ?? null,
       departmentCode: first?.departmentCode ?? userDept?.code ?? null,
       departmentName: first?.departmentName ?? userDept?.name ?? null,
       slug: "",
-      htmlPath: "",
+      htmlContent: "",
       file1: "",
       file2: "",
       link1: "",
@@ -206,14 +207,18 @@ export async function getPageEntryForEditor(
   const [existing] = await db
     .select({
       id: pageEntries.id,
-      title: pageEntries.title,
-      desc: pageEntries.desc,
+      displayOrder: pageEntries.displayOrder,
+      field1: pageEntries.field1,
+      field2: pageEntries.field2,
+      field3: pageEntries.field3,
+      field4: pageEntries.field4,
+      field5: pageEntries.field5,
       pageCategoryId: pageEntries.pageCategoryId,
       departmentId: pageEntries.departmentId,
       departmentCode: departmentsTable.code,
       departmentName: departmentsTable.name,
       slug: pageEntries.slug,
-      htmlPath: pageEntries.htmlPath,
+      htmlContent: pageEntries.htmlContent,
       file1: pageEntries.file1,
       file2: pageEntries.file2,
       link1: pageEntries.link1,
@@ -245,14 +250,18 @@ export async function getPageEntryForEditor(
   return {
     ...baseReturn,
     id: existing.id,
-    title: existing.title,
-    desc: existing.desc ?? "",
+    displayOrder: existing.displayOrder ?? 0,
+    field1: existing.field1 ?? "",
+    field2: existing.field2 ?? "",
+    field3: existing.field3 ?? "",
+    field4: existing.field4 ?? "",
+    field5: existing.field5 ?? "",
     pageCategoryId: existing.pageCategoryId,
     departmentId: existing.departmentId,
     departmentCode: existing.departmentCode,
     departmentName: existing.departmentName,
     slug: existing.slug ?? "",
-    htmlPath: existing.htmlPath ?? "",
+    htmlContent: existing.htmlContent ?? "",
     file1: existing.file1 ?? "",
     file2: existing.file2 ?? "",
     link1: existing.link1 ?? "",

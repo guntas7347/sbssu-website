@@ -1,15 +1,13 @@
 "use server";
 
-import { and, count, desc, eq, ilike, inArray, or, sql } from "drizzle-orm";
+import { and, count, desc, eq, ilike, or } from "drizzle-orm";
 import { db } from "@/db/drizzel";
 import { departmentsTable, pageCategories, pageEntries } from "@/db/schema";
 import { getCurrentUser } from "@/lib/actions/auth";
-import { getAllowedScopesForRights } from "@/lib/actions/configs";
+import { getUserAllowedScopes } from "@/lib/actions/configs";
 
 export interface AdminPageEntryItem {
   id: string;
-  title: string | null;
-  desc: string | null;
   pageCategoryId: string;
   categoryCode: string;
   categoryName: string;
@@ -17,8 +15,15 @@ export interface AdminPageEntryItem {
   departmentId: string | null;
   departmentCode: string | null;
   departmentName: string | null;
+  displayOrder: number;
+  field1: string | null;
+  field2: string | null;
+  field3: string | null;
+  field4: string | null;
+  field5: string | null;
   slug: string | null;
   htmlPath: string | null;
+  htmlContent: string | null;
   file1: string | null;
   file2: string | null;
   link1: string | null;
@@ -44,19 +49,29 @@ export async function getPageEntries(options?: {
     throw new Error("Unauthorized: Portal access required.");
   }
 
-  const allowedScopes = await getAllowedScopesForRights(rights);
-  const allowedScopeKeys = allowedScopes.map((s) => s.key);
+  const isAdmin = rights.includes("admin");
   const isHod = rights.includes("hod");
+  const allowedScopes = await getUserAllowedScopes();
+  const allowedScopeKeys = allowedScopes.map((s) => s.key);
 
   const accessParts = [];
   if (allowedScopeKeys.length > 0) {
-    accessParts.push(
-      inArray(
-        sql`coalesce(${pageCategories.scope}, 'university')`,
-        allowedScopeKeys,
-      ),
-    );
+    for (const scope of allowedScopeKeys) {
+      if (scope === "department" && !isAdmin) {
+        if (user.departmentId) {
+          accessParts.push(
+            and(
+              eq(pageCategories.scope, "department"),
+              eq(pageEntries.departmentId, user.departmentId),
+            )!,
+          );
+        }
+      } else {
+        accessParts.push(eq(pageCategories.scope, scope));
+      }
+    }
   }
+
   if (isHod && user.departmentId) {
     accessParts.push(eq(pageEntries.departmentId, user.departmentId));
   }
@@ -74,8 +89,11 @@ export async function getPageEntries(options?: {
     const pattern = `%${trimmedSearch}%`;
     conditions.push(
       or(
-        ilike(pageEntries.title, pattern),
-        ilike(pageEntries.desc, pattern),
+        ilike(pageEntries.field1, pattern),
+        ilike(pageEntries.field2, pattern),
+        ilike(pageEntries.field3, pattern),
+        ilike(pageEntries.field4, pattern),
+        ilike(pageEntries.field5, pattern),
         ilike(pageEntries.slug, pattern),
         ilike(pageCategories.code, pattern),
         ilike(pageCategories.name, pattern),
@@ -106,8 +124,6 @@ export async function getPageEntries(options?: {
   const items = await db
     .select({
       id: pageEntries.id,
-      title: pageEntries.title,
-      desc: pageEntries.desc,
       pageCategoryId: pageEntries.pageCategoryId,
       categoryCode: pageCategories.code,
       categoryName: pageCategories.name,
@@ -115,8 +131,15 @@ export async function getPageEntries(options?: {
       departmentId: pageEntries.departmentId,
       departmentCode: departmentsTable.code,
       departmentName: departmentsTable.name,
+      displayOrder: pageEntries.displayOrder,
+      field1: pageEntries.field1,
+      field2: pageEntries.field2,
+      field3: pageEntries.field3,
+      field4: pageEntries.field4,
+      field5: pageEntries.field5,
       slug: pageEntries.slug,
       htmlPath: pageEntries.htmlPath,
+      htmlContent: pageEntries.htmlContent,
       file1: pageEntries.file1,
       file2: pageEntries.file2,
       link1: pageEntries.link1,

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { loadUniversityCustomPage } from "@/lib/custom-page-loader";
+import { getPageEntryByCategoryAndSlug } from "@/lib/actions/public/public-custom-pages";
+import { sanitizeHtmlClient } from "@/lib/sanitize-html";
 
 export const dynamic = "force-dynamic";
 
@@ -12,22 +13,44 @@ export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
   const { html } = await params;
-  const page = await loadUniversityCustomPage(html);
-  if (!page) {
+  const entry = await getPageEntryByCategoryAndSlug({
+    catCode: "901",
+    slug: html,
+  });
+
+  if (!entry) {
     return { title: "Page Not Found | SBSSU" };
   }
+
+  const title = entry.field1?.trim() || entry.categoryName || html;
+
   return {
-    title: `${page.title} | SBSSU`,
+    title: `${title} | SBSSU`,
+    description:
+      entry.field2?.trim() ||
+      `${title} — Shaheed Bhagat Singh State University, Ferozepur.`,
   };
 }
 
 export default async function UniversityCustomHtmlPage({ params }: PageProps) {
   const { html } = await params;
-  const page = await loadUniversityCustomPage(html);
+  const entry = await getPageEntryByCategoryAndSlug({
+    catCode: "901",
+    slug: html,
+  });
 
-  if (!page) {
+  if (!entry) {
     notFound();
   }
+
+  const heading = entry.field1?.trim() || entry.categoryName;
+  const safeHtml = entry.htmlContent
+    ? sanitizeHtmlClient(entry.htmlContent)
+    : "";
+
+  const extraFields = [entry.field2, entry.field3, entry.field4, entry.field5]
+    .map((v) => v?.trim())
+    .filter((v): v is string => Boolean(v));
 
   return (
     <section className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
@@ -36,13 +59,25 @@ export default async function UniversityCustomHtmlPage({ params }: PageProps) {
           SBSSU • University Page
         </span>
         <h1 className="mt-3 text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl dark:text-white">
-          {page.title}
+          {heading}
         </h1>
+        {extraFields.length > 0 && (
+          <div className="mt-2 space-y-1">
+            {extraFields.map((val, idx) => (
+              <p
+                key={`uni-field-${idx + 2}`}
+                className="whitespace-pre-line text-xs leading-relaxed text-slate-600 sm:text-sm dark:text-slate-400"
+              >
+                {val}
+              </p>
+            ))}
+          </div>
+        )}
       </header>
 
       <article
         className="custom-html-content rounded-2xl border border-slate-200 bg-white p-6 text-slate-800 shadow-xs dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200"
-        dangerouslySetInnerHTML={{ __html: page.html }}
+        dangerouslySetInnerHTML={{ __html: safeHtml }}
       />
     </section>
   );

@@ -5,18 +5,31 @@ import { db } from "@/db/drizzel";
 import { pageCategories, pageEntries } from "@/db/schema";
 import { getCurrentUser } from "@/lib/actions/auth";
 import { getUserAllowedScopes } from "@/lib/actions/configs";
+import { sanitizeHtmlClient } from "@/lib/sanitize-html";
 
 export interface UpdatePageEntryInput {
   id: string;
-  title: string | null;
-  desc: string;
+  field1: string;
+  field2: string;
+  field3: string;
+  field4: string;
+  field5: string;
   file1: string;
   file2: string;
   link1: string;
   link2: string;
   isCustomPage: boolean;
   slug: string;
-  htmlPath: string;
+  htmlContent: string;
+}
+
+function normalizeSlug(raw: string): string | null {
+  const cleaned = raw
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9-]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+  return cleaned || null;
 }
 
 export async function updatePageEntry(input: UpdatePageEntryInput) {
@@ -58,17 +71,24 @@ export async function updatePageEntry(input: UpdatePageEntryInput) {
     throw new Error("Unauthorized: You cannot edit this page entry.");
   }
 
+  const rawHtml = input.htmlContent?.trim() || "";
+  const sanitizedHtml =
+    input.isCustomPage && rawHtml ? sanitizeHtmlClient(rawHtml) : null;
+
   const [updated] = await db
     .update(pageEntries)
     .set({
-      title: input.title?.trim() || null,
-      desc: input.desc.trim() || null,
+      field1: input.field1.trim() || null,
+      field2: input.field2.trim() || null,
+      field3: input.field3.trim() || null,
+      field4: input.field4.trim() || null,
+      field5: input.field5.trim() || null,
       file1: input.file1.trim() || null,
       file2: input.file2.trim() || null,
       link1: input.link1.trim() || null,
       link2: input.link2.trim() || null,
-      slug: input.isCustomPage ? input.slug.trim() || null : null,
-      htmlPath: input.isCustomPage ? input.htmlPath.trim() || null : null,
+      slug: input.isCustomPage ? normalizeSlug(input.slug) : null,
+      htmlContent: sanitizedHtml,
       updatedAt: new Date(),
     })
     .where(eq(pageEntries.id, input.id))

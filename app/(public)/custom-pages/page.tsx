@@ -64,15 +64,15 @@ export default async function UniversityCustomPagesDirectory() {
                 <div className="min-w-0 flex-1 space-y-1">
                   <div className="flex flex-wrap items-center gap-2">
                     <h2 className="text-sm font-bold text-slate-900 sm:text-base dark:text-white">
-                      {pageItem.title?.trim() || pageItem.slug}
+                      {pageItem.field1?.trim() || pageItem.slug}
                     </h2>
                     <span className="rounded-md bg-green-600/10 px-2 py-0.5 font-mono text-[11px] font-semibold text-green-700 dark:bg-green-500/15 dark:text-green-400">
                       slug: {pageItem.slug}
                     </span>
                   </div>
-                  {pageItem.desc && (
+                  {pageItem.field2 && (
                     <p className="text-xs text-slate-600 dark:text-slate-400">
-                      {pageItem.desc}
+                      {pageItem.field2}
                     </p>
                   )}
                   <p className="font-mono text-[11px] text-slate-500 dark:text-slate-400">

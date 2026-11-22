@@ -49,12 +49,34 @@ interface EntryActionLink {
   isExternal: boolean;
 }
 
+function sortByDisplayOrder(
+  a: PublicDepartmentEntryItem,
+  b: PublicDepartmentEntryItem,
+): number {
+  const orderA = a.displayOrder ?? 0;
+  const orderB = b.displayOrder ?? 0;
+  if (orderA !== orderB) return orderA - orderB;
+  return (a.field1 ?? "").localeCompare(b.field1 ?? "");
+}
+
+function getNonEmptyFields(entry: PublicDepartmentEntryItem): string[] {
+  return [entry.field1, entry.field2, entry.field3, entry.field4, entry.field5]
+    .map((v) => v?.trim())
+    .filter((v): v is string => Boolean(v));
+}
+
+function getSecondaryFields(entry: PublicDepartmentEntryItem): string[] {
+  return [entry.field2, entry.field3, entry.field4, entry.field5]
+    .map((v) => v?.trim())
+    .filter((v): v is string => Boolean(v));
+}
+
 function getEntryLinks(
   entry: PublicDepartmentEntryItem,
   deptSlug: string,
 ): EntryActionLink[] {
   const links: EntryActionLink[] = [];
-  const isCustom = Boolean(entry.slug || entry.htmlPath);
+  const isCustom = Boolean(entry.slug || entry.htmlContent);
 
   if (isCustom && entry.slug) {
     links.push({
@@ -91,12 +113,39 @@ function getEntryLinks(
   if (entry.link2) {
     links.push({
       href: entry.link2,
-      label: "Link 2",
+      label: entry.link2 || "Link 2",
       isExternal: /^https?:\/\//i.test(entry.link2),
     });
   }
 
   return links;
+}
+
+function EntryFieldsList({
+  entry,
+  skipPrimary = false,
+}: {
+  entry: PublicDepartmentEntryItem;
+  skipPrimary?: boolean;
+}) {
+  const fields = skipPrimary
+    ? getSecondaryFields(entry)
+    : getNonEmptyFields(entry);
+
+  if (fields.length === 0) return null;
+
+  return (
+    <div className="mt-2 space-y-1">
+      {fields.map((val, idx) => (
+        <p
+          key={`${entry.id}-f-${idx}`}
+          className="whitespace-pre-line text-xs leading-relaxed text-slate-600 dark:text-slate-400"
+        >
+          {val}
+        </p>
+      ))}
+    </div>
+  );
 }
 
 export async function generateMetadata({
@@ -125,9 +174,10 @@ export default async function DepartmentPublicPage({ params }: DeptPageProps) {
 
   const deptSlug = department.code.toLowerCase();
   const legacyUrl = `/departments/legacy/${encodeURIComponent(deptSlug)}`;
+  const orderedEntries = [...entries].sort(sortByDisplayOrder);
 
   const byCategoryCode = (code: string): PublicDepartmentEntryItem[] =>
-    entries.filter((e) => (e.categoryCode ?? "").trim() === code);
+    orderedEntries.filter((e) => (e.categoryCode ?? "").trim() === code);
 
   // Single-entry department home sections
   const aboutEntry = byCategoryCode("205")[0] ?? null;
@@ -142,13 +192,13 @@ export default async function DepartmentPublicPage({ params }: DeptPageProps) {
   const bosEntries = byCategoryCode("212");
   const researchEntries = byCategoryCode("213");
 
-  // Remaining department categories (Timetable 201, Syllabus 202, Labs 203, Committees 204, Custom Pages 901, etc.)
+  // Remaining department categories
   const otherGroupsMap = new Map<
     string,
     { code: string; label: string; items: PublicDepartmentEntryItem[] }
   >();
 
-  for (const entry of entries) {
+  for (const entry of orderedEntries) {
     const code = (entry.categoryCode ?? "").trim();
     if (HOME_CATEGORY_CODES.has(code)) continue;
 
@@ -258,16 +308,12 @@ export default async function DepartmentPublicPage({ params }: DeptPageProps) {
                     <Compass className="h-5 w-5" />
                   </div>
                   <h2 className="text-base font-bold text-slate-900 sm:text-lg dark:text-white">
-                    {aboutEntry.title?.trim() ||
+                    {aboutEntry.field1?.trim() ||
                       aboutEntry.categoryName ||
                       "About the Department"}
                   </h2>
                 </div>
-                {aboutEntry.desc && (
-                  <p className="mt-4 whitespace-pre-line text-xs leading-relaxed text-slate-700 sm:text-sm dark:text-slate-300">
-                    {aboutEntry.desc}
-                  </p>
-                )}
+                <EntryFieldsList entry={aboutEntry} skipPrimary />
               </div>
             )}
 
@@ -280,16 +326,12 @@ export default async function DepartmentPublicPage({ params }: DeptPageProps) {
                         <Eye className="h-5 w-5" />
                       </div>
                       <h2 className="text-base font-bold text-slate-900 sm:text-lg dark:text-white">
-                        {visionEntry.title?.trim() ||
+                        {visionEntry.field1?.trim() ||
                           visionEntry.categoryName ||
                           "Vision"}
                       </h2>
                     </div>
-                    {visionEntry.desc && (
-                      <p className="mt-4 whitespace-pre-line text-xs leading-relaxed text-slate-700 sm:text-sm dark:text-slate-300">
-                        {visionEntry.desc}
-                      </p>
-                    )}
+                    <EntryFieldsList entry={visionEntry} skipPrimary />
                   </div>
                 )}
 
@@ -300,16 +342,12 @@ export default async function DepartmentPublicPage({ params }: DeptPageProps) {
                         <Target className="h-5 w-5" />
                       </div>
                       <h2 className="text-base font-bold text-slate-900 sm:text-lg dark:text-white">
-                        {missionEntry.title?.trim() ||
+                        {missionEntry.field1?.trim() ||
                           missionEntry.categoryName ||
                           "Mission"}
                       </h2>
                     </div>
-                    {missionEntry.desc && (
-                      <p className="mt-4 whitespace-pre-line text-xs leading-relaxed text-slate-700 sm:text-sm dark:text-slate-300">
-                        {missionEntry.desc}
-                      </p>
-                    )}
+                    <EntryFieldsList entry={missionEntry} skipPrimary />
                   </div>
                 )}
               </div>
@@ -342,21 +380,17 @@ export default async function DepartmentPublicPage({ params }: DeptPageProps) {
                 <div className="shrink-0">
                   <img
                     src={hodEntry.file1}
-                    alt={hodEntry.title?.trim() || "Head of Department"}
+                    alt={hodEntry.field1?.trim() || "Head of Department"}
                     className="h-36 w-36 rounded-2xl border border-slate-200 object-cover shadow-xs dark:border-slate-700"
                   />
                 </div>
               )}
 
-              <div className="min-w-0 flex-1 space-y-2.5">
+              <div className="min-w-0 flex-1 space-y-2">
                 <h3 className="text-lg font-bold text-slate-900 dark:text-white">
-                  {hodEntry.title?.trim() || "Head of Department"}
+                  {hodEntry.field1?.trim() || "Head of Department"}
                 </h3>
-                {hodEntry.desc && (
-                  <p className="whitespace-pre-line text-xs leading-relaxed text-slate-700 sm:text-sm dark:text-slate-300">
-                    {hodEntry.desc}
-                  </p>
-                )}
+                <EntryFieldsList entry={hodEntry} skipPrimary />
               </div>
             </div>
           </section>
@@ -386,6 +420,7 @@ export default async function DepartmentPublicPage({ params }: DeptPageProps) {
             <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {coursesEntries.map((course) => {
                 const links = getEntryLinks(course, deptSlug);
+                const extraFields = getSecondaryFields(course);
                 return (
                   <div
                     key={course.id}
@@ -393,12 +428,19 @@ export default async function DepartmentPublicPage({ params }: DeptPageProps) {
                   >
                     <div>
                       <h3 className="text-sm font-bold text-slate-900 dark:text-white">
-                        {course.title?.trim() || "Academic Program"}
+                        {course.field1?.trim() || "Academic Program"}
                       </h3>
-                      {course.desc && (
-                        <p className="mt-2 inline-flex rounded-lg bg-green-600/10 px-2.5 py-1 font-mono text-xs font-semibold text-green-700 dark:bg-green-500/15 dark:text-green-400">
-                          {course.desc}
-                        </p>
+                      {extraFields.length > 0 && (
+                        <div className="mt-2 flex flex-wrap gap-1.5">
+                          {extraFields.map((val, idx) => (
+                            <span
+                              key={`${course.id}-c-${idx}`}
+                              className="inline-flex rounded-lg bg-green-600/10 px-2.5 py-1 font-mono text-xs font-semibold text-green-700 dark:bg-green-500/15 dark:text-green-400"
+                            >
+                              {val}
+                            </span>
+                          ))}
+                        </div>
                       )}
                     </div>
 
@@ -442,7 +484,7 @@ export default async function DepartmentPublicPage({ params }: DeptPageProps) {
                 </div>
                 <div>
                   <h2 className="text-base font-bold text-slate-900 sm:text-lg dark:text-white">
-                    {peoEntry.title?.trim() ||
+                    {peoEntry.field1?.trim() ||
                       peoEntry.categoryName ||
                       "PEOs, POs & PSOs (Outcome Framework)"}
                   </h2>
@@ -468,11 +510,7 @@ export default async function DepartmentPublicPage({ params }: DeptPageProps) {
               </div>
             </div>
 
-            {peoEntry.desc && (
-              <p className="mt-4 whitespace-pre-line text-xs leading-relaxed text-slate-700 sm:text-sm dark:text-slate-300">
-                {peoEntry.desc}
-              </p>
-            )}
+            <EntryFieldsList entry={peoEntry} skipPrimary />
           </section>
         )}
 
@@ -515,19 +553,15 @@ export default async function DepartmentPublicPage({ params }: DeptPageProps) {
                       {isPhoto && member.file1 && (
                         <img
                           src={member.file1}
-                          alt={member.title?.trim() || "Faculty member"}
+                          alt={member.field1?.trim() || "Faculty member"}
                           className="h-14 w-14 shrink-0 rounded-xl border border-slate-200 object-cover dark:border-slate-700"
                         />
                       )}
                       <div className="min-w-0 flex-1">
                         <h3 className="text-sm font-bold text-slate-900 dark:text-white">
-                          {member.title?.trim() || "Faculty Member"}
+                          {member.field1?.trim() || "Faculty Member"}
                         </h3>
-                        {member.desc && (
-                          <p className="mt-1 whitespace-pre-line text-xs leading-relaxed text-slate-600 dark:text-slate-400">
-                            {member.desc}
-                          </p>
-                        )}
+                        <EntryFieldsList entry={member} skipPrimary />
                       </div>
                     </div>
 
@@ -583,13 +617,9 @@ export default async function DepartmentPublicPage({ params }: DeptPageProps) {
                   >
                     <div className="min-w-0 flex-1">
                       <p className="text-sm font-semibold text-slate-900 dark:text-white">
-                        {item.title?.trim() || "Board of Studies Notification"}
+                        {item.field1?.trim() || "Board of Studies Notification"}
                       </p>
-                      {item.desc && (
-                        <p className="mt-0.5 text-xs text-slate-600 dark:text-slate-400">
-                          {item.desc}
-                        </p>
-                      )}
+                      <EntryFieldsList entry={item} skipPrimary />
                     </div>
 
                     {links.length > 0 && (
@@ -649,13 +679,9 @@ export default async function DepartmentPublicPage({ params }: DeptPageProps) {
                   >
                     <div className="min-w-0 flex-1">
                       <p className="text-sm font-semibold text-slate-900 dark:text-white">
-                        {item.title?.trim() || "Research Entry"}
+                        {item.field1?.trim() || "Research Entry"}
                       </p>
-                      {item.desc && (
-                        <p className="mt-0.5 text-xs text-slate-600 dark:text-slate-400">
-                          {item.desc}
-                        </p>
-                      )}
+                      <EntryFieldsList entry={item} skipPrimary />
                     </div>
 
                     {links.length > 0 && (
@@ -685,7 +711,7 @@ export default async function DepartmentPublicPage({ params }: DeptPageProps) {
           </section>
         )}
 
-        {/* 8. Other Department Categories (Timetable, Syllabus, Labs, Committees, Custom Pages) */}
+        {/* 8. Other Department Categories */}
         {otherSections.map((section) => (
           <section
             key={section.code}
@@ -709,6 +735,9 @@ export default async function DepartmentPublicPage({ params }: DeptPageProps) {
             <ul className="mt-4 divide-y divide-slate-200 dark:divide-slate-800">
               {section.items.map((item) => {
                 const links = getEntryLinks(item, deptSlug);
+                const allFields = getNonEmptyFields(item);
+                const primaryLabel =
+                  allFields[0] || item.categoryName || "Entry";
                 return (
                   <li
                     key={item.id}
@@ -716,16 +745,9 @@ export default async function DepartmentPublicPage({ params }: DeptPageProps) {
                   >
                     <div className="min-w-0 flex-1">
                       <p className="text-sm font-semibold text-slate-900 dark:text-white">
-                        {item.title?.trim() ||
-                          item.desc?.trim() ||
-                          item.categoryName ||
-                          "Entry"}
+                        {primaryLabel}
                       </p>
-                      {item.title && item.desc && (
-                        <p className="mt-0.5 text-xs text-slate-600 dark:text-slate-400">
-                          {item.desc}
-                        </p>
-                      )}
+                      <EntryFieldsList entry={item} skipPrimary />
                     </div>
 
                     {links.length > 0 && (

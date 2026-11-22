@@ -243,21 +243,30 @@ export const pageEntries = pgTable(
     pageCategoryId: text("page_category_id")
       .notNull()
       .references(() => pageCategories.id, { onDelete: "restrict" }),
-    departmentId: text("department_id"), // nullable for university-wide entries
-    title: text("title"),
-    desc: text("desc"),
+    departmentId: text("department_id"),
+    displayOrder: integer("display_order").default(0).notNull(),
+    field1: text("field1"),
+    field2: text("field2"),
+    field3: text("field3"),
+    field4: text("field4"),
+    field5: text("field5"),
     file1: text("file1"),
     file2: text("file2"),
     link1: text("link1"),
     link2: text("link2"),
     slug: text("slug"),
-    htmlPath: text("html_path"), // disk-backed sanitized .html path inside UPLOAD_DIR
+    htmlPath: text("html_path"), // optional legacy/file fallback
+    htmlContent: text("html_content"), // sanitized HTML stored in DB
     createdById: text("created_by_id"),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").defaultNow().notNull(),
   },
   (table) => [
-    index("page_entries_category_idx").on(table.pageCategoryId),
+    index("page_entries_category_order_idx").on(
+      table.pageCategoryId,
+      table.displayOrder,
+      table.createdAt,
+    ),
     index("page_entries_department_idx").on(table.departmentId),
     index("page_entries_slug_idx").on(table.slug),
   ],

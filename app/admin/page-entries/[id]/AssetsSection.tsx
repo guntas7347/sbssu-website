@@ -1,13 +1,21 @@
 "use client";
 
-import { FolderOpen, Link2 } from "lucide-react";
+import { FolderOpen, Info, Link2 } from "lucide-react";
 import { Uploader } from "@/components/Uploader";
 
 interface AssetsSectionProps {
-  title: string;
-  onTitleChange: (value: string) => void;
-  desc: string;
-  onDescChange: (value: string) => void;
+  displayOrder: number;
+  onDisplayOrderChange: (value: number) => void;
+  field1: string;
+  onField1Change: (value: string) => void;
+  field2: string;
+  onField2Change: (value: string) => void;
+  field3: string;
+  onField3Change: (value: string) => void;
+  field4: string;
+  onField4Change: (value: string) => void;
+  field5: string;
+  onField5Change: (value: string) => void;
   file1: string;
   onFile1Change: (value: string) => void;
   file2: string;
@@ -16,15 +24,24 @@ interface AssetsSectionProps {
   onLink1Change: (value: string) => void;
   link2: string;
   onLink2Change: (value: string) => void;
+  categoryNote?: string | null;
   uploadFolder: string;
   onUploadError?: (message: string) => void;
 }
 
 export function AssetsSection({
-  title,
-  onTitleChange,
-  desc,
-  onDescChange,
+  displayOrder,
+  onDisplayOrderChange,
+  field1,
+  onField1Change,
+  field2,
+  onField2Change,
+  field3,
+  onField3Change,
+  field4,
+  onField4Change,
+  field5,
+  onField5Change,
   file1,
   onFile1Change,
   file2,
@@ -33,14 +50,59 @@ export function AssetsSection({
   onLink1Change,
   link2,
   onLink2Change,
+  categoryNote,
   uploadFolder,
   onUploadError,
 }: AssetsSectionProps) {
+  const fields: Array<{
+    id: string;
+    label: string;
+    value: string;
+    onChange: (val: string) => void;
+    placeholder: string;
+  }> = [
+    {
+      id: "entry-field-1",
+      label: "Field 1 (Primary)",
+      value: field1,
+      onChange: onField1Change,
+      placeholder: "Primary label, name, heading, or title",
+    },
+    {
+      id: "entry-field-2",
+      label: "Field 2",
+      value: field2,
+      onChange: onField2Change,
+      placeholder: "Designation, subtitle, or secondary info",
+    },
+    {
+      id: "entry-field-3",
+      label: "Field 3",
+      value: field3,
+      onChange: onField3Change,
+      placeholder: "Department, tenure, date, or extra detail",
+    },
+    {
+      id: "entry-field-4",
+      label: "Field 4",
+      value: field4,
+      onChange: onField4Change,
+      placeholder: "Additional column / value",
+    },
+    {
+      id: "entry-field-5",
+      label: "Field 5",
+      value: field5,
+      onChange: onField5Change,
+      placeholder: "Additional column / notes",
+    },
+  ];
+
   return (
     <div className="space-y-5 rounded-2xl border border-slate-200 bg-slate-50/70 p-4 sm:p-5 dark:border-slate-800 dark:bg-slate-950/40">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h2 className="text-xs font-bold tracking-wider text-slate-700 uppercase dark:text-slate-200">
-          3. Entry Details, Files & Links
+          3. Structured Fields, Files & Links
         </h2>
         <span className="inline-flex items-center gap-1 font-mono text-[11px] text-slate-500 dark:text-slate-400">
           <FolderOpen className="h-3.5 w-3.5 text-orange-600 dark:text-orange-400" />
@@ -48,38 +110,32 @@ export function AssetsSection({
         </span>
       </div>
 
-      <div className="space-y-1.5">
-        <label
-          htmlFor="entry-title"
-          className="block text-xs font-semibold text-slate-700 dark:text-slate-300"
-        >
-          Title
-        </label>
-        <input
-          id="entry-title"
-          type="text"
-          value={title}
-          onChange={(e) => onTitleChange(e.target.value)}
-          placeholder="e.g. B.Tech CSE 5th Semester Timetable or Academic Calendar 2026-27"
-          className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-xs font-medium text-slate-900 placeholder:text-slate-400 focus:border-orange-500 focus:outline-none sm:text-sm dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:focus:border-orange-400"
-        />
-      </div>
+      {categoryNote && (
+        <div className="flex items-start gap-2 rounded-xl border border-orange-500/20 bg-orange-500/5 px-3.5 py-2.5 text-xs text-slate-700 dark:text-slate-300">
+          <Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-orange-600 dark:text-orange-400" />
+          <span>{categoryNote}</span>
+        </div>
+      )}
 
-      <div className="space-y-1.5">
-        <label
-          htmlFor="entry-desc"
-          className="block text-xs font-semibold text-slate-700 dark:text-slate-300"
-        >
-          Description
-        </label>
-        <textarea
-          id="entry-desc"
-          rows={10}
-          value={desc}
-          onChange={(e) => onDescChange(e.target.value)}
-          placeholder="Summary, semester details, notes, or metadata..."
-          className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-xs font-medium text-slate-900 placeholder:text-slate-400 focus:border-orange-500 focus:outline-none sm:text-sm dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:focus:border-orange-400"
-        />
+      <div className="grid gap-4 sm:grid-cols-2">
+        {fields.map((f) => (
+          <div key={f.id} className="space-y-1.5">
+            <label
+              htmlFor={f.id}
+              className="block text-xs font-semibold text-slate-700 dark:text-slate-300"
+            >
+              {f.label}
+            </label>
+            <textarea
+              id={f.id}
+              rows={5}
+              value={f.value}
+              onChange={(e) => f.onChange(e.target.value)}
+              placeholder={f.placeholder}
+              className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-xs font-medium text-slate-900 placeholder:text-slate-400 focus:border-orange-500 focus:outline-none sm:text-sm dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:focus:border-orange-400"
+            />
+          </div>
+        ))}
       </div>
 
       {/* File 1 & File 2 using Uploader with dynamic folder */}
@@ -96,13 +152,6 @@ export function AssetsSection({
             label="Upload File 1"
             folder={uploadFolder}
           />
-          <input
-            type="text"
-            value={file1}
-            onChange={(e) => onFile1Change(e.target.value)}
-            placeholder="Uploaded file path or URL"
-            className="mt-2 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 font-mono text-xs text-slate-700 focus:border-orange-500 focus:bg-white focus:outline-none dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:focus:border-orange-400"
-          />
         </div>
 
         <div className="space-y-1.5 rounded-xl border border-slate-200 bg-white p-3.5 dark:border-slate-800 dark:bg-slate-900">
@@ -116,13 +165,6 @@ export function AssetsSection({
             accept="*/*"
             label="Upload File 2"
             folder={uploadFolder}
-          />
-          <input
-            type="text"
-            value={file2}
-            onChange={(e) => onFile2Change(e.target.value)}
-            placeholder="Uploaded file path or URL"
-            className="mt-2 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 font-mono text-xs text-slate-700 focus:border-orange-500 focus:bg-white focus:outline-none dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:focus:border-orange-400"
           />
         </div>
       </div>

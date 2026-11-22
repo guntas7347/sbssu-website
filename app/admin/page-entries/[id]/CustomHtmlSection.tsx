@@ -12,7 +12,6 @@ interface CustomHtmlSectionProps {
   onSlugChange: (value: string) => void;
   htmlContent: string;
   onHtmlContentChange: (value: string) => void;
-  htmlPath: string;
   deptCode: string | null;
 }
 
@@ -23,7 +22,6 @@ export function CustomHtmlSection({
   onSlugChange,
   htmlContent,
   onHtmlContentChange,
-  htmlPath,
   deptCode,
 }: CustomHtmlSectionProps) {
   const [showPreview, setShowPreview] = useState(true);
@@ -60,8 +58,9 @@ export function CustomHtmlSection({
             <span>2. Custom HTML Page Option</span>
           </div>
           <p className="text-xs text-slate-500 dark:text-slate-400">
-            Leave unchecked for a normal list/table entry. Check it to publish a
-            standalone custom HTML page with a slug.
+            Optional standalone custom HTML page with a slug, stored directly in
+            the entry. Can also be combined with structured fields, files, and
+            links.
           </p>
         </div>
 
@@ -114,8 +113,7 @@ export function CustomHtmlSection({
               >
                 <FileCode2 className="h-3.5 w-3.5 text-orange-600 dark:text-orange-400" />
                 <span>
-                  Paste HTML Content{" "}
-                  {!htmlPath && <span className="text-red-500">*</span>}
+                  HTML Content <span className="text-red-500">*</span>
                 </span>
               </label>
 
@@ -136,22 +134,9 @@ export function CustomHtmlSection({
               rows={8}
               value={htmlContent}
               onChange={(e) => onHtmlContentChange(e.target.value)}
-              placeholder={
-                htmlPath
-                  ? `Saved file: ${htmlPath} — paste new HTML here only if you want to overwrite the saved file.`
-                  : "Paste your HTML snippet or markup here..."
-              }
+              placeholder="Paste HTML markup here — it will be sanitized and stored in the database..."
               className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 font-mono text-xs text-slate-900 placeholder:text-slate-400 focus:border-orange-500 focus:outline-none dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:focus:border-orange-400"
             />
-
-            {htmlPath && (
-              <p className="text-[11px] text-slate-500 dark:text-slate-400">
-                Current saved file:{" "}
-                <code className="font-mono text-slate-700 dark:text-slate-300">
-                  {htmlPath}
-                </code>
-              </p>
-            )}
           </div>
 
           {showPreview && (

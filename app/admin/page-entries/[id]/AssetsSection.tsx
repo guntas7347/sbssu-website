@@ -24,14 +24,33 @@ interface AssetsSectionProps {
   onLink1Change: (value: string) => void;
   link2: string;
   onLink2Change: (value: string) => void;
+  field1Label?: string | null;
+  field2Label?: string | null;
+  field3Label?: string | null;
+  field4Label?: string | null;
+  field5Label?: string | null;
+  file1Label?: string | null;
+  file2Label?: string | null;
+  link1Label?: string | null;
+  link2Label?: string | null;
   categoryNote?: string | null;
   uploadFolder: string;
   onUploadError?: (message: string) => void;
 }
 
+function formatSlotLabel(
+  customLabel: string | null | undefined,
+  defaultLabel: string,
+  emptyCustomFallback?: string,
+): string {
+  const trimmed = customLabel?.trim() ?? "";
+  if (trimmed.length > 0) {
+    return `${trimmed} (${defaultLabel})`;
+  }
+  return emptyCustomFallback ?? defaultLabel;
+}
+
 export function AssetsSection({
-  displayOrder,
-  onDisplayOrderChange,
   field1,
   onField1Change,
   field2,
@@ -50,10 +69,34 @@ export function AssetsSection({
   onLink1Change,
   link2,
   onLink2Change,
+  field1Label,
+  field2Label,
+  field3Label,
+  field4Label,
+  field5Label,
+  file1Label,
+  file2Label,
+  link1Label,
+  link2Label,
   categoryNote,
   uploadFolder,
   onUploadError,
 }: AssetsSectionProps) {
+  const resolvedField1Label = formatSlotLabel(
+    field1Label,
+    "Field 1",
+    "Field 1 (Primary)",
+  );
+  const resolvedField2Label = formatSlotLabel(field2Label, "Field 2");
+  const resolvedField3Label = formatSlotLabel(field3Label, "Field 3");
+  const resolvedField4Label = formatSlotLabel(field4Label, "Field 4");
+  const resolvedField5Label = formatSlotLabel(field5Label, "Field 5");
+
+  const resolvedFile1Label = formatSlotLabel(file1Label, "File 1");
+  const resolvedFile2Label = formatSlotLabel(file2Label, "File 2");
+  const resolvedLink1Label = formatSlotLabel(link1Label, "Link 1");
+  const resolvedLink2Label = formatSlotLabel(link2Label, "Link 2");
+
   const fields: Array<{
     id: string;
     label: string;
@@ -63,38 +106,41 @@ export function AssetsSection({
   }> = [
     {
       id: "entry-field-1",
-      label: "Field 1 (Primary)",
+      label: resolvedField1Label,
       value: field1,
       onChange: onField1Change,
-      placeholder: "Primary label, name, heading, or title",
+      placeholder:
+        field1Label?.trim() || "Primary label, name, heading, or title",
     },
     {
       id: "entry-field-2",
-      label: "Field 2",
+      label: resolvedField2Label,
       value: field2,
       onChange: onField2Change,
-      placeholder: "Designation, subtitle, or secondary info",
+      placeholder:
+        field2Label?.trim() || "Designation, subtitle, or secondary info",
     },
     {
       id: "entry-field-3",
-      label: "Field 3",
+      label: resolvedField3Label,
       value: field3,
       onChange: onField3Change,
-      placeholder: "Department, tenure, date, or extra detail",
+      placeholder:
+        field3Label?.trim() || "Department, tenure, date, or extra detail",
     },
     {
       id: "entry-field-4",
-      label: "Field 4",
+      label: resolvedField4Label,
       value: field4,
       onChange: onField4Change,
-      placeholder: "Additional column / value",
+      placeholder: field4Label?.trim() || "Additional column / value",
     },
     {
       id: "entry-field-5",
-      label: "Field 5",
+      label: resolvedField5Label,
       value: field5,
       onChange: onField5Change,
-      placeholder: "Additional column / notes",
+      placeholder: field5Label?.trim() || "Additional column / notes",
     },
   ];
 
@@ -102,18 +148,27 @@ export function AssetsSection({
     <div className="space-y-5 rounded-2xl border border-slate-200 bg-slate-50/70 p-4 sm:p-5 dark:border-slate-800 dark:bg-slate-950/40">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h2 className="text-xs font-bold tracking-wider text-slate-700 uppercase dark:text-slate-200">
-          3. Structured Fields, Files & Links
+          2. Structured Fields, Files & Links
         </h2>
         <span className="inline-flex items-center gap-1 font-mono text-[11px] text-slate-500 dark:text-slate-400">
-          <FolderOpen className="h-3.5 w-3.5 text-orange-600 dark:text-orange-400" />
+          <FolderOpen className="h-3.5 w-3.5 text-[var(--color-primary)] dark:text-[var(--color-primary-dark)]" />
           <span>Upload folder: {uploadFolder}</span>
         </span>
       </div>
 
       {categoryNote && (
-        <div className="flex items-start gap-2 rounded-xl border border-orange-500/20 bg-orange-500/5 px-3.5 py-2.5 text-xs text-slate-700 dark:text-slate-300">
-          <Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-orange-600 dark:text-orange-400" />
-          <span>{categoryNote}</span>
+        <div className="flex gap-3 rounded-xl border border-[var(--color-primary)]/25 bg-[var(--color-primary)]/5 px-3.5 py-3 text-sm dark:border-[var(--color-primary-dark)]/25 dark:bg-[var(--color-primary-dark)]/5">
+          <Info className="mt-0.5 h-4 w-4 shrink-0 text-[var(--color-primary)] dark:text-[var(--color-primary-dark)]" />
+
+          <div className="min-w-0 space-y-1">
+            <p className="font-semibold text-[var(--color-primary)] dark:text-[var(--color-primary-dark)]">
+              How to fill this category
+            </p>
+
+            <p className="whitespace-pre-wrap leading-relaxed text-slate-700 dark:text-slate-300">
+              {categoryNote}
+            </p>
+          </div>
         </div>
       )}
 
@@ -132,7 +187,7 @@ export function AssetsSection({
               value={f.value}
               onChange={(e) => f.onChange(e.target.value)}
               placeholder={f.placeholder}
-              className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-xs font-medium text-slate-900 placeholder:text-slate-400 focus:border-orange-500 focus:outline-none sm:text-sm dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:focus:border-orange-400"
+              className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-xs font-medium text-slate-900 placeholder:text-slate-400 focus:border-[var(--color-primary)] focus:outline-none sm:text-sm dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:focus:border-[var(--color-primary-dark)]"
             />
           </div>
         ))}
@@ -142,28 +197,28 @@ export function AssetsSection({
       <div className="grid gap-4 md:grid-cols-2">
         <div className="space-y-1.5 rounded-xl border border-slate-200 bg-white p-3.5 dark:border-slate-800 dark:bg-slate-900">
           <div className="text-xs font-semibold text-slate-700 dark:text-slate-300">
-            File 1
+            {resolvedFile1Label}
           </div>
           <Uploader
             value={file1}
             onUploaded={(filePath) => onFile1Change(filePath)}
             onError={onUploadError}
             accept="*/*"
-            label="Upload File 1"
+            label={file1Label?.trim() || "Upload File 1"}
             folder={uploadFolder}
           />
         </div>
 
         <div className="space-y-1.5 rounded-xl border border-slate-200 bg-white p-3.5 dark:border-slate-800 dark:bg-slate-900">
           <div className="text-xs font-semibold text-slate-700 dark:text-slate-300">
-            File 2
+            {resolvedFile2Label}
           </div>
           <Uploader
             value={file2}
             onUploaded={(filePath) => onFile2Change(filePath)}
             onError={onUploadError}
             accept="*/*"
-            label="Upload File 2"
+            label={file2Label?.trim() || "Upload File 2"}
             folder={uploadFolder}
           />
         </div>
@@ -176,16 +231,16 @@ export function AssetsSection({
             htmlFor="entry-link1"
             className="flex items-center gap-1.5 text-xs font-semibold text-slate-700 dark:text-slate-300"
           >
-            <Link2 className="h-3.5 w-3.5 text-green-600 dark:text-green-400" />
-            <span>Link 1</span>
+            <Link2 className="h-3.5 w-3.5 text-[var(--color-secondary)] dark:text-[var(--color-secondary-dark)]" />
+            <span>{resolvedLink1Label}</span>
           </label>
           <input
             id="entry-link1"
             type="text"
             value={link1}
             onChange={(e) => onLink1Change(e.target.value)}
-            placeholder="https://... or reference text"
-            className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-xs font-medium text-slate-900 placeholder:text-slate-400 focus:border-orange-500 focus:outline-none sm:text-sm dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:focus:border-orange-400"
+            placeholder={link1Label?.trim() || "https://... or reference text"}
+            className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-xs font-medium text-slate-900 placeholder:text-slate-400 focus:border-[var(--color-primary)] focus:outline-none sm:text-sm dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:focus:border-[var(--color-primary-dark)]"
           />
         </div>
 
@@ -194,16 +249,18 @@ export function AssetsSection({
             htmlFor="entry-link2"
             className="flex items-center gap-1.5 text-xs font-semibold text-slate-700 dark:text-slate-300"
           >
-            <Link2 className="h-3.5 w-3.5 text-green-600 dark:text-green-400" />
-            <span>Link 2</span>
+            <Link2 className="h-3.5 w-3.5 text-[var(--color-secondary)] dark:text-[var(--color-secondary-dark)]" />
+            <span>{resolvedLink2Label}</span>
           </label>
           <input
             id="entry-link2"
             type="text"
             value={link2}
             onChange={(e) => onLink2Change(e.target.value)}
-            placeholder="https://... or secondary reference"
-            className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-xs font-medium text-slate-900 placeholder:text-slate-400 focus:border-orange-500 focus:outline-none sm:text-sm dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:focus:border-orange-400"
+            placeholder={
+              link2Label?.trim() || "https://... or secondary reference"
+            }
+            className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-xs font-medium text-slate-900 placeholder:text-slate-400 focus:border-[var(--color-primary)] focus:outline-none sm:text-sm dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:focus:border-[var(--color-primary-dark)]"
           />
         </div>
       </div>

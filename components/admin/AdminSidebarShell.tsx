@@ -9,21 +9,16 @@ import {
   ChevronLeft,
   ChevronRight,
   ExternalLink,
-  FileText,
-  History,
-  Image as ImageIcon,
-  LayoutDashboard,
+  HelpCircle,
   LogOut,
   Menu,
-  Megaphone,
   Moon,
   ShieldCheck,
   Sun,
-  Users,
   X,
-  ListSortAscending,
 } from "lucide-react";
 import { RevalidateSidebarButton } from "./RevalidateSidebarButton";
+import { ADMIN_NAV_ITEMS } from "@/constants/admin-nav-items";
 
 export interface DepartmentInfo {
   id: string;
@@ -56,80 +51,10 @@ interface AdminSidebarShellProps {
 
 type NavCategory = "Overview" | "Administration" | "Content & Media";
 
-interface NavItem {
-  name: string;
-  href: string;
-  category: NavCategory;
-  icon: React.ComponentType<{ className?: string }>;
-  /**
-   * Required right(s) to view this link.
-   * - Omit or pass [] to make visible to any authenticated admin user.
-   * - Pass an array of rights if ANY matching right grants access (or "*" / "SUPER_ADMIN" for full access).
-   */
-  requiredRights?: string[];
-}
-
 const NAV_CATEGORIES: NavCategory[] = [
   "Overview",
   "Administration",
   "Content & Media",
-];
-const NAV_ITEMS: NavItem[] = [
-  {
-    name: "Dashboard",
-    href: "/admin",
-    category: "Overview",
-    icon: LayoutDashboard,
-  },
-  {
-    name: "Manage Departments",
-    href: "/admin/admin/manage-departments",
-    category: "Administration",
-    icon: Building2,
-    requiredRights: ["admin"],
-  },
-  {
-    name: "Manage Users",
-    href: "/admin/admin/users",
-    category: "Administration",
-    icon: Users,
-    requiredRights: ["admin"],
-  },
-  {
-    name: "Legacy Manager",
-    href: "/admin/admin/legacy-manager",
-    category: "Administration",
-    icon: History,
-    requiredRights: ["admin"],
-  },
-  {
-    name: "Gallery",
-    href: "/admin/gallery",
-    category: "Content & Media",
-    icon: ImageIcon,
-    requiredRights: ["admin", "hod"],
-  },
-  {
-    name: "Notices",
-    href: "/admin/notices",
-    category: "Content & Media",
-    icon: Megaphone,
-    requiredRights: ["admin", "hod"],
-  },
-  {
-    name: "Page Categories",
-    href: "/admin/page-categories",
-    category: "Content & Media",
-    icon: ListSortAscending,
-    requiredRights: ["admin", "hod"],
-  },
-  {
-    name: "Page Entries",
-    href: "/admin/page-entries",
-    category: "Content & Media",
-    icon: FileText,
-    requiredRights: ["admin", "hod"],
-  },
 ];
 
 function hasAccess(
@@ -184,7 +109,7 @@ export default function AdminSidebarShell({
   };
 
   const groupedNav = useMemo(() => {
-    const visibleItems = NAV_ITEMS.filter((item) =>
+    const visibleItems = ADMIN_NAV_ITEMS.filter((item) =>
       hasAccess(user?.rights, item.requiredRights),
     );
     return NAV_CATEGORIES.map((category) => ({
@@ -412,7 +337,6 @@ export default function AdminSidebarShell({
                 </span>
               )}
             </div>
-
             <button
               type="button"
               onClick={toggleDarkMode}
@@ -426,6 +350,13 @@ export default function AdminSidebarShell({
                 <Moon className="w-4 h-4 text-slate-600 dark:text-slate-300" />
               )}
             </button>
+            <Link
+              href="/admin/support"
+              className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-medium text-slate-700 transition-colors hover:border-orange-500/40 hover:bg-orange-50 hover:text-orange-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:border-orange-400/40 dark:hover:bg-orange-500/10 dark:hover:text-orange-300"
+            >
+              <HelpCircle className="h-4 w-4 shrink-0" />
+              <span>Help & Support</span>
+            </Link>
           </div>
         </header>
 

@@ -213,13 +213,11 @@ export function PageEntryEditorForm({ entryId }: PageEntryEditorFormProps) {
           {error}
         </div>
       )}
-
       {success && (
         <div className="rounded-2xl border border-green-200 bg-green-50 px-4 py-3 text-xs font-medium text-green-700 dark:border-green-900/60 dark:bg-green-950/40 dark:text-green-300">
           {success}
         </div>
       )}
-
       <CategoryScopeSelector
         selectedCategoryId={selectedCategoryId}
         onSelectCategory={handleSelectCategory}
@@ -227,17 +225,6 @@ export function PageEntryEditorForm({ entryId }: PageEntryEditorFormProps) {
         isNewEntry={isNew}
         onSingleEntryBlockedChange={setIsSingleEntryBlocked}
       />
-
-      <CustomHtmlSection
-        isCustomPage={isCustomPage}
-        onToggleCustomPage={setIsCustomPage}
-        slug={slug}
-        onSlugChange={setSlug}
-        htmlContent={htmlContent}
-        onHtmlContentChange={setHtmlContent}
-        deptCode={effectiveDeptCode}
-      />
-
       <AssetsSection
         displayOrder={displayOrder}
         onDisplayOrderChange={setDisplayOrder}
@@ -259,11 +246,29 @@ export function PageEntryEditorForm({ entryId }: PageEntryEditorFormProps) {
         onLink1Change={setLink1}
         link2={link2}
         onLink2Change={setLink2}
+        field1Label={activeCategory?.field1Label}
+        field2Label={activeCategory?.field2Label}
+        field3Label={activeCategory?.field3Label}
+        field4Label={activeCategory?.field4Label}
+        field5Label={activeCategory?.field5Label}
+        file1Label={activeCategory?.file1Label}
+        file2Label={activeCategory?.file2Label}
+        link1Label={activeCategory?.link1Label}
+        link2Label={activeCategory?.link2Label}
         categoryNote={activeCategory?.note}
         uploadFolder={uploadFolder}
         onUploadError={(msg) => setError(msg)}
       />
 
+      <CustomHtmlSection
+        isCustomPage={isCustomPage}
+        onToggleCustomPage={setIsCustomPage}
+        slug={slug}
+        onSlugChange={setSlug}
+        htmlContent={htmlContent}
+        onHtmlContentChange={setHtmlContent}
+        deptCode={effectiveDeptCode}
+      />
       <div className="flex flex-col-reverse gap-3 border-t border-slate-200 pt-5 sm:flex-row sm:items-center sm:justify-between dark:border-slate-800">
         <div>
           {!isNew && (

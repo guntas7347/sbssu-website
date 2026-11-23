@@ -220,6 +220,19 @@ export const pageCategories = pgTable(
     singleEntry: boolean("single_entry").default(false).notNull(),
     scope: text("scope").default("university").notNull(), // "university" | "department" | "academics" | "coe" ...
     departmentId: text("department_id"), // null = University Wide, non-null = Department
+    uiLayout: text("ui_layout")
+      .$type<"list" | "table" | "cards" | "accordion" | "article">()
+      .notNull()
+      .default("list"),
+    field1Label: text("field1_label"),
+    field2Label: text("field2_label"),
+    field3Label: text("field3_label"),
+    field4Label: text("field4_label"),
+    field5Label: text("field5_label"),
+    file1Label: text("file1_label"),
+    file2Label: text("file2_label"),
+    link1Label: text("link1_label"),
+    link2Label: text("link2_label"),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").defaultNow().notNull(),
   },

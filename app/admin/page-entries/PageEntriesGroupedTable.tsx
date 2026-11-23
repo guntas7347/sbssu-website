@@ -35,9 +35,13 @@ function formatSecondaryFields(item: AdminPageEntryItem): string {
   return parts.length > 0 ? parts.join(" | ") : "";
 }
 
+const DEPARTMENT_SCOPES = new Set(["department", "all-departments"]);
+
 function getPublicHref(item: AdminPageEntryItem): string {
+  const scopeSlug = (item.categoryScope || "university").trim().toLowerCase();
+  const catSlug = item.categoryCode.trim().toLowerCase();
+  const deptSlug = item.departmentCode?.trim().toLowerCase() || null;
   const isCustom = Boolean(item.slug || item.htmlPath || item.htmlContent);
-  const deptSlug = item.departmentCode?.toLowerCase();
 
   if (isCustom && item.slug) {
     return deptSlug
@@ -45,9 +49,11 @@ function getPublicHref(item: AdminPageEntryItem): string {
       : `/custom-pages/${item.slug}`;
   }
 
-  return deptSlug
-    ? `/departments/${deptSlug}/page/${item.categoryCode}`
-    : `/page/${item.categoryCode}`;
+  if (DEPARTMENT_SCOPES.has(scopeSlug) && deptSlug) {
+    return `/pages/${scopeSlug}/${deptSlug}/${catSlug}`;
+  }
+
+  return `/pages/${scopeSlug}/${catSlug}`;
 }
 
 export function PageEntriesGroupedTable({
@@ -243,6 +249,7 @@ export function PageEntriesGroupedTable({
                               )}
                               <Link
                                 href={publicHref}
+                                target="_blank"
                                 className="inline-flex items-center gap-1 rounded-md bg-slate-100 px-2 py-0.5 font-mono text-[11px] text-slate-600 transition hover:bg-orange-500/10 hover:text-orange-700 dark:bg-slate-800 dark:text-slate-400 dark:hover:text-orange-400"
                               >
                                 <span>View</span>

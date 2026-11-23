@@ -6,6 +6,13 @@ import { departmentsTable, pageCategories, pageEntries } from "@/db/schema";
 import { getCurrentUser } from "@/lib/actions/auth";
 import { getAllowedScopesForRights } from "../../configs";
 
+export type CategoryUiLayoutType =
+  | "list"
+  | "table"
+  | "cards"
+  | "accordion"
+  | "article";
+
 export interface PageCategoryByIdData {
   id: string | null;
   name: string;
@@ -14,6 +21,16 @@ export interface PageCategoryByIdData {
   permanent: boolean;
   singleEntry: boolean;
   scope: string;
+  uiLayout: CategoryUiLayoutType;
+  field1Label: string;
+  field2Label: string;
+  field3Label: string;
+  field4Label: string;
+  field5Label: string;
+  file1Label: string;
+  file2Label: string;
+  link1Label: string;
+  link2Label: string;
   departmentId: string | null;
   departmentCode: string | null;
   departmentName: string | null;
@@ -26,6 +43,25 @@ function normalizeCode(raw: string): string {
     .toLowerCase()
     .replace(/[^a-z0-9-_]+/g, "-")
     .replace(/^-+|-+$/g, "");
+}
+
+function normalizeUiLayout(raw?: string | null): CategoryUiLayoutType {
+  const clean = (raw ?? "").trim().toLowerCase();
+  if (
+    clean === "list" ||
+    clean === "table" ||
+    clean === "cards" ||
+    clean === "accordion" ||
+    clean === "article"
+  ) {
+    return clean;
+  }
+  return "list";
+}
+
+function normalizeOptionalLabel(raw?: string | null): string | null {
+  const trimmed = raw?.trim() ?? "";
+  return trimmed.length > 0 ? trimmed : null;
 }
 
 export async function getPageCategoryById(
@@ -47,6 +83,16 @@ export async function getPageCategoryById(
       permanent: false,
       singleEntry: false,
       scope: "university",
+      uiLayout: "list",
+      field1Label: "",
+      field2Label: "",
+      field3Label: "",
+      field4Label: "",
+      field5Label: "",
+      file1Label: "",
+      file2Label: "",
+      link1Label: "",
+      link2Label: "",
       departmentId: null,
       departmentCode: null,
       departmentName: null,
@@ -63,6 +109,16 @@ export async function getPageCategoryById(
       permanent: pageCategories.permanent,
       singleEntry: pageCategories.singleEntry,
       scope: pageCategories.scope,
+      uiLayout: pageCategories.uiLayout,
+      field1Label: pageCategories.field1Label,
+      field2Label: pageCategories.field2Label,
+      field3Label: pageCategories.field3Label,
+      field4Label: pageCategories.field4Label,
+      field5Label: pageCategories.field5Label,
+      file1Label: pageCategories.file1Label,
+      file2Label: pageCategories.file2Label,
+      link1Label: pageCategories.link1Label,
+      link2Label: pageCategories.link2Label,
       departmentId: pageCategories.departmentId,
       departmentCode: departmentsTable.code,
       departmentName: departmentsTable.name,
@@ -92,6 +148,16 @@ export async function getPageCategoryById(
     permanent: row.permanent,
     singleEntry: Boolean(row.singleEntry),
     scope: row.scope || "university",
+    uiLayout: normalizeUiLayout(row.uiLayout),
+    field1Label: row.field1Label ?? "",
+    field2Label: row.field2Label ?? "",
+    field3Label: row.field3Label ?? "",
+    field4Label: row.field4Label ?? "",
+    field5Label: row.field5Label ?? "",
+    file1Label: row.file1Label ?? "",
+    file2Label: row.file2Label ?? "",
+    link1Label: row.link1Label ?? "",
+    link2Label: row.link2Label ?? "",
     departmentId: row.departmentId,
     departmentCode: row.departmentCode,
     departmentName: row.departmentName,
@@ -105,6 +171,16 @@ export async function createPageCategory(input: {
   note?: string;
   scope?: string;
   singleEntry?: boolean;
+  uiLayout?: string;
+  field1Label?: string;
+  field2Label?: string;
+  field3Label?: string;
+  field4Label?: string;
+  field5Label?: string;
+  file1Label?: string;
+  file2Label?: string;
+  link1Label?: string;
+  link2Label?: string;
 }): Promise<{ id: string; createdCount: number }> {
   const user = await getCurrentUser();
   const rights = Array.isArray(user?.rights) ? user.rights : [];
@@ -124,6 +200,7 @@ export async function createPageCategory(input: {
   const scope = input.scope?.trim() || allowedScopes[0].key;
   const departmentId = user.departmentId ?? null;
   const singleEntry = Boolean(input.singleEntry);
+  const uiLayout = normalizeUiLayout(input.uiLayout);
 
   if (!name) throw new Error("Category name is required.");
   if (!code) throw new Error("Category code is required.");
@@ -145,6 +222,16 @@ export async function createPageCategory(input: {
       singleEntry,
       scope,
       departmentId,
+      uiLayout,
+      field1Label: normalizeOptionalLabel(input.field1Label),
+      field2Label: normalizeOptionalLabel(input.field2Label),
+      field3Label: normalizeOptionalLabel(input.field3Label),
+      field4Label: normalizeOptionalLabel(input.field4Label),
+      field5Label: normalizeOptionalLabel(input.field5Label),
+      file1Label: normalizeOptionalLabel(input.file1Label),
+      file2Label: normalizeOptionalLabel(input.file2Label),
+      link1Label: normalizeOptionalLabel(input.link1Label),
+      link2Label: normalizeOptionalLabel(input.link2Label),
     })
     .returning({ id: pageCategories.id });
 
@@ -157,6 +244,16 @@ export async function updatePageCategory(input: {
   code: string;
   note?: string;
   singleEntry?: boolean;
+  uiLayout?: string;
+  field1Label?: string;
+  field2Label?: string;
+  field3Label?: string;
+  field4Label?: string;
+  field5Label?: string;
+  file1Label?: string;
+  file2Label?: string;
+  link1Label?: string;
+  link2Label?: string;
 }): Promise<void> {
   const user = await getCurrentUser();
   const rights = Array.isArray(user?.rights) ? user.rights : [];
@@ -169,6 +266,7 @@ export async function updatePageCategory(input: {
   const code = normalizeCode(input.code);
   const note = input.note?.trim() || null;
   const singleEntry = Boolean(input.singleEntry);
+  const uiLayout = normalizeUiLayout(input.uiLayout);
 
   if (!input.id) throw new Error("Category ID is required.");
   if (!name) throw new Error("Category name is required.");
@@ -195,6 +293,16 @@ export async function updatePageCategory(input: {
       code,
       note,
       singleEntry,
+      uiLayout,
+      field1Label: normalizeOptionalLabel(input.field1Label),
+      field2Label: normalizeOptionalLabel(input.field2Label),
+      field3Label: normalizeOptionalLabel(input.field3Label),
+      field4Label: normalizeOptionalLabel(input.field4Label),
+      field5Label: normalizeOptionalLabel(input.field5Label),
+      file1Label: normalizeOptionalLabel(input.file1Label),
+      file2Label: normalizeOptionalLabel(input.file2Label),
+      link1Label: normalizeOptionalLabel(input.link1Label),
+      link2Label: normalizeOptionalLabel(input.link2Label),
       updatedAt: new Date(),
     })
     .where(eq(pageCategories.id, existing.id));

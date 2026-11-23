@@ -55,7 +55,7 @@ export function CustomHtmlSection({
         <div className="space-y-0.5">
           <div className="flex items-center gap-2 text-xs font-bold tracking-wider text-slate-700 uppercase dark:text-slate-200">
             <Code2 className="h-4 w-4 text-green-600 dark:text-green-400" />
-            <span>2. Custom HTML Page Option</span>
+            <span>3. Custom HTML Page (Optional)</span>
           </div>
           <p className="text-xs text-slate-500 dark:text-slate-400">
             Optional standalone custom HTML page with a slug, stored directly in

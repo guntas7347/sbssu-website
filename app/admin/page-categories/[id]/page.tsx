@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { Loader2, Lock, Save, Trash2 } from "lucide-react";
+import { ChevronDown, Loader2, Lock, Save, Tags, Trash2 } from "lucide-react";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { getUserAllowedScopes, type ScopeConfig } from "@/lib/actions/configs";
 import {
@@ -11,6 +11,7 @@ import {
   deletePageCategory,
   updatePageCategory,
 } from "@/lib/actions/admin/page-categories/page-categories";
+import { CategoryUiLayoutSelector } from "./CategoryUiLayoutSelector";
 
 export default function AdminPageCategoryEditorPage() {
   const params = useParams<{ id: string }>();
@@ -22,11 +23,22 @@ export default function AdminPageCategoryEditorPage() {
   const [code, setCode] = useState("");
   const [note, setNote] = useState("");
   const [scope, setScope] = useState("university");
+  const [uiLayout, setUiLayout] = useState("list");
   const [singleEntry, setSingleEntry] = useState(false);
   const [permanent, setPermanent] = useState(false);
-  const [departmentCode, setDepartmentCode] = useState<string | null>(null);
   const [entryCount, setEntryCount] = useState(0);
   const [scopes, setScopes] = useState<ScopeConfig[]>([]);
+
+  const [field1Label, setField1Label] = useState("");
+  const [field2Label, setField2Label] = useState("");
+  const [field3Label, setField3Label] = useState("");
+  const [field4Label, setField4Label] = useState("");
+  const [field5Label, setField5Label] = useState("");
+  const [file1Label, setFile1Label] = useState("");
+  const [file2Label, setFile2Label] = useState("");
+  const [link1Label, setLink1Label] = useState("");
+  const [link2Label, setLink2Label] = useState("");
+  const [labelsOpen, setLabelsOpen] = useState(false);
 
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -52,10 +64,33 @@ export default function AdminPageCategoryEditorPage() {
         setCode(data.code);
         setNote(data.note);
         setScope(data.scope || "university");
+        setUiLayout(data.uiLayout || "list");
         setSingleEntry(Boolean(data.singleEntry));
         setPermanent(data.permanent);
-        setDepartmentCode(data.departmentCode);
         setEntryCount(data.entryCount);
+
+        setField1Label(data.field1Label);
+        setField2Label(data.field2Label);
+        setField3Label(data.field3Label);
+        setField4Label(data.field4Label);
+        setField5Label(data.field5Label);
+        setFile1Label(data.file1Label);
+        setFile2Label(data.file2Label);
+        setLink1Label(data.link1Label);
+        setLink2Label(data.link2Label);
+
+        const hasAnyCustomLabel = Boolean(
+          data.field1Label ||
+          data.field2Label ||
+          data.field3Label ||
+          data.field4Label ||
+          data.field5Label ||
+          data.file1Label ||
+          data.file2Label ||
+          data.link1Label ||
+          data.link2Label,
+        );
+        setLabelsOpen(hasAnyCustomLabel);
       } catch (err) {
         if (active) {
           setError(
@@ -75,13 +110,19 @@ export default function AdminPageCategoryEditorPage() {
     };
   }, [id]);
 
-  const slug = code
-    .trim()
-    .toLowerCase()
-    .replace(/[^a-z0-9-_]+/g, "-")
-    .replace(/^-+|-+$/g, "");
-
   const canDelete = !isNew && !permanent && entryCount === 0;
+
+  const configuredLabelCount = [
+    field1Label,
+    field2Label,
+    field3Label,
+    field4Label,
+    field5Label,
+    file1Label,
+    file2Label,
+    link1Label,
+    link2Label,
+  ].filter((v) => v.trim().length > 0).length;
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -92,13 +133,41 @@ export default function AdminPageCategoryEditorPage() {
       setError(null);
       setSuccess(null);
 
+      const labelPayload = {
+        field1Label,
+        field2Label,
+        field3Label,
+        field4Label,
+        field5Label,
+        file1Label,
+        file2Label,
+        link1Label,
+        link2Label,
+      };
+
       if (isNew) {
-        await createPageCategory({ name, code, note, scope, singleEntry });
+        await createPageCategory({
+          name,
+          code,
+          note,
+          scope,
+          singleEntry,
+          uiLayout,
+          ...labelPayload,
+        });
         router.push("/admin/page-categories");
         return;
       }
 
-      await updatePageCategory({ id, name, code, note, singleEntry });
+      await updatePageCategory({
+        id,
+        name,
+        code,
+        note,
+        singleEntry,
+        uiLayout,
+        ...labelPayload,
+      });
       setSuccess("Category updated.");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to save category.");
@@ -123,6 +192,87 @@ export default function AdminPageCategoryEditorPage() {
       setIsDeleting(false);
     }
   }
+
+  const fieldLabelInputs: Array<{
+    id: string;
+    label: string;
+    placeholder: string;
+    value: string;
+    onChange: (val: string) => void;
+  }> = [
+    {
+      id: "cat-field1-label",
+      label: "Field 1 Label",
+      placeholder: "e.g. Title / Name / Course",
+      value: field1Label,
+      onChange: setField1Label,
+    },
+    {
+      id: "cat-field2-label",
+      label: "Field 2 Label",
+      placeholder: "e.g. Designation / Duration",
+      value: field2Label,
+      onChange: setField2Label,
+    },
+    {
+      id: "cat-field3-label",
+      label: "Field 3 Label",
+      placeholder: "e.g. Qualification / Date",
+      value: field3Label,
+      onChange: setField3Label,
+    },
+    {
+      id: "cat-field4-label",
+      label: "Field 4 Label",
+      placeholder: "e.g. Email / Session",
+      value: field4Label,
+      onChange: setField4Label,
+    },
+    {
+      id: "cat-field5-label",
+      label: "Field 5 Label",
+      placeholder: "e.g. Remarks / Office",
+      value: field5Label,
+      onChange: setField5Label,
+    },
+  ];
+
+  const assetLabelInputs: Array<{
+    id: string;
+    label: string;
+    placeholder: string;
+    value: string;
+    onChange: (val: string) => void;
+  }> = [
+    {
+      id: "cat-file1-label",
+      label: "File 1 Button Label",
+      placeholder: "e.g. Download Syllabus",
+      value: file1Label,
+      onChange: setFile1Label,
+    },
+    {
+      id: "cat-file2-label",
+      label: "File 2 Button Label",
+      placeholder: "e.g. Annexure / Notice PDF",
+      value: file2Label,
+      onChange: setFile2Label,
+    },
+    {
+      id: "cat-link1-label",
+      label: "Link 1 Button Label",
+      placeholder: "e.g. Apply Online / Profile",
+      value: link1Label,
+      onChange: setLink1Label,
+    },
+    {
+      id: "cat-link2-label",
+      label: "Link 2 Button Label",
+      placeholder: "e.g. Reference Portal",
+      value: link2Label,
+      onChange: setLink2Label,
+    },
+  ];
 
   return (
     <div className="space-y-6">
@@ -188,7 +338,7 @@ export default function AdminPageCategoryEditorPage() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="e.g. Syllabus"
-                className="w-full rounded-xl border border-slate-300 bg-slate-50 px-3.5 py-2.5 text-xs font-medium text-slate-900 focus:border-orange-500 focus:bg-white focus:outline-none sm:text-sm dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
+                className="w-full rounded-xl border border-slate-300 bg-slate-50 px-3.5 py-2.5 text-xs font-medium text-slate-900 focus:border-[var(--color-primary)] focus:bg-white focus:outline-none sm:text-sm dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:focus:border-[var(--color-primary-dark)]"
               />
             </div>
 
@@ -206,7 +356,7 @@ export default function AdminPageCategoryEditorPage() {
                 value={code}
                 onChange={(e) => setCode(e.target.value.trim())}
                 placeholder="e.g. syllabus"
-                className="w-full rounded-xl border border-slate-300 bg-slate-50 px-3.5 py-2.5 font-mono text-xs font-medium text-slate-900 focus:border-orange-500 focus:bg-white focus:outline-none sm:text-sm dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
+                className="w-full rounded-xl border border-slate-300 bg-slate-50 px-3.5 py-2.5 font-mono text-xs font-medium text-slate-900 focus:border-[var(--color-primary)] focus:bg-white focus:outline-none sm:text-sm dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:focus:border-[var(--color-primary-dark)]"
               />
             </div>
 
@@ -222,7 +372,7 @@ export default function AdminPageCategoryEditorPage() {
                 disabled={!isNew}
                 value={scope}
                 onChange={(e) => setScope(e.target.value)}
-                className="w-full rounded-xl border border-slate-300 bg-slate-50 px-3.5 py-2.5 text-xs font-medium text-slate-900 focus:border-orange-500 focus:bg-white focus:outline-none disabled:opacity-60 sm:text-sm dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
+                className="w-full rounded-xl border border-slate-300 bg-slate-50 px-3.5 py-2.5 text-xs font-medium text-slate-900 focus:border-[var(--color-primary)] focus:bg-white focus:outline-none disabled:opacity-60 sm:text-sm dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:focus:border-[var(--color-primary-dark)]"
               >
                 {scopes.map((item) => (
                   <option key={item.key} value={item.key}>
@@ -250,7 +400,7 @@ export default function AdminPageCategoryEditorPage() {
               type="checkbox"
               checked={singleEntry}
               onChange={(e) => setSingleEntry(e.target.checked)}
-              className="h-4 w-4 accent-orange-600"
+              className="h-4 w-4 accent-[var(--color-primary)]"
             />
           </div>
 
@@ -266,10 +416,123 @@ export default function AdminPageCategoryEditorPage() {
               rows={3}
               value={note}
               onChange={(e) => setNote(e.target.value)}
-              placeholder="Optional guidance for editors..."
-              className="w-full rounded-xl border border-slate-300 bg-slate-50 px-3.5 py-2.5 text-xs font-medium text-slate-900 focus:border-orange-500 focus:bg-white focus:outline-none sm:text-sm dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
+              placeholder="Optional guidance or instructions for editors..."
+              className="w-full rounded-xl border border-slate-300 bg-slate-50 px-3.5 py-2.5 text-xs font-medium text-slate-900 focus:border-[var(--color-primary)] focus:bg-white focus:outline-none sm:text-sm dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:focus:border-[var(--color-primary-dark)]"
             />
           </div>
+
+          {/* Collapsible Optional Field & Button Labels */}
+          <div className="overflow-hidden rounded-2xl border border-slate-200 bg-slate-50/60 dark:border-slate-800 dark:bg-slate-950/40">
+            <button
+              type="button"
+              onClick={() => setLabelsOpen((prev) => !prev)}
+              aria-expanded={labelsOpen}
+              className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left transition hover:bg-slate-100/70 dark:hover:bg-slate-900/70"
+            >
+              <div className="flex items-center gap-2.5">
+                <span className="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-[var(--color-secondary)]/10 text-[var(--color-secondary)] dark:bg-[var(--color-secondary-dark)]/15 dark:text-[var(--color-secondary-dark)]">
+                  <Tags className="h-3.5 w-3.5" />
+                </span>
+                <div>
+                  <span className="block text-xs font-bold text-slate-800 dark:text-slate-200">
+                    Field Labels
+                  </span>
+                  <span className="block text-[11px] text-slate-500 dark:text-slate-400">
+                    Rename Field 1–5, File 1–2, and Link 1–2 in the editor and
+                    public tables/cards. Leave blank for defaults.
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex shrink-0 items-center gap-2">
+                {configuredLabelCount > 0 && (
+                  <span className="rounded-full bg-[var(--color-secondary)]/10 px-2.5 py-0.5 font-mono text-[11px] font-bold text-[var(--color-secondary)] dark:bg-[var(--color-secondary-dark)]/15 dark:text-[var(--color-secondary-dark)]">
+                    {configuredLabelCount} set
+                  </span>
+                )}
+                <ChevronDown
+                  className={`h-4 w-4 text-slate-500 transition-transform ${
+                    labelsOpen ? "rotate-180" : ""
+                  }`}
+                />
+              </div>
+            </button>
+
+            {labelsOpen && (
+              <div className="space-y-4 border-t border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900">
+                <div>
+                  <p className="mb-2.5 text-[11px] font-bold tracking-wider text-slate-500 uppercase dark:text-slate-400">
+                    Text Fields (Field 1 – Field 5)
+                  </p>
+                  <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                    {fieldLabelInputs.map((item) => (
+                      <div key={item.id} className="space-y-1">
+                        <label
+                          htmlFor={item.id}
+                          className="block text-[11px] font-semibold text-slate-700 dark:text-slate-300"
+                        >
+                          {item.label}
+                        </label>
+                        <input
+                          id={item.id}
+                          type="text"
+                          value={item.value}
+                          onChange={(e) => item.onChange(e.target.value)}
+                          placeholder={item.placeholder}
+                          className="w-full rounded-xl border border-slate-300 bg-slate-50 px-3 py-2 text-xs font-medium text-slate-900 focus:border-[var(--color-primary)] focus:bg-white focus:outline-none dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:focus:border-[var(--color-primary-dark)]"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <p className="mb-2.5 text-[11px] font-bold tracking-wider text-slate-500 uppercase dark:text-slate-400">
+                    Files & Links (File 1–2, Link 1–2)
+                  </p>
+                  <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                    {assetLabelInputs.map((item) => (
+                      <div key={item.id} className="space-y-1">
+                        <label
+                          htmlFor={item.id}
+                          className="block text-[11px] font-semibold text-slate-700 dark:text-slate-300"
+                        >
+                          {item.label}
+                        </label>
+                        <input
+                          id={item.id}
+                          type="text"
+                          value={item.value}
+                          onChange={(e) => item.onChange(e.target.value)}
+                          placeholder={item.placeholder}
+                          className="w-full rounded-xl border border-slate-300 bg-slate-50 px-3 py-2 text-xs font-medium text-slate-900 focus:border-[var(--color-primary)] focus:bg-white focus:outline-none dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:focus:border-[var(--color-primary-dark)]"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          <CategoryUiLayoutSelector
+            value={uiLayout}
+            onSelect={(s) => setUiLayout(s)}
+            catName={name}
+            catScope={scope}
+            catNote={note}
+            catLabels={{
+              field1Label,
+              field2Label,
+              field3Label,
+              field4Label,
+              field5Label,
+              file1Label,
+              file2Label,
+              link1Label,
+              link2Label,
+            }}
+          />
 
           <div className="flex flex-col-reverse gap-3 border-t border-slate-200 pt-5 sm:flex-row sm:items-center sm:justify-between dark:border-slate-800">
             <div>
@@ -293,7 +556,7 @@ export default function AdminPageCategoryEditorPage() {
             <button
               type="submit"
               disabled={isSaving || isDeleting}
-              className="inline-flex items-center justify-center gap-2 rounded-xl bg-orange-600 px-5 py-2.5 text-xs font-semibold text-white transition hover:bg-orange-700 disabled:opacity-50 dark:bg-orange-500 dark:text-slate-950"
+              className="inline-flex items-center justify-center gap-2 rounded-xl bg-[var(--color-primary)] px-5 py-2.5 text-xs font-semibold text-white transition hover:opacity-90 disabled:opacity-50 dark:bg-[var(--color-primary-dark)] dark:text-slate-950"
             >
               {isSaving ? (
                 <Loader2 className="h-4 w-4 animate-spin" />

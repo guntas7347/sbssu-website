@@ -137,7 +137,7 @@ export function CategoryScopeSelector({
         </div>
       )}
 
-      {activeCategory?.note && (
+      {/* {activeCategory?.note && (
         <div className="flex items-start gap-2.5 rounded-xl border border-orange-500/25 bg-orange-500/10 px-3.5 py-2.5 text-xs text-slate-800 dark:border-orange-400/25 dark:bg-orange-500/10 dark:text-slate-200">
           <Info className="mt-0.5 h-4 w-4 shrink-0 text-orange-600 dark:text-orange-400" />
           <div>
@@ -147,7 +147,7 @@ export function CategoryScopeSelector({
             <span>{activeCategory.note}</span>
           </div>
         </div>
-      )}
+      )} */}
     </div>
   );
 }

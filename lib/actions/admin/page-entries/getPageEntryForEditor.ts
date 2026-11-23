@@ -16,6 +16,15 @@ export interface CategoryChoice {
   existingEntryId: string | null;
   scope: string;
   scopeLabel: string;
+  field1Label: string | null;
+  field2Label: string | null;
+  field3Label: string | null;
+  field4Label: string | null;
+  field5Label: string | null;
+  file1Label: string | null;
+  file2Label: string | null;
+  link1Label: string | null;
+  link2Label: string | null;
   departmentId: string | null;
   departmentCode: string | null;
   departmentName: string | null;
@@ -104,6 +113,15 @@ export async function getPageEntryForEditor(
       permanent: pageCategories.permanent,
       singleEntry: pageCategories.singleEntry,
       scope: pageCategories.scope,
+      field1Label: pageCategories.field1Label,
+      field2Label: pageCategories.field2Label,
+      field3Label: pageCategories.field3Label,
+      field4Label: pageCategories.field4Label,
+      field5Label: pageCategories.field5Label,
+      file1Label: pageCategories.file1Label,
+      file2Label: pageCategories.file2Label,
+      link1Label: pageCategories.link1Label,
+      link2Label: pageCategories.link2Label,
       departmentId: pageCategories.departmentId,
       departmentCode: departmentsTable.code,
       departmentName: departmentsTable.name,
@@ -165,6 +183,15 @@ export async function getPageEntryForEditor(
       existingEntryId: existingByCat.get(row.id) ?? null,
       scope: scopeKey,
       scopeLabel: scopeLabelMap.get(scopeKey) ?? scopeKey,
+      field1Label: row.field1Label ?? null,
+      field2Label: row.field2Label ?? null,
+      field3Label: row.field3Label ?? null,
+      field4Label: row.field4Label ?? null,
+      field5Label: row.field5Label ?? null,
+      file1Label: row.file1Label ?? null,
+      file2Label: row.file2Label ?? null,
+      link1Label: row.link1Label ?? null,
+      link2Label: row.link2Label ?? null,
       departmentId: row.departmentId,
       departmentCode: row.departmentCode,
       departmentName: row.departmentName,

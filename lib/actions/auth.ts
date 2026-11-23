@@ -6,6 +6,7 @@ import { decrypt, SessionPayload } from "@/lib/jose";
 import { db } from "@/db/drizzel";
 import { usersTable } from "@/db/schema";
 import { eq } from "drizzle-orm";
+import { ADMIN_NAV_ITEMS } from "@/constants/admin-nav-items";
 
 /**
  * Retrieves the currently authenticated user from the session cookie
@@ -44,5 +45,32 @@ export async function getCurrentUser() {
     // Token is expired, tampered with, or database query failed
     console.error("getCurrentUser error:", error);
     return null;
+  }
+}
+
+export async function canAccessAdminRoute(href: string): Promise<boolean> {
+  try {
+    const user = await getCurrentUser();
+
+    if (!user || !Array.isArray(user.rights)) return false;
+
+    const rights = user.rights;
+
+    // Must at least have allow_login
+    const hasBaseAccess = rights.includes("allow_login");
+
+    if (!hasBaseAccess) return false;
+
+    // Admin bypasses specific route right restrictions
+    if (rights.includes("admin")) return true;
+
+    const item = ADMIN_NAV_ITEMS.find((nav) => nav.href === href);
+
+    if (!item || !item.requiredRights) return false;
+
+    return item.requiredRights.some((right) => rights.includes(right));
+  } catch (error) {
+    console.error("Error checking route access:", error);
+    return false;
   }
 }

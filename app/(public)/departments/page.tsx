@@ -2,8 +2,11 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, Building2, Layers } from "lucide-react";
 import { getAllPublicDepartments } from "@/lib/actions/public/public-page-entries";
+import { notFound } from "next/navigation";
 
-export const dynamic = "force-dynamic";
+export async function generateStaticParams() {
+  return [];
+}
 
 export const metadata: Metadata = {
   title: "Academic Departments | SBSSU",
@@ -13,6 +16,8 @@ export const metadata: Metadata = {
 
 export default async function DepartmentsDirectoryPage() {
   const departments = await getAllPublicDepartments();
+
+  if (!departments) return notFound();
 
   return (
     <main className="min-h-screen bg-slate-50 px-4 py-10 text-slate-900 sm:px-6 lg:px-8 dark:bg-slate-950 dark:text-slate-100">

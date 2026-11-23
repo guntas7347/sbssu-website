@@ -149,14 +149,18 @@ export async function getAllPublicDepartmentEntries(deptCode: string): Promise<{
 }
 
 export async function getAllPublicDepartments(): Promise<
-  PublicDepartmentBasic[]
+  PublicDepartmentBasic[] | null
 > {
-  return db
-    .select({
-      id: departmentsTable.id,
-      name: departmentsTable.name,
-      code: departmentsTable.code,
-    })
-    .from(departmentsTable)
-    .orderBy(asc(departmentsTable.name));
+  try {
+    return db
+      .select({
+        id: departmentsTable.id,
+        name: departmentsTable.name,
+        code: departmentsTable.code,
+      })
+      .from(departmentsTable)
+      .orderBy(asc(departmentsTable.name));
+  } catch (error) {
+    return null;
+  }
 }

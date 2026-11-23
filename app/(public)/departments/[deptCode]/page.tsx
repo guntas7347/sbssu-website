@@ -20,8 +20,9 @@ import { Outcomes206 } from "@/components/departments/Outcomes206";
 import { Faculty207 } from "@/components/departments/Faculty207";
 import { MoreDepartmentCategories } from "@/components/departments/MoreDepartmentCategories";
 
-export const dynamic = "force-static";
-export const dynamicParams = true;
+export async function generateStaticParams() {
+  return [];
+}
 
 interface DeptPageProps {
   params: Promise<{ deptCode: string }>;

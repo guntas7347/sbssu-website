@@ -152,7 +152,7 @@ export async function getAllPublicDepartments(): Promise<
   PublicDepartmentBasic[] | null
 > {
   try {
-    return db
+    return await db
       .select({
         id: departmentsTable.id,
         name: departmentsTable.name,

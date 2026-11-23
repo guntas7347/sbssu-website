@@ -157,18 +157,11 @@ export function AssetsSection({
       </div>
 
       {categoryNote && (
-        <div className="flex gap-3 rounded-xl border border-[var(--color-primary)]/25 bg-[var(--color-primary)]/5 px-3.5 py-3 text-sm dark:border-[var(--color-primary-dark)]/25 dark:bg-[var(--color-primary-dark)]/5">
-          <Info className="mt-0.5 h-4 w-4 shrink-0 text-[var(--color-primary)] dark:text-[var(--color-primary-dark)]" />
-
-          <div className="min-w-0 space-y-1">
-            <p className="font-semibold text-[var(--color-primary)] dark:text-[var(--color-primary-dark)]">
-              How to fill this category
-            </p>
-
-            <p className="whitespace-pre-wrap leading-relaxed text-slate-700 dark:text-slate-300">
-              {categoryNote}
-            </p>
-          </div>
+        <div className="flex items-center justify-start gap-3 rounded-xl border border-[var(--color-primary)]/25 bg-[var(--color-primary)]/5 px-3.5 py-3 text-sm dark:border-[var(--color-primary-dark)]/25 dark:bg-[var(--color-primary-dark)]/5">
+          <Info className="h-4 w-4 shrink-0 text-[var(--color-primary)] dark:text-[var(--color-primary-dark)]" />
+          <p className="whitespace-pre-wrap leading-relaxed text-slate-700 dark:text-slate-300">
+            {categoryNote}
+          </p>
         </div>
       )}
 

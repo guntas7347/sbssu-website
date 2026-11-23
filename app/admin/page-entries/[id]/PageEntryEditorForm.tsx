@@ -268,6 +268,7 @@ export function PageEntryEditorForm({ entryId }: PageEntryEditorFormProps) {
         htmlContent={htmlContent}
         onHtmlContentChange={setHtmlContent}
         deptCode={effectiveDeptCode}
+        activeCategory={activeCategory}
       />
       <div className="flex flex-col-reverse gap-3 border-t border-slate-200 pt-5 sm:flex-row sm:items-center sm:justify-between dark:border-slate-800">
         <div>

@@ -10,6 +10,10 @@ interface PageProps {
   }>;
 }
 
+export async function generateStaticParams() {
+  return [];
+}
+
 function parseSlugSegments(slug?: string[]): {
   deptCode: string | null;
   catCode: string | null;

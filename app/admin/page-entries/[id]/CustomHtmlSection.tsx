@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { Code2, Eye, FileCode2 } from "lucide-react";
 import { sanitizeHtmlClient } from "@/lib/sanitize-html";
 import { HtmlPromptCopyBox } from "./HtmlPromptCopyBox";
+import { CategoryChoice } from "@/lib/actions/admin/page-entries/getPageEntryForEditor";
 
 interface CustomHtmlSectionProps {
   isCustomPage: boolean;
@@ -13,6 +14,7 @@ interface CustomHtmlSectionProps {
   htmlContent: string;
   onHtmlContentChange: (value: string) => void;
   deptCode: string | null;
+  activeCategory: CategoryChoice | null;
 }
 
 export function CustomHtmlSection({
@@ -23,6 +25,7 @@ export function CustomHtmlSection({
   htmlContent,
   onHtmlContentChange,
   deptCode,
+  activeCategory,
 }: CustomHtmlSectionProps) {
   const [showPreview, setShowPreview] = useState(true);
 
@@ -37,10 +40,18 @@ export function CustomHtmlSection({
     .replace(/[^a-z0-9-]+/g, "-")
     .replace(/^-+|-+$/g, "");
 
+  const DEPT_SCOPES = new Set(["all-departments", "department"]);
+
+  const normalizedScope = (activeCategory?.scope || "university")
+    .trim()
+    .toLowerCase();
+  const normalizedCat = (activeCategory?.code || "901").trim().toLowerCase();
+  const normalizedDept = deptCode?.trim().toLowerCase();
+
   const routeHint = normalizedSlug
-    ? deptCode
-      ? `/departments/${deptCode.toLowerCase()}/custom-pages/${normalizedSlug}`
-      : `/custom-pages/${normalizedSlug}`
+    ? DEPT_SCOPES.has(normalizedScope) && normalizedDept
+      ? `/html/${normalizedScope}/${normalizedDept}/${normalizedCat}/${normalizedSlug}`
+      : `/html/${normalizedScope}/${normalizedCat}/${normalizedSlug}`
     : null;
 
   return (

@@ -35,25 +35,27 @@ function formatSecondaryFields(item: AdminPageEntryItem): string {
   return parts.length > 0 ? parts.join(" | ") : "";
 }
 
-const DEPARTMENT_SCOPES = new Set(["department", "all-departments"]);
+const DEPT_SCOPES = new Set(["all-departments", "department"]);
 
 function getPublicHref(item: AdminPageEntryItem): string {
   const scopeSlug = (item.categoryScope || "university").trim().toLowerCase();
   const catSlug = item.categoryCode.trim().toLowerCase();
-  const deptSlug = item.departmentCode?.trim().toLowerCase() || null;
-  const isCustom = Boolean(item.slug || item.htmlPath || item.htmlContent);
+  const deptSlug = item.departmentCode?.trim().toLowerCase();
+  const entrySlug = item.slug?.trim().toLowerCase();
 
-  if (isCustom && item.slug) {
-    return deptSlug
-      ? `/departments/${deptSlug}/custom-pages/${item.slug}`
-      : `/custom-pages/${item.slug}`;
+  if (entrySlug) {
+    if (DEPT_SCOPES.has(scopeSlug)) {
+      return deptSlug
+        ? `/html/${scopeSlug}/${deptSlug}/${entrySlug}`
+        : `/html/${scopeSlug}/${entrySlug}`;
+    }
+
+    return `/html/${scopeSlug}/${catSlug}/${entrySlug}`;
   }
 
-  if (DEPARTMENT_SCOPES.has(scopeSlug) && deptSlug) {
-    return `/pages/${scopeSlug}/${deptSlug}/${catSlug}`;
-  }
-
-  return `/pages/${scopeSlug}/${catSlug}`;
+  return deptSlug
+    ? `/pages/${scopeSlug}/${deptSlug}/${catSlug}`
+    : `/pages/${scopeSlug}/${catSlug}`;
 }
 
 export function PageEntriesGroupedTable({
@@ -171,17 +173,12 @@ export function PageEntriesGroupedTable({
                   {group.categoryName}
                 </span>
 
-                {group.departmentId ? (
-                  <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-orange-500/10 px-2.5 py-0.5 text-[11px] font-semibold text-orange-700 dark:bg-orange-500/15 dark:text-orange-400">
-                    <Building2 className="h-3 w-3" />
-                    <span>{group.departmentCode?.toUpperCase() || "Dept"}</span>
+                <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-green-600/10 px-2.5 py-0.5 text-[11px] font-semibold text-green-700 dark:bg-green-500/15 dark:text-green-400">
+                  <Globe className="h-3 w-3" />
+                  <span>
+                    {group.categoryScope.toUpperCase() || "University"}
                   </span>
-                ) : (
-                  <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-green-600/10 px-2.5 py-0.5 text-[11px] font-semibold text-green-700 dark:bg-green-500/15 dark:text-green-400">
-                    <Globe className="h-3 w-3" />
-                    <span>{group.categoryScope || "University"}</span>
-                  </span>
-                )}
+                </span>
               </div>
 
               <span className="shrink-0 rounded-full border border-slate-200 bg-slate-50 px-2.5 py-0.5 font-mono text-xs font-semibold text-slate-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300">

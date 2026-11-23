@@ -71,9 +71,7 @@ export async function getPublicCategoryPageData(input: {
     const scope = input.scope.trim().toLowerCase();
     const catCode = input.catCode.trim().toLowerCase();
 
-    if (!scope || !catCode) {
-      return null;
-    }
+    if (!scope || !catCode) return null;
 
     const isDepartmentScope = DEPARTMENT_SCOPES.has(scope);
     const deptCode = isDepartmentScope

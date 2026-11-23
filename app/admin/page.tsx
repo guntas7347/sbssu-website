@@ -6,8 +6,6 @@ import AdminDashboardPage from "./AdminDashboardPage";
 export default async function PageEntriesPage() {
   const allowed = await canAccessAdminRoute("/admin");
 
-  console.log(allowed);
-
   if (!allowed) redirect("/page-not-found");
 
   return <AdminDashboardPage />;

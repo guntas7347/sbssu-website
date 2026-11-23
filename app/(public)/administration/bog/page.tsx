@@ -36,9 +36,7 @@ export default async function BoardOfGovernorsPage() {
     catCode: "101",
   });
 
-  if (!data) {
-    notFound();
-  }
+  if (!data) notFound();
 
   const { category, entries } = data;
 

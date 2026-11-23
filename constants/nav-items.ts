@@ -10,7 +10,7 @@ export const navItems: NavItem[] = [
     children: [
       { label: "About", path: "/about" },
       { label: "Mission & Vision", path: "/mission" },
-      { label: "Legacy Website", path: "/legacy-website" },
+      { label: "Legacy Content", path: "/legacy-website" },
     ],
   },
   {

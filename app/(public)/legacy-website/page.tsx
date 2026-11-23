@@ -8,6 +8,7 @@ import {
   resolveLegacyData,
 } from "@/lib/actions/legacy-website";
 import type { LegacyWebsite } from "@/db/schema";
+import { LegacyLookupForm } from "./LegacyLookupForm";
 
 type Props = {
   searchParams: Promise<{
@@ -36,35 +37,8 @@ export default async function LegacyWebsiteContent({ searchParams }: Props) {
             new system. Enter an ID below to view the archived content.
           </p>
 
-          <form method="GET" className="mt-6 space-y-4">
-            <div>
-              <label
-                htmlFor="Id"
-                className="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-200"
-              >
-                Legacy Website ID
-              </label>
-
-              <input
-                id="Id"
-                name="Id"
-                type="number"
-                min="0"
-                required
-                placeholder="e.g. 1150"
-                className="w-full rounded-xl border border-slate-300 bg-slate-50 px-4 py-3 text-slate-900 outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 dark:border-slate-700 dark:bg-slate-800 dark:text-white dark:focus:border-primary-dark dark:focus:ring-primary-dark/20"
-              />
-            </div>
-
-            {mode && <input type="hidden" name="mode" value={mode} />}
-
-            <button
-              type="submit"
-              className="w-full cursor-pointer rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-white shadow-sm transition-opacity hover:opacity-95 dark:bg-primary-dark"
-            >
-              View Legacy Content
-            </button>
-          </form>
+          {/* 2. Replace the old <form method="GET">...</form> with this single line: */}
+          <LegacyLookupForm defaultMode={mode} />
 
           <div className="mt-6 rounded-xl border border-primary/20 bg-primary/5 p-4 text-sm text-slate-700 dark:border-primary-dark/25 dark:bg-primary-dark/10 dark:text-slate-200">
             <h2 className="font-bold text-primary dark:text-primary-dark">

@@ -242,31 +242,8 @@ export async function getUserProfileById(
 export async function revalidateCurrentScopeCache(): Promise<void> {
   const user = await getCurrentUser();
   const rights = Array.isArray(user?.rights) ? user.rights : [];
-  const allowedScopes = await getUserAllowedScopes();
 
-  if (!user || allowedScopes.length === 0) {
-    return;
-  }
+  if (!user || !rights.includes("allow_login")) return;
 
-  if (user.departmentId) {
-    const [dept] = await db
-      .select({ code: departmentsTable.code })
-      .from(departmentsTable)
-      .where(eq(departmentsTable.id, user.departmentId))
-      .limit(1);
-
-    if (dept?.code) {
-      const basePath = `/departments/${dept.code.trim().toLowerCase()}`;
-      revalidatePath(basePath, "layout");
-      revalidatePath(basePath);
-      revalidatePath(`${basePath}/page`, "layout");
-      revalidatePath(`${basePath}/custom-pages`, "layout");
-    }
-  }
-
-  if (rights.includes("admin")) {
-    revalidatePath("/", "layout");
-    revalidatePath("/page", "layout");
-    revalidatePath("/custom-pages", "layout");
-  }
+  revalidatePath("/", "layout");
 }

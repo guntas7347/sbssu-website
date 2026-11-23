@@ -6,26 +6,59 @@ import { departmentsTable, pageCategories, pageEntries } from "@/db/schema";
 import {
   normalizeUiLayout,
   type CategoryUiLayout,
-  type CategoryViewMeta,
-  type RawCategoryEntry,
 } from "@/components/category-views/entry-view-helpers";
 
 const DEPARTMENT_SCOPES = new Set(["department", "all-departments"]);
 
+export interface RawCategoryEntry {
+  id: string;
+  displayOrder?: number | null;
+  field1?: string | null;
+  field2?: string | null;
+  field3?: string | null;
+  field4?: string | null;
+  field5?: string | null;
+  file1?: string | null;
+  file2?: string | null;
+  link1?: string | null;
+  link2?: string | null;
+  slug?: string | null;
+  htmlContent?: string | null;
+  createdAt?: Date | string | null;
+}
+
+export interface PublicCategoryRecord {
+  id: string;
+  name: string;
+  code: string;
+  note: string | null;
+  permanent: boolean;
+  singleEntry: boolean;
+  scope: string;
+  departmentId: string | null;
+  uiLayout: CategoryUiLayout;
+  field1Label: string | null;
+  field2Label: string | null;
+  field3Label: string | null;
+  field4Label: string | null;
+  field5Label: string | null;
+  file1Label: string | null;
+  file2Label: string | null;
+  link1Label: string | null;
+  link2Label: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface PublicCategoryDepartment {
+  id: string;
+  code: string;
+  name: string;
+}
+
 export interface PublicCategoryPageData {
-  category: CategoryViewMeta & {
-    id: string;
-    name: string;
-    code: string;
-    scope: string;
-    uiLayout: CategoryUiLayout;
-    singleEntry: boolean;
-  };
-  department: {
-    id: string;
-    code: string;
-    name: string;
-  } | null;
+  category: PublicCategoryRecord;
+  department: PublicCategoryDepartment | null;
   entries: RawCategoryEntry[];
 }
 
@@ -47,12 +80,10 @@ export async function getPublicCategoryPageData(input: {
       ? input.deptCode?.trim().toLowerCase() || null
       : null;
 
-    // Department scopes require a valid deptCode; non-department scopes ignore department completely
     if (isDepartmentScope && !deptCode) {
       return null;
     }
 
-    // 1. Resolve department only when scope is "department" or "all-departments"
     let department: { id: string; code: string; name: string } | null = null;
     if (isDepartmentScope && deptCode) {
       const [dept] = await db
@@ -71,7 +102,6 @@ export async function getPublicCategoryPageData(input: {
       department = dept;
     }
 
-    // 2. Resolve category matching scope + catCode (+ departmentId only for "department" scope)
     const categoryConditions = [
       eq(sql`lower(${pageCategories.scope})`, scope),
       eq(sql`lower(${pageCategories.code})`, catCode),
@@ -82,24 +112,7 @@ export async function getPublicCategoryPageData(input: {
     }
 
     const [cat] = await db
-      .select({
-        id: pageCategories.id,
-        name: pageCategories.name,
-        code: pageCategories.code,
-        note: pageCategories.note,
-        scope: pageCategories.scope,
-        singleEntry: pageCategories.singleEntry,
-        uiLayout: pageCategories.uiLayout,
-        field1Label: pageCategories.field1Label,
-        field2Label: pageCategories.field2Label,
-        field3Label: pageCategories.field3Label,
-        field4Label: pageCategories.field4Label,
-        field5Label: pageCategories.field5Label,
-        file1Label: pageCategories.file1Label,
-        file2Label: pageCategories.file2Label,
-        link1Label: pageCategories.link1Label,
-        link2Label: pageCategories.link2Label,
-      })
+      .select()
       .from(pageCategories)
       .where(and(...categoryConditions))
       .limit(1);
@@ -108,7 +121,6 @@ export async function getPublicCategoryPageData(input: {
       return null;
     }
 
-    // 3. Fetch entries (filtered by departmentId only when scope is "all-departments")
     const entryConditions = [eq(pageEntries.pageCategoryId, cat.id)];
     if (scope === "all-departments" && department) {
       entryConditions.push(eq(pageEntries.departmentId, department.id));
@@ -137,22 +149,8 @@ export async function getPublicCategoryPageData(input: {
 
     return {
       category: {
-        id: cat.id,
-        name: cat.name,
-        code: cat.code,
-        note: cat.note,
-        scope: cat.scope,
-        singleEntry: Boolean(cat.singleEntry),
+        ...cat,
         uiLayout: normalizeUiLayout(cat.uiLayout),
-        field1Label: cat.field1Label,
-        field2Label: cat.field2Label,
-        field3Label: cat.field3Label,
-        field4Label: cat.field4Label,
-        field5Label: cat.field5Label,
-        file1Label: cat.file1Label,
-        file2Label: cat.file2Label,
-        link1Label: cat.link1Label,
-        link2Label: cat.link2Label,
       },
       department,
       entries: rows,
@@ -182,7 +180,7 @@ export async function getPublicScopeDirectory(
 ): Promise<PublicScopeDirectoryData | null> {
   try {
     const scope = rawScope.trim().toLowerCase();
-    if (!scope || DEPARTMENT_SCOPES.has(scope)) return null;
+    if (!scope) return null;
 
     const rows = await db
       .select({

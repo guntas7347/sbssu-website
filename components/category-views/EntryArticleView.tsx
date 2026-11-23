@@ -19,11 +19,7 @@ export function EntryArticleView({
   deptCode,
   emptyMessage = "No article content available yet.",
 }: EntryArticleViewProps) {
-  const items = normalizeEntries(entries, {
-    categoryName: category?.name,
-    deptCode,
-    labels: category,
-  });
+  const items = normalizeEntries(entries, category, deptCode);
 
   if (items.length === 0) {
     return (
@@ -69,7 +65,7 @@ export function EntryArticleView({
                   className="rounded-2xl border border-slate-200/80 bg-slate-50/70 p-4 dark:border-slate-800 dark:bg-slate-950/50"
                 >
                   <h3 className="text-xs font-bold tracking-wider text-[var(--color-primary)] uppercase dark:text-[var(--color-primary-dark)]">
-                    {field.defaultLabel}
+                    {field.label}
                   </h3>
                   <p className="mt-1.5 whitespace-pre-line text-xs leading-relaxed text-slate-700 sm:text-sm dark:text-slate-300">
                     {field.isPopulated ? (

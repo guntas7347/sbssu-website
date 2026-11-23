@@ -19,11 +19,7 @@ export function EntryListView({
   deptCode,
   emptyMessage = "No entries available yet.",
 }: EntryListViewProps) {
-  const items = normalizeEntries(entries, {
-    categoryName: category?.name,
-    deptCode,
-    labels: category,
-  });
+  const items = normalizeEntries(entries, category, deptCode);
 
   if (items.length === 0) {
     return (
@@ -61,7 +57,7 @@ export function EntryListView({
                       className="rounded-xl border border-slate-200/80 bg-slate-50/80 px-3 py-2 dark:border-slate-800 dark:bg-slate-950/60"
                     >
                       <dt className="text-[10px] font-bold tracking-wider text-slate-500 uppercase dark:text-slate-400">
-                        {field.defaultLabel}
+                        {field.label}
                       </dt>
                       <dd className="mt-0.5 whitespace-pre-line text-xs text-slate-800 dark:text-slate-200">
                         {field.isPopulated ? (

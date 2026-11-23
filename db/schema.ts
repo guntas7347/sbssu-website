@@ -233,6 +233,7 @@ export const pageCategories = pgTable(
     file2Label: text("file2_label"),
     link1Label: text("link1_label"),
     link2Label: text("link2_label"),
+    createdById: text("created_by_id"),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").defaultNow().notNull(),
   },

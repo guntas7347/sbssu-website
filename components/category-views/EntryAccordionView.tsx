@@ -29,11 +29,7 @@ export function EntryAccordionView({
   deptCode,
   emptyMessage = "No items available yet.",
 }: EntryAccordionViewProps) {
-  const items = normalizeEntries(entries, {
-    categoryName: category?.name,
-    deptCode,
-    labels: category,
-  });
+  const items = normalizeEntries(entries, category, deptCode);
 
   const [openIds, setOpenIds] = useState<Record<string, boolean>>({});
 
@@ -94,7 +90,7 @@ export function EntryAccordionView({
                         className="rounded-xl border border-slate-200/80 bg-white px-3.5 py-2.5 dark:border-slate-800 dark:bg-slate-900"
                       >
                         <dt className="text-[10px] font-bold tracking-wider text-slate-500 uppercase dark:text-slate-400">
-                          {field.defaultLabel}
+                          {field.label}
                         </dt>
                         <dd className="mt-1 whitespace-pre-line text-xs text-slate-800 dark:text-slate-200">
                           {field.isPopulated ? (

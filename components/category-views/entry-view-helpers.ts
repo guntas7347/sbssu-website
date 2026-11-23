@@ -21,6 +21,14 @@ export interface CategoryCustomLabels {
   link2Label?: string | null;
 }
 
+export interface CategoryViewMeta extends CategoryCustomLabels {
+  name?: string | null;
+  code?: string | null;
+  scope?: string | null;
+  note?: string | null;
+  uiLayout?: string | null;
+}
+
 export interface RawCategoryEntry {
   id: string;
   displayOrder?: number | null;
@@ -38,17 +46,9 @@ export interface RawCategoryEntry {
   createdAt?: Date | string | null;
 }
 
-export interface CategoryViewMeta extends CategoryCustomLabels {
-  name?: string | null;
-  code?: string | null;
-  scope?: string | null;
-  note?: string | null;
-  uiLayout?: string | null;
-}
-
 export interface NormalizedField {
   slot: FieldSlotKey;
-  defaultLabel: string;
+  label: string;
   value: string;
   isPopulated: boolean;
 }
@@ -76,21 +76,20 @@ export interface NormalizedEntry {
   formattedDate: string;
 }
 
-const FIELD_DEFS: Array<{
+const FIELD_SLOTS: Array<{
   slot: FieldSlotKey;
-  labelProp: keyof CategoryCustomLabels;
-  defaultLabel: string;
+  labelKey: keyof CategoryCustomLabels;
+  fallback: string;
 }> = [
-  { slot: "field1", labelProp: "field1Label", defaultLabel: "Field 1" },
-  { slot: "field2", labelProp: "field2Label", defaultLabel: "Field 2" },
-  { slot: "field3", labelProp: "field3Label", defaultLabel: "Field 3" },
-  { slot: "field4", labelProp: "field4Label", defaultLabel: "Field 4" },
-  { slot: "field5", labelProp: "field5Label", defaultLabel: "Field 5" },
+  { slot: "field1", labelKey: "field1Label", fallback: "Field 1" },
+  { slot: "field2", labelKey: "field2Label", fallback: "Field 2" },
+  { slot: "field3", labelKey: "field3Label", fallback: "Field 3" },
+  { slot: "field4", labelKey: "field4Label", fallback: "Field 4" },
+  { slot: "field5", labelKey: "field5Label", fallback: "Field 5" },
 ];
 
-function resolveLabel(custom?: string | null, fallback = ""): string {
-  const trimmed = custom?.trim() ?? "";
-  return trimmed.length > 0 ? trimmed : fallback;
+function labelOr(value?: string | null, fallback = ""): string {
+  return value?.trim() || fallback;
 }
 
 export function normalizeUiLayout(layout?: string | null): CategoryUiLayout {
@@ -129,81 +128,58 @@ export function isExternalUrl(url: string): boolean {
   return /^https?:\/\//i.test(url.trim());
 }
 
-export function parseTableColumnHeaders(
-  note?: string | null,
-  customLabels?: CategoryCustomLabels | null,
-): Record<FieldSlotKey, string> {
-  const headers: Record<FieldSlotKey, string> = {
-    field1: resolveLabel(customLabels?.field1Label, "Field 1"),
-    field2: resolveLabel(customLabels?.field2Label, "Field 2"),
-    field3: resolveLabel(customLabels?.field3Label, "Field 3"),
-    field4: resolveLabel(customLabels?.field4Label, "Field 4"),
-    field5: resolveLabel(customLabels?.field5Label, "Field 5"),
-  };
+export function buildPageUrl(params: {
+  html?: boolean;
+  scope?: string | null;
+  catCode?: string | null;
+  slug?: string | null;
+  deptCode?: string | null;
+}): string | null {
+  const scope = (params.scope ?? "university").trim().toLowerCase();
+  const catCode = (params.catCode ?? "").trim().toLowerCase();
+  const slug = params.html ? (params.slug ?? "").trim().toLowerCase() : null;
 
-  const hasExplicitFieldLabels = Boolean(
-    customLabels?.field1Label?.trim() ||
-    customLabels?.field2Label?.trim() ||
-    customLabels?.field3Label?.trim() ||
-    customLabels?.field4Label?.trim() ||
-    customLabels?.field5Label?.trim(),
-  );
+  if (!scope || !catCode) return null;
+  if (params.html && !slug) return null;
 
-  // If explicit field labels aren't set, allow optional pipe-delimited note headers as fallback
-  if (!hasExplicitFieldLabels && note) {
-    const parts = note
-      .split("|")
-      .map((p) => p.trim())
-      .filter(Boolean);
+  const baseSegments = DEPT_SCOPES.has(scope)
+    ? (() => {
+        const deptCode = (params.deptCode ?? "").trim().toLowerCase();
+        return deptCode ? [scope, deptCode, catCode] : null;
+      })()
+    : [scope, catCode];
 
-    if (parts.length >= 2) {
-      FIELD_DEFS.forEach((def, idx) => {
-        if (parts[idx]) {
-          headers[def.slot] = parts[idx];
-        }
-      });
-    }
-  }
+  if (!baseSegments) return null;
 
-  return headers;
+  return params.html
+    ? `/html/${[...baseSegments, slug].join("/")}`
+    : `/pages/${baseSegments.join("/")}`;
 }
 
 export function normalizeEntry(
   raw: RawCategoryEntry,
-  options?: {
-    categoryName?: string | null;
-    categoryCode?: string | null;
-    scope?: string | null;
-    deptCode?: string | null;
-    labels?: CategoryCustomLabels | null;
-  },
+  category?: CategoryViewMeta | null,
+  deptCode?: string | null,
 ): NormalizedEntry {
-  const labels = options?.labels as CategoryViewMeta | null | undefined;
-  console.log();
-
-  const allFields: NormalizedField[] = FIELD_DEFS.map((def) => {
-    const trimmed = (raw[def.slot] ?? "").trim();
-    const resolvedLabel = resolveLabel(
-      labels?.[def.labelProp],
-      def.defaultLabel,
-    );
-    return {
-      slot: def.slot,
-      defaultLabel: resolvedLabel,
-      value: trimmed,
-      isPopulated: trimmed.length > 0,
-    };
-  });
+  const allFields: NormalizedField[] = FIELD_SLOTS.map(
+    ({ slot, labelKey, fallback }) => {
+      const value = (raw[slot] ?? "").trim();
+      return {
+        slot,
+        label: labelOr(category?.[labelKey], fallback),
+        value,
+        isPopulated: value.length > 0,
+      };
+    },
+  );
 
   const populatedFields = allFields.filter((f) => f.isPopulated);
-  const hasAnyFieldValue = populatedFields.length > 0;
-
-  const primaryField = allFields[0]?.isPopulated
-    ? allFields[0].value
-    : (populatedFields[0]?.value ?? "");
-
   const primaryTitle =
-    primaryField || options?.categoryName?.trim() || "Untitled Entry";
+    (allFields[0]?.isPopulated
+      ? allFields[0].value
+      : populatedFields[0]?.value) ||
+    category?.name?.trim() ||
+    "Untitled Entry";
 
   const secondaryFields = populatedFields.filter(
     (f) => f.value !== primaryTitle,
@@ -216,7 +192,7 @@ export function normalizeEntry(
     files.push({
       key: `${raw.id}-file1`,
       kind: "file",
-      label: resolveLabel(labels?.file1Label, f2 ? "File 1" : "Download File"),
+      label: labelOr(category?.file1Label, f2 ? "File 1" : "Download File"),
       href: f1,
       isExternal: isExternalUrl(f1),
     });
@@ -225,7 +201,7 @@ export function normalizeEntry(
     files.push({
       key: `${raw.id}-file2`,
       kind: "file",
-      label: resolveLabel(labels?.file2Label, "File 2"),
+      label: labelOr(category?.file2Label, "File 2"),
       href: f2,
       isExternal: isExternalUrl(f2),
     });
@@ -238,7 +214,7 @@ export function normalizeEntry(
     links.push({
       key: `${raw.id}-link1`,
       kind: "link",
-      label: resolveLabel(labels?.link1Label, l2 ? "Link 1" : "Open Link"),
+      label: labelOr(category?.link1Label, l2 ? "Link 1" : "Open Link"),
       href: l1,
       isExternal: isExternalUrl(l1),
     });
@@ -247,32 +223,25 @@ export function normalizeEntry(
     links.push({
       key: `${raw.id}-link2`,
       kind: "link",
-      label: resolveLabel(labels?.link2Label, "Link 2"),
+      label: labelOr(category?.link2Label, "Link 2"),
       href: l2,
       isExternal: isExternalUrl(l2),
     });
   }
 
-  const cleanSlug = (raw.slug ?? "").trim().toLowerCase();
-  const cleanScope = (labels?.scope ?? options?.scope ?? "university")
-    .trim()
-    .toLowerCase();
-  const cleanCatCode = (labels?.code ?? options?.categoryCode ?? "")
-    .trim()
-    .toLowerCase();
-  const isDeptScope = DEPT_SCOPES.has(cleanScope);
-  const cleanDept = isDeptScope
-    ? options?.deptCode?.trim().toLowerCase() || null
+  const hasCustomHtml = Boolean(
+    (raw.slug ?? "").trim() || (raw.htmlContent ?? "").trim(),
+  );
+  const customPageHref = hasCustomHtml
+    ? buildPageUrl({
+        html: true,
+        scope: category?.scope,
+        catCode: category?.code,
+        slug: raw.slug,
+        deptCode,
+      })
     : null;
 
-  const customPageHref =
-    cleanSlug || (raw.htmlContent ?? "").trim()
-      ? cleanSlug
-        ? isDeptScope
-          ? `/html/${cleanScope}/${cleanDept ?? "all-departments"}/${cleanCatCode}/${cleanSlug}`
-          : `/html/${cleanScope}/${cleanCatCode}/${cleanSlug}`
-        : null
-      : null;
   const previewImageUrl = isImageAssetUrl(f1)
     ? f1
     : isImageAssetUrl(f2)
@@ -286,7 +255,7 @@ export function normalizeEntry(
     allFields,
     populatedFields,
     secondaryFields,
-    hasAnyFieldValue,
+    hasAnyFieldValue: populatedFields.length > 0,
     files,
     links,
     customPageHref,
@@ -297,13 +266,8 @@ export function normalizeEntry(
 
 export function normalizeEntries(
   rows: RawCategoryEntry[],
-  options?: {
-    categoryName?: string | null;
-    categoryCode?: string | null;
-    scope?: string | null;
-    deptCode?: string | null;
-    labels?: CategoryCustomLabels | null;
-  },
+  category?: CategoryViewMeta | null,
+  deptCode?: string | null,
 ): NormalizedEntry[] {
   return [...rows]
     .sort((a, b) => {
@@ -312,5 +276,5 @@ export function normalizeEntries(
       if (orderA !== orderB) return orderA - orderB;
       return (a.field1 ?? "").localeCompare(b.field1 ?? "");
     })
-    .map((row) => normalizeEntry(row, options));
+    .map((row) => normalizeEntry(row, category, deptCode));
 }

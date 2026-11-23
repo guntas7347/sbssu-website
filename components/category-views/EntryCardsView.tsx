@@ -19,11 +19,7 @@ export function EntryCardsView({
   deptCode,
   emptyMessage = "No cards available yet.",
 }: EntryCardsViewProps) {
-  const items = normalizeEntries(entries, {
-    categoryName: category?.name,
-    deptCode,
-    labels: category,
-  });
+  const items = normalizeEntries(entries, category, deptCode);
 
   if (items.length === 0) {
     return (
@@ -69,7 +65,7 @@ export function EntryCardsView({
                     className="rounded-lg bg-slate-50 px-3 py-2 dark:bg-slate-950/60"
                   >
                     <dt className="text-[10px] font-bold tracking-wider text-[var(--color-primary)] uppercase dark:text-[var(--color-primary-dark)]">
-                      {field.defaultLabel}
+                      {field.label}
                     </dt>
                     <dd className="mt-0.5 whitespace-pre-line text-xs text-slate-700 dark:text-slate-300">
                       {field.isPopulated ? (

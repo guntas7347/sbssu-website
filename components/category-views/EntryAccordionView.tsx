@@ -12,7 +12,6 @@ import {
 } from "lucide-react";
 import {
   normalizeEntries,
-  parseTableColumnHeaders,
   type CategoryViewMeta,
   type RawCategoryEntry,
 } from "./entry-view-helpers";

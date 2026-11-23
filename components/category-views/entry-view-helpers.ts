@@ -7,6 +7,8 @@ export type CategoryUiLayout =
 
 export type FieldSlotKey = "field1" | "field2" | "field3" | "field4" | "field5";
 
+const DEPT_SCOPES = new Set(["all-departments", "department"]);
+
 export interface CategoryCustomLabels {
   field1Label?: string | null;
   field2Label?: string | null;
@@ -39,6 +41,7 @@ export interface RawCategoryEntry {
 export interface CategoryViewMeta extends CategoryCustomLabels {
   name?: string | null;
   code?: string | null;
+  scope?: string | null;
   note?: string | null;
   uiLayout?: string | null;
 }
@@ -169,11 +172,14 @@ export function normalizeEntry(
   raw: RawCategoryEntry,
   options?: {
     categoryName?: string | null;
+    categoryCode?: string | null;
+    scope?: string | null;
     deptCode?: string | null;
     labels?: CategoryCustomLabels | null;
   },
 ): NormalizedEntry {
-  const labels = options?.labels;
+  const labels = options?.labels as CategoryViewMeta | null | undefined;
+  console.log();
 
   const allFields: NormalizedField[] = FIELD_DEFS.map((def) => {
     const trimmed = (raw[def.slot] ?? "").trim();
@@ -247,17 +253,26 @@ export function normalizeEntry(
     });
   }
 
-  const cleanSlug = (raw.slug ?? "").trim();
-  const cleanDept = (options?.deptCode ?? "").trim().toLowerCase();
+  const cleanSlug = (raw.slug ?? "").trim().toLowerCase();
+  const cleanScope = (labels?.scope ?? options?.scope ?? "university")
+    .trim()
+    .toLowerCase();
+  const cleanCatCode = (labels?.code ?? options?.categoryCode ?? "")
+    .trim()
+    .toLowerCase();
+  const isDeptScope = DEPT_SCOPES.has(cleanScope);
+  const cleanDept = isDeptScope
+    ? options?.deptCode?.trim().toLowerCase() || null
+    : null;
+
   const customPageHref =
     cleanSlug || (raw.htmlContent ?? "").trim()
       ? cleanSlug
-        ? cleanDept
-          ? `/departments/${cleanDept}/custom-pages/${cleanSlug}`
-          : `/custom-pages/${cleanSlug}`
+        ? isDeptScope
+          ? `/html/${cleanScope}/${cleanDept ?? "all-departments"}/${cleanCatCode}/${cleanSlug}`
+          : `/html/${cleanScope}/${cleanCatCode}/${cleanSlug}`
         : null
       : null;
-
   const previewImageUrl = isImageAssetUrl(f1)
     ? f1
     : isImageAssetUrl(f2)
@@ -284,6 +299,8 @@ export function normalizeEntries(
   rows: RawCategoryEntry[],
   options?: {
     categoryName?: string | null;
+    categoryCode?: string | null;
+    scope?: string | null;
     deptCode?: string | null;
     labels?: CategoryCustomLabels | null;
   },

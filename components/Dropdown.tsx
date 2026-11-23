@@ -3,12 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { Menu, X, ChevronDown, ChevronRight } from "lucide-react";
-
-export interface NavItem {
-  label: string;
-  path?: string;
-  children?: NavItem[];
-}
+import { NavItem } from "@/constants/nav-items";
 
 function DesktopDropdownItem({
   item,
@@ -19,7 +14,7 @@ function DesktopDropdownItem({
 }) {
   const [subOpen, setSubOpen] = useState(false);
   const hasChildren = Boolean(item.children && item.children.length > 0);
-  const isExternal = item.path?.startsWith("http");
+  const isExternal = item.href?.startsWith("http");
 
   return (
     <div
@@ -27,9 +22,9 @@ function DesktopDropdownItem({
       onMouseEnter={() => hasChildren && setSubOpen(true)}
       onMouseLeave={() => hasChildren && setSubOpen(false)}
     >
-      {item.path ? (
+      {item.href ? (
         <Link
-          href={item.path}
+          href={item.href}
           target={isExternal ? "_blank" : undefined}
           rel={isExternal ? "noopener noreferrer" : undefined}
           onClick={onNavigate}
@@ -81,7 +76,7 @@ function MobileNavNode({
 }) {
   const [expanded, setExpanded] = useState(false);
   const hasChildren = Boolean(item.children && item.children.length > 0);
-  const isExternal = item.path?.startsWith("http");
+  const isExternal = item.href?.startsWith("http");
 
   return (
     <div
@@ -94,9 +89,9 @@ function MobileNavNode({
       {hasChildren ? (
         <div>
           <div className="flex items-center justify-between rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800">
-            {item.path ? (
+            {item.href ? (
               <Link
-                href={item.path}
+                href={item.href}
                 target={isExternal ? "_blank" : undefined}
                 rel={isExternal ? "noopener noreferrer" : undefined}
                 onClick={onNavigate}
@@ -145,7 +140,7 @@ function MobileNavNode({
         </div>
       ) : (
         <Link
-          href={item.path || "#"}
+          href={item.href || "#"}
           target={isExternal ? "_blank" : undefined}
           rel={isExternal ? "noopener noreferrer" : undefined}
           onClick={onNavigate}
@@ -169,7 +164,7 @@ export function Tier2Navigation({ navItems }: { navItems: NavItem[] }) {
           const hasChildren = Boolean(
             item.children && item.children.length > 0,
           );
-          const isExternal = item.path?.startsWith("http");
+          const isExternal = item.href?.startsWith("http");
 
           return (
             <div
@@ -179,9 +174,9 @@ export function Tier2Navigation({ navItems }: { navItems: NavItem[] }) {
               onMouseLeave={() => hasChildren && setOpenDropdown(null)}
             >
               {hasChildren ? (
-                item.path ? (
+                item.href ? (
                   <Link
-                    href={item.path}
+                    href={item.href}
                     target={isExternal ? "_blank" : undefined}
                     rel={isExternal ? "noopener noreferrer" : undefined}
                     className="px-2 py-1 text-[13px] font-semibold text-slate-700 dark:text-slate-200 hover:text-primary dark:hover:text-primary-dark transition-colors flex items-center gap-0.5 rounded"
@@ -200,7 +195,7 @@ export function Tier2Navigation({ navItems }: { navItems: NavItem[] }) {
                 )
               ) : (
                 <Link
-                  href={item.path || "#"}
+                  href={item.href || "#"}
                   target={isExternal ? "_blank" : undefined}
                   rel={isExternal ? "noopener noreferrer" : undefined}
                   className="px-2 py-1 text-[13px] font-semibold text-slate-700 dark:text-slate-200 hover:text-primary dark:hover:text-primary-dark transition-colors rounded block"

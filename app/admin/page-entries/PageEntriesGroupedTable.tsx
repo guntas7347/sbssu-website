@@ -40,11 +40,14 @@ const DEPT_SCOPES = new Set(["all-departments", "department"]);
 function getPublicHref(item: AdminPageEntryItem): string {
   const scopeSlug = (item.categoryScope || "university").trim().toLowerCase();
   const catSlug = item.categoryCode.trim().toLowerCase();
-  const deptSlug = item.departmentCode?.trim().toLowerCase();
   const entrySlug = item.slug?.trim().toLowerCase();
+  const isDeptScope = DEPT_SCOPES.has(scopeSlug);
+  const deptSlug = isDeptScope
+    ? item.departmentCode?.trim().toLowerCase() || null
+    : null;
 
   if (entrySlug) {
-    if (DEPT_SCOPES.has(scopeSlug)) {
+    if (isDeptScope) {
       return deptSlug
         ? `/html/${scopeSlug}/${deptSlug}/${entrySlug}`
         : `/html/${scopeSlug}/${entrySlug}`;

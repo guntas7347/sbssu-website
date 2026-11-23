@@ -1,6 +1,6 @@
 "use server";
 
-import { and, asc, eq, isNull, sql } from "drizzle-orm";
+import { and, asc, eq, sql } from "drizzle-orm";
 import { db } from "@/db/drizzel";
 import { departmentsTable, pageCategories, pageEntries } from "@/db/schema";
 import {
@@ -37,25 +37,22 @@ export async function getPublicCategoryPageData(input: {
   try {
     const scope = input.scope.trim().toLowerCase();
     const catCode = input.catCode.trim().toLowerCase();
-    const deptCode = input.deptCode?.trim().toLowerCase() || null;
 
     if (!scope || !catCode) {
       return null;
     }
 
     const isDepartmentScope = DEPARTMENT_SCOPES.has(scope);
+    const deptCode = isDepartmentScope
+      ? input.deptCode?.trim().toLowerCase() || null
+      : null;
 
-    // Enforce strict route separation:
-    // - Department scopes ("department" | "all-departments") require deptCode
-    // - Non-department scopes ("university", "academics", "coe", etc.) forbid deptCode
+    // Department scopes require a valid deptCode; non-department scopes ignore department completely
     if (isDepartmentScope && !deptCode) {
       return null;
     }
-    if (!isDepartmentScope && deptCode) {
-      return null;
-    }
 
-    // 1. Resolve department if department-scoped
+    // 1. Resolve department only when scope is "department" or "all-departments"
     let department: { id: string; code: string; name: string } | null = null;
     if (isDepartmentScope && deptCode) {
       const [dept] = await db
@@ -74,7 +71,7 @@ export async function getPublicCategoryPageData(input: {
       department = dept;
     }
 
-    // 2. Resolve category matching scope + catCode (+ departmentId for "department" scope)
+    // 2. Resolve category matching scope + catCode (+ departmentId only for "department" scope)
     const categoryConditions = [
       eq(sql`lower(${pageCategories.scope})`, scope),
       eq(sql`lower(${pageCategories.code})`, catCode),
@@ -82,8 +79,6 @@ export async function getPublicCategoryPageData(input: {
 
     if (scope === "department" && department) {
       categoryConditions.push(eq(pageCategories.departmentId, department.id));
-    } else {
-      categoryConditions.push(isNull(pageCategories.departmentId));
     }
 
     const [cat] = await db
@@ -113,7 +108,7 @@ export async function getPublicCategoryPageData(input: {
       return null;
     }
 
-    // 3. Fetch entries for this category (filtered by departmentId for "all-departments")
+    // 3. Fetch entries (filtered by departmentId only when scope is "all-departments")
     const entryConditions = [eq(pageEntries.pageCategoryId, cat.id)];
     if (scope === "all-departments" && department) {
       entryConditions.push(eq(pageEntries.departmentId, department.id));
@@ -162,7 +157,69 @@ export async function getPublicCategoryPageData(input: {
       department,
       entries: rows,
     };
-  } catch (error) {
+  } catch {
+    return null;
+  }
+}
+
+export interface ScopeDirectoryCategoryItem {
+  id: string;
+  name: string;
+  code: string;
+  uiLayout: CategoryUiLayout;
+  singleEntry: boolean;
+  entryCount: number;
+  href: string;
+}
+
+export interface PublicScopeDirectoryData {
+  scope: string;
+  categories: ScopeDirectoryCategoryItem[];
+}
+
+export async function getPublicScopeDirectory(
+  rawScope: string,
+): Promise<PublicScopeDirectoryData | null> {
+  try {
+    const scope = rawScope.trim().toLowerCase();
+    if (!scope || DEPARTMENT_SCOPES.has(scope)) return null;
+
+    const rows = await db
+      .select({
+        id: pageCategories.id,
+        name: pageCategories.name,
+        code: pageCategories.code,
+        uiLayout: pageCategories.uiLayout,
+        singleEntry: pageCategories.singleEntry,
+        entryCount: sql<number>`count(${pageEntries.id})::int`,
+      })
+      .from(pageCategories)
+      .leftJoin(pageEntries, eq(pageEntries.pageCategoryId, pageCategories.id))
+      .where(eq(sql`lower(${pageCategories.scope})`, scope))
+      .groupBy(
+        pageCategories.id,
+        pageCategories.name,
+        pageCategories.code,
+        pageCategories.uiLayout,
+        pageCategories.singleEntry,
+      )
+      .orderBy(asc(pageCategories.code), asc(pageCategories.name));
+
+    if (rows.length === 0) return null;
+
+    return {
+      scope,
+      categories: rows.map((row) => ({
+        id: row.id,
+        name: row.name,
+        code: row.code,
+        uiLayout: normalizeUiLayout(row.uiLayout),
+        singleEntry: Boolean(row.singleEntry),
+        entryCount: Number(row.entryCount ?? 0),
+        href: `/pages/${scope}/${row.code.trim().toLowerCase()}`,
+      })),
+    };
+  } catch {
     return null;
   }
 }

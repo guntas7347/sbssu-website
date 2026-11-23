@@ -34,69 +34,74 @@ export async function getPageEntryByCategoryAndSlug(params: {
   slug: string;
   deptCode?: string | null;
 }): Promise<PublicSlugPageEntry | null> {
-  const cleanCatCode = params.catCode.trim().toLowerCase();
-  const cleanSlug = params.slug.trim().toLowerCase();
-  const cleanDeptCode = params.deptCode?.trim().toLowerCase() || null;
+  try {
+    const cleanCatCode = params.catCode.trim().toLowerCase();
+    const cleanSlug = params.slug.trim().toLowerCase();
+    const cleanDeptCode = params.deptCode?.trim().toLowerCase() || null;
 
-  if (!cleanCatCode || !cleanSlug) {
+    if (!cleanCatCode || !cleanSlug) {
+      return null;
+    }
+
+    const conditions = [
+      sql`lower(${pageCategories.code}) = ${cleanCatCode}`,
+      sql`lower(${pageEntries.slug}) = ${cleanSlug}`,
+    ];
+
+    if (cleanDeptCode) {
+      conditions.push(
+        or(
+          sql`lower(${departmentsTable.code}) = ${cleanDeptCode}`,
+          eq(pageCategories.scope, "all-departments"),
+        )!,
+      );
+    }
+
+    const rows = await db
+      .select({
+        id: pageEntries.id,
+        pageCategoryId: pageEntries.pageCategoryId,
+        categoryCode: pageCategories.code,
+        categoryName: pageCategories.name,
+        categoryScope: pageCategories.scope,
+        departmentId: pageEntries.departmentId,
+        departmentCode: departmentsTable.code,
+        departmentName: departmentsTable.name,
+        displayOrder: pageEntries.displayOrder,
+        field1: pageEntries.field1,
+        field2: pageEntries.field2,
+        field3: pageEntries.field3,
+        field4: pageEntries.field4,
+        field5: pageEntries.field5,
+        file1: pageEntries.file1,
+        file2: pageEntries.file2,
+        link1: pageEntries.link1,
+        link2: pageEntries.link2,
+        slug: pageEntries.slug,
+        htmlContent: pageEntries.htmlContent,
+        createdAt: pageEntries.createdAt,
+        updatedAt: pageEntries.updatedAt,
+      })
+      .from(pageEntries)
+      .innerJoin(
+        pageCategories,
+        eq(pageEntries.pageCategoryId, pageCategories.id),
+      )
+      .leftJoin(
+        departmentsTable,
+        eq(pageEntries.departmentId, departmentsTable.id),
+      )
+      .where(and(...conditions))
+      .orderBy(
+        asc(pageEntries.displayOrder),
+        desc(pageEntries.updatedAt),
+        desc(pageEntries.createdAt),
+      )
+      .limit(1);
+
+    return rows[0] ?? null;
+  } catch (error) {
+    console.error(error);
     return null;
   }
-
-  const conditions = [
-    sql`lower(${pageCategories.code}) = ${cleanCatCode}`,
-    sql`lower(${pageEntries.slug}) = ${cleanSlug}`,
-  ];
-
-  if (cleanDeptCode) {
-    conditions.push(
-      or(
-        sql`lower(${departmentsTable.code}) = ${cleanDeptCode}`,
-        eq(pageCategories.scope, "all-departments"),
-      )!,
-    );
-  }
-
-  const rows = await db
-    .select({
-      id: pageEntries.id,
-      pageCategoryId: pageEntries.pageCategoryId,
-      categoryCode: pageCategories.code,
-      categoryName: pageCategories.name,
-      categoryScope: pageCategories.scope,
-      departmentId: pageEntries.departmentId,
-      departmentCode: departmentsTable.code,
-      departmentName: departmentsTable.name,
-      displayOrder: pageEntries.displayOrder,
-      field1: pageEntries.field1,
-      field2: pageEntries.field2,
-      field3: pageEntries.field3,
-      field4: pageEntries.field4,
-      field5: pageEntries.field5,
-      file1: pageEntries.file1,
-      file2: pageEntries.file2,
-      link1: pageEntries.link1,
-      link2: pageEntries.link2,
-      slug: pageEntries.slug,
-      htmlContent: pageEntries.htmlContent,
-      createdAt: pageEntries.createdAt,
-      updatedAt: pageEntries.updatedAt,
-    })
-    .from(pageEntries)
-    .innerJoin(
-      pageCategories,
-      eq(pageEntries.pageCategoryId, pageCategories.id),
-    )
-    .leftJoin(
-      departmentsTable,
-      eq(pageEntries.departmentId, departmentsTable.id),
-    )
-    .where(and(...conditions))
-    .orderBy(
-      asc(pageEntries.displayOrder),
-      desc(pageEntries.updatedAt),
-      desc(pageEntries.createdAt),
-    )
-    .limit(1);
-
-  return rows[0] ?? null;
 }

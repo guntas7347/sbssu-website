@@ -16,7 +16,7 @@ import { sanitizeHtmlClient } from "@/lib/sanitize-html";
 
 const VC_CATEGORY_QUERY = {
   scope: "university",
-  catCode: "102", // Update to your VC category code
+  catCode: "108", // Update to your VC category code
 } as const;
 
 const DEFAULT_VC_PHOTO =

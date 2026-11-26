@@ -1,9 +1,9 @@
 export interface NavItem {
   label: string;
   href?: string;
+  new?: boolean;
   children?: NavItem[];
 }
-
 export const navItems: NavItem[] = [
   {
     label: "Home",
@@ -53,7 +53,7 @@ export const navItems: NavItem[] = [
   {
     label: "Academics",
     children: [
-      { label: "Others", href: "/pages/academics" },
+      { label: "Others", href: "/pages/academics", new: true },
       {
         label: "Academic Council",
         href: "/academics/council",

@@ -38,16 +38,13 @@ interface AssetsSectionProps {
   onUploadError?: (message: string) => void;
 }
 
-function formatSlotLabel(
-  customLabel: string | null | undefined,
-  defaultLabel: string,
-  emptyCustomFallback?: string,
-): string {
-  const trimmed = customLabel?.trim() ?? "";
-  if (trimmed.length > 0) {
-    return `${trimmed} (${defaultLabel})`;
-  }
-  return emptyCustomFallback ?? defaultLabel;
+function getTrimmedLabel(label: string | null | undefined): string | null {
+  const trimmed = label?.trim() ?? "";
+  return trimmed.length > 0 ? trimmed : null;
+}
+
+function formatSlotLabel(trimmedLabel: string, defaultLabel: string): string {
+  return `${trimmedLabel} (${defaultLabel})`;
 }
 
 export function AssetsSection({
@@ -82,67 +79,67 @@ export function AssetsSection({
   uploadFolder,
   onUploadError,
 }: AssetsSectionProps) {
-  const resolvedField1Label = formatSlotLabel(
-    field1Label,
-    "Field 1",
-    "Field 1 (Primary)",
-  );
-  const resolvedField2Label = formatSlotLabel(field2Label, "Field 2");
-  const resolvedField3Label = formatSlotLabel(field3Label, "Field 3");
-  const resolvedField4Label = formatSlotLabel(field4Label, "Field 4");
-  const resolvedField5Label = formatSlotLabel(field5Label, "Field 5");
-
-  const resolvedFile1Label = formatSlotLabel(file1Label, "File 1");
-  const resolvedFile2Label = formatSlotLabel(file2Label, "File 2");
-  const resolvedLink1Label = formatSlotLabel(link1Label, "Link 1");
-  const resolvedLink2Label = formatSlotLabel(link2Label, "Link 2");
-
-  const fields: Array<{
-    id: string;
-    label: string;
-    value: string;
-    onChange: (val: string) => void;
-    placeholder: string;
-  }> = [
+  const fields = [
     {
       id: "entry-field-1",
-      label: resolvedField1Label,
+      rawLabel: getTrimmedLabel(field1Label),
+      defaultLabel: "Field 1",
       value: field1,
       onChange: onField1Change,
-      placeholder:
-        field1Label?.trim() || "Primary label, name, heading, or title",
+      placeholder: "Primary label, name, heading, or title",
     },
     {
       id: "entry-field-2",
-      label: resolvedField2Label,
+      rawLabel: getTrimmedLabel(field2Label),
+      defaultLabel: "Field 2",
       value: field2,
       onChange: onField2Change,
-      placeholder:
-        field2Label?.trim() || "Designation, subtitle, or secondary info",
+      placeholder: "Designation, subtitle, or secondary info",
     },
     {
       id: "entry-field-3",
-      label: resolvedField3Label,
+      rawLabel: getTrimmedLabel(field3Label),
+      defaultLabel: "Field 3",
       value: field3,
       onChange: onField3Change,
-      placeholder:
-        field3Label?.trim() || "Department, tenure, date, or extra detail",
+      placeholder: "Department, tenure, date, or extra detail",
     },
     {
       id: "entry-field-4",
-      label: resolvedField4Label,
+      rawLabel: getTrimmedLabel(field4Label),
+      defaultLabel: "Field 4",
       value: field4,
       onChange: onField4Change,
-      placeholder: field4Label?.trim() || "Additional column / value",
+      placeholder: "Additional column / value",
     },
     {
       id: "entry-field-5",
-      label: resolvedField5Label,
+      rawLabel: getTrimmedLabel(field5Label),
+      defaultLabel: "Field 5",
       value: field5,
       onChange: onField5Change,
-      placeholder: field5Label?.trim() || "Additional column / notes",
+      placeholder: "Additional column / notes",
     },
-  ];
+  ].filter(
+    (
+      f,
+    ): f is {
+      id: string;
+      rawLabel: string;
+      defaultLabel: string;
+      value: string;
+      onChange: (val: string) => void;
+      placeholder: string;
+    } => f.rawLabel !== null,
+  );
+
+  const file1Trimmed = getTrimmedLabel(file1Label);
+  const file2Trimmed = getTrimmedLabel(file2Label);
+  const hasAnyFile = file1Trimmed !== null || file2Trimmed !== null;
+
+  const link1Trimmed = getTrimmedLabel(link1Label);
+  const link2Trimmed = getTrimmedLabel(link2Label);
+  const hasAnyLink = link1Trimmed !== null || link2Trimmed !== null;
 
   return (
     <div className="space-y-5 rounded-2xl border border-slate-200 bg-slate-50/70 p-4 sm:p-5 dark:border-slate-800 dark:bg-slate-950/40">
@@ -159,104 +156,116 @@ export function AssetsSection({
       {categoryNote && (
         <div className="flex items-center justify-start gap-3 rounded-xl border border-[var(--color-primary)]/25 bg-[var(--color-primary)]/5 px-3.5 py-3 text-sm dark:border-[var(--color-primary-dark)]/25 dark:bg-[var(--color-primary-dark)]/5">
           <Info className="h-4 w-4 shrink-0 text-[var(--color-primary)] dark:text-[var(--color-primary-dark)]" />
-          <p className="whitespace-pre-wrap leading-relaxed text-slate-700 dark:text-slate-300">
+          <p className="leading-relaxed whitespace-pre-wrap text-slate-700 dark:text-slate-300">
             {categoryNote}
           </p>
         </div>
       )}
 
-      <div className="grid gap-4 sm:grid-cols-2">
-        {fields.map((f) => (
-          <div key={f.id} className="space-y-1.5">
-            <label
-              htmlFor={f.id}
-              className="block text-xs font-semibold text-slate-700 dark:text-slate-300"
-            >
-              {f.label}
-            </label>
-            <textarea
-              id={f.id}
-              rows={5}
-              value={f.value}
-              onChange={(e) => f.onChange(e.target.value)}
-              placeholder={f.placeholder}
-              className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-xs font-medium text-slate-900 placeholder:text-slate-400 focus:border-[var(--color-primary)] focus:outline-none sm:text-sm dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:focus:border-[var(--color-primary-dark)]"
-            />
-          </div>
-        ))}
-      </div>
+      {fields.length > 0 && (
+        <div className="grid gap-4 sm:grid-cols-2">
+          {fields.map((f) => (
+            <div key={f.id} className="space-y-1.5">
+              <label
+                htmlFor={f.id}
+                className="block text-xs font-semibold text-slate-700 dark:text-slate-300"
+              >
+                {formatSlotLabel(f.rawLabel, f.defaultLabel)}
+              </label>
+              <textarea
+                id={f.id}
+                rows={5}
+                value={f.value}
+                onChange={(e) => f.onChange(e.target.value)}
+                placeholder={f.rawLabel}
+                className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-xs font-medium text-slate-900 placeholder:text-slate-400 focus:border-[var(--color-primary)] focus:outline-none sm:text-sm dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:focus:border-[var(--color-primary-dark)]"
+              />
+            </div>
+          ))}
+        </div>
+      )}
 
       {/* File 1 & File 2 using Uploader with dynamic folder */}
-      <div className="grid gap-4 md:grid-cols-2">
-        <div className="space-y-1.5 rounded-xl border border-slate-200 bg-white p-3.5 dark:border-slate-800 dark:bg-slate-900">
-          <div className="text-xs font-semibold text-slate-700 dark:text-slate-300">
-            {resolvedFile1Label}
-          </div>
-          <Uploader
-            value={file1}
-            onUploaded={(filePath) => onFile1Change(filePath)}
-            onError={onUploadError}
-            accept="*/*"
-            label={file1Label?.trim() || "Upload File 1"}
-            folder={uploadFolder}
-          />
-        </div>
+      {hasAnyFile && (
+        <div className="grid gap-4 md:grid-cols-2">
+          {file1Trimmed !== null && (
+            <div className="space-y-1.5 rounded-xl border border-slate-200 bg-white p-3.5 dark:border-slate-800 dark:bg-slate-900">
+              <div className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                {formatSlotLabel(file1Trimmed, "File 1")}
+              </div>
+              <Uploader
+                value={file1}
+                onUploaded={(filePath) => onFile1Change(filePath)}
+                onError={onUploadError}
+                accept="*/*"
+                label={file1Trimmed}
+                folder={uploadFolder}
+              />
+            </div>
+          )}
 
-        <div className="space-y-1.5 rounded-xl border border-slate-200 bg-white p-3.5 dark:border-slate-800 dark:bg-slate-900">
-          <div className="text-xs font-semibold text-slate-700 dark:text-slate-300">
-            {resolvedFile2Label}
-          </div>
-          <Uploader
-            value={file2}
-            onUploaded={(filePath) => onFile2Change(filePath)}
-            onError={onUploadError}
-            accept="*/*"
-            label={file2Label?.trim() || "Upload File 2"}
-            folder={uploadFolder}
-          />
+          {file2Trimmed !== null && (
+            <div className="space-y-1.5 rounded-xl border border-slate-200 bg-white p-3.5 dark:border-slate-800 dark:bg-slate-900">
+              <div className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                {formatSlotLabel(file2Trimmed, "File 2")}
+              </div>
+              <Uploader
+                value={file2}
+                onUploaded={(filePath) => onFile2Change(filePath)}
+                onError={onUploadError}
+                accept="*/*"
+                label={file2Trimmed}
+                folder={uploadFolder}
+              />
+            </div>
+          )}
         </div>
-      </div>
+      )}
 
       {/* Link 1 & Link 2 as plain text inputs */}
-      <div className="grid gap-4 md:grid-cols-2">
-        <div className="space-y-1.5">
-          <label
-            htmlFor="entry-link1"
-            className="flex items-center gap-1.5 text-xs font-semibold text-slate-700 dark:text-slate-300"
-          >
-            <Link2 className="h-3.5 w-3.5 text-[var(--color-secondary)] dark:text-[var(--color-secondary-dark)]" />
-            <span>{resolvedLink1Label}</span>
-          </label>
-          <input
-            id="entry-link1"
-            type="text"
-            value={link1}
-            onChange={(e) => onLink1Change(e.target.value)}
-            placeholder={link1Label?.trim() || "https://... or reference text"}
-            className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-xs font-medium text-slate-900 placeholder:text-slate-400 focus:border-[var(--color-primary)] focus:outline-none sm:text-sm dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:focus:border-[var(--color-primary-dark)]"
-          />
-        </div>
+      {hasAnyLink && (
+        <div className="grid gap-4 md:grid-cols-2">
+          {link1Trimmed !== null && (
+            <div className="space-y-1.5">
+              <label
+                htmlFor="entry-link1"
+                className="flex items-center gap-1.5 text-xs font-semibold text-slate-700 dark:text-slate-300"
+              >
+                <Link2 className="h-3.5 w-3.5 text-[var(--color-secondary)] dark:text-[var(--color-secondary-dark)]" />
+                <span>{formatSlotLabel(link1Trimmed, "Link 1")}</span>
+              </label>
+              <input
+                id="entry-link1"
+                type="text"
+                value={link1}
+                onChange={(e) => onLink1Change(e.target.value)}
+                placeholder={link1Trimmed}
+                className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-xs font-medium text-slate-900 placeholder:text-slate-400 focus:border-[var(--color-primary)] focus:outline-none sm:text-sm dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:focus:border-[var(--color-primary-dark)]"
+              />
+            </div>
+          )}
 
-        <div className="space-y-1.5">
-          <label
-            htmlFor="entry-link2"
-            className="flex items-center gap-1.5 text-xs font-semibold text-slate-700 dark:text-slate-300"
-          >
-            <Link2 className="h-3.5 w-3.5 text-[var(--color-secondary)] dark:text-[var(--color-secondary-dark)]" />
-            <span>{resolvedLink2Label}</span>
-          </label>
-          <input
-            id="entry-link2"
-            type="text"
-            value={link2}
-            onChange={(e) => onLink2Change(e.target.value)}
-            placeholder={
-              link2Label?.trim() || "https://... or secondary reference"
-            }
-            className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-xs font-medium text-slate-900 placeholder:text-slate-400 focus:border-[var(--color-primary)] focus:outline-none sm:text-sm dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:focus:border-[var(--color-primary-dark)]"
-          />
+          {link2Trimmed !== null && (
+            <div className="space-y-1.5">
+              <label
+                htmlFor="entry-link2"
+                className="flex items-center gap-1.5 text-xs font-semibold text-slate-700 dark:text-slate-300"
+              >
+                <Link2 className="h-3.5 w-3.5 text-[var(--color-secondary)] dark:text-[var(--color-secondary-dark)]" />
+                <span>{formatSlotLabel(link2Trimmed, "Link 2")}</span>
+              </label>
+              <input
+                id="entry-link2"
+                type="text"
+                value={link2}
+                onChange={(e) => onLink2Change(e.target.value)}
+                placeholder={link2Trimmed}
+                className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-xs font-medium text-slate-900 placeholder:text-slate-400 focus:border-[var(--color-primary)] focus:outline-none sm:text-sm dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:focus:border-[var(--color-primary-dark)]"
+              />
+            </div>
+          )}
         </div>
-      </div>
+      )}
     </div>
   );
 }

@@ -29,29 +29,23 @@ export function EntryTableView({
     );
   }
 
-  const headers = [
-    category?.field1Label?.trim() || "Field 1",
-    category?.field2Label?.trim() || "Field 2",
-    category?.field3Label?.trim() || "Field 3",
-    category?.field4Label?.trim() || "Field 4",
-    category?.field5Label?.trim() || "Field 5",
-  ];
+  const columnFields = items[0]?.allFields ?? [];
 
   return (
     <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-2xs dark:border-slate-800 dark:bg-slate-900">
       <table className="min-w-full divide-y divide-slate-200 text-left text-xs dark:divide-slate-800">
         <thead className="bg-slate-50 text-[11px] font-bold tracking-wider text-slate-600 uppercase dark:bg-slate-950/70 dark:text-slate-300">
           <tr>
-            {headers.map((header, idx) => (
+            {columnFields.map((field, idx) => (
               <th
-                key={idx}
+                key={field.slot}
                 className={`px-4 py-3 ${
                   idx === 0
                     ? "text-[var(--color-primary)] dark:text-[var(--color-primary-dark)]"
                     : ""
                 }`}
               >
-                {header}
+                {field.label}
               </th>
             ))}
             <th className="px-4 py-3">Created</th>

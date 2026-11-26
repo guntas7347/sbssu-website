@@ -79,14 +79,18 @@ export interface NormalizedEntry {
 const FIELD_SLOTS: Array<{
   slot: FieldSlotKey;
   labelKey: keyof CategoryCustomLabels;
-  fallback: string;
 }> = [
-  { slot: "field1", labelKey: "field1Label", fallback: "Field 1" },
-  { slot: "field2", labelKey: "field2Label", fallback: "Field 2" },
-  { slot: "field3", labelKey: "field3Label", fallback: "Field 3" },
-  { slot: "field4", labelKey: "field4Label", fallback: "Field 4" },
-  { slot: "field5", labelKey: "field5Label", fallback: "Field 5" },
+  { slot: "field1", labelKey: "field1Label" },
+  { slot: "field2", labelKey: "field2Label" },
+  { slot: "field3", labelKey: "field3Label" },
+  { slot: "field4", labelKey: "field4Label" },
+  { slot: "field5", labelKey: "field5Label" },
 ];
+
+function getTrimmedLabel(value?: string | null): string | null {
+  const trimmed = value?.trim() ?? "";
+  return trimmed.length > 0 ? trimmed : null;
+}
 
 function labelOr(value?: string | null, fallback = ""): string {
   return value?.trim() || fallback;
@@ -161,23 +165,37 @@ export function normalizeEntry(
   category?: CategoryViewMeta | null,
   deptCode?: string | null,
 ): NormalizedEntry {
-  const allFields: NormalizedField[] = FIELD_SLOTS.map(
-    ({ slot, labelKey, fallback }) => {
+  const allFields: NormalizedField[] = FIELD_SLOTS.flatMap(
+    ({ slot, labelKey }) => {
+      const label = getTrimmedLabel(category?.[labelKey]);
+      if (!label) return [];
+
       const value = (raw[slot] ?? "").trim();
-      return {
-        slot,
-        label: labelOr(category?.[labelKey], fallback),
-        value,
-        isPopulated: value.length > 0,
-      };
+      return [
+        {
+          slot,
+          label,
+          value,
+          isPopulated: value.length > 0,
+        },
+      ];
     },
   );
 
   const populatedFields = allFields.filter((f) => f.isPopulated);
+
+  const fallbackRawTitle =
+    (raw.field1 ?? "").trim() ||
+    FIELD_SLOTS.map(({ slot }) => (raw[slot] ?? "").trim()).find(
+      (v) => v.length > 0,
+    ) ||
+    "";
+
   const primaryTitle =
-    (allFields[0]?.isPopulated
+    (allFields[0]?.slot === "field1" && allFields[0].isPopulated
       ? allFields[0].value
       : populatedFields[0]?.value) ||
+    fallbackRawTitle ||
     category?.name?.trim() ||
     "Untitled Entry";
 
@@ -188,20 +206,22 @@ export function normalizeEntry(
   const files: EntryActionItem[] = [];
   const f1 = (raw.file1 ?? "").trim();
   const f2 = (raw.file2 ?? "").trim();
-  if (f1) {
+  const f1Label = getTrimmedLabel(category?.file1Label);
+  const f2Label = getTrimmedLabel(category?.file2Label);
+  if (f1 && f1Label) {
     files.push({
       key: `${raw.id}-file1`,
       kind: "file",
-      label: labelOr(category?.file1Label, f2 ? "File 1" : "Download File"),
+      label: f1Label,
       href: f1,
       isExternal: isExternalUrl(f1),
     });
   }
-  if (f2) {
+  if (f2 && f2Label) {
     files.push({
       key: `${raw.id}-file2`,
       kind: "file",
-      label: labelOr(category?.file2Label, "File 2"),
+      label: f2Label,
       href: f2,
       isExternal: isExternalUrl(f2),
     });
@@ -210,20 +230,22 @@ export function normalizeEntry(
   const links: EntryActionItem[] = [];
   const l1 = (raw.link1 ?? "").trim();
   const l2 = (raw.link2 ?? "").trim();
-  if (l1) {
+  const l1Label = getTrimmedLabel(category?.link1Label);
+  const l2Label = getTrimmedLabel(category?.link2Label);
+  if (l1 && l1Label) {
     links.push({
       key: `${raw.id}-link1`,
       kind: "link",
-      label: labelOr(category?.link1Label, l2 ? "Link 1" : "Open Link"),
+      label: l1Label,
       href: l1,
       isExternal: isExternalUrl(l1),
     });
   }
-  if (l2) {
+  if (l2 && l2Label) {
     links.push({
       key: `${raw.id}-link2`,
       kind: "link",
-      label: labelOr(category?.link2Label, "Link 2"),
+      label: l2Label,
       href: l2,
       isExternal: isExternalUrl(l2),
     });

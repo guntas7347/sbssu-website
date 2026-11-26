@@ -53,7 +53,7 @@ export default function AdminPageCategoriesPage() {
         description="Manage category codes, page titles, and dynamic /page/[code] routes."
         backHref="/admin"
         backLabel="Back to Admin Dashboard"
-        actionLabel="New Category"
+        actionLabel="New Page"
         actionHref="/admin/page-categories/new"
       />
 

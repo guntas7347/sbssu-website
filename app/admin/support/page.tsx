@@ -37,6 +37,8 @@ export default function AdminSupportPage() {
         description="Quick guides and FAQs for structured fields, custom HTML pages, display ordering, and portal scopes."
         backHref="/admin"
         backLabel="Back to Admin Dashboard"
+        actionLabel="Video Guide"
+        actionHref="https://www.youtube.com"
       />
 
       {/* Search & Category Filter */}

@@ -24,7 +24,7 @@ export const ADMIN_HELP_ITEMS: AdminHelpItem[] = [
     category: "Page Entries & Fields",
     question: "How do I add or edit department data?",
     summary:
-      "Go to Page Entries -> New Entry, pick your department category, fill field1 to field5 using the guide shown on screen, and save. If a category only allows one entry and already has one, a warning box appears with a link to edit the existing entry instead of creating a duplicate.",
+      "Go to Manage Data (Page Entries) -> New Entry, pick your department category, fill field1 to field5 using the guide shown on screen, and save. If a category only allows one entry and already has one, a warning box appears with a link to edit the existing entry instead of creating a duplicate.",
     steps: [
       "Open Page Entries from the admin menu and click New Entry.",
       "Select your department category (such as About, Vision, Mission, HOD Details, Courses, Faculty, BoS, or Research).",
@@ -44,6 +44,146 @@ export const ADMIN_HELP_ITEMS: AdminHelpItem[] = [
       "field1",
       "guide",
     ],
+  },
+  {
+    id: "create-page",
+    category: "Page Entries & Fields",
+    question: "What is Create Page?",
+    summary:
+      "Create Page is used to create a new page on the website. You choose what kind of information the page will contain and how that information will be displayed.",
+    steps: [
+      "Open Create Page to create a new page.",
+      "Enter the page name and other basic details.",
+      "Choose how the information should be displayed, such as a list, table, cards, accordion, or article.",
+      "Set labels for the information you want to collect, such as Title, Description, Date, or Document.",
+      "Save the page. It will now be available for adding information through Manage Data.",
+      "Some pages are permanent and cannot be edited or deleted. These pages are maintained by the system.",
+    ],
+    tags: ["create page", "new page", "page setup", "page layout"],
+  },
+  {
+    id: "manage-page-data",
+    category: "Page Entries & Fields",
+    question: "What is Manage Data?",
+    summary:
+      "Manage Data is used to add, update, arrange, and manage the information shown on an existing page. You do not create a new page here; you only manage its content.",
+    steps: [
+      "Open Manage Data and select a page you have access to.",
+      "Click Add Entry to add new information to that page.",
+      "Fill in the available fields. Their names depend on how the page was created.",
+      "Upload documents or add links if those options are available.",
+      "Save the entry to make the information available on the page.",
+      "You can edit, delete, or change the display order of entries depending on your permissions.",
+    ],
+    tags: [
+      "manage data",
+      "page entries",
+      "add information",
+      "edit content",
+      "upload documents",
+    ],
+  },
+  {
+    id: "create-page-vs-manage-data",
+    category: "Page Entries & Fields",
+    question: "What is the difference between Create Page and Manage Data?",
+    summary:
+      "Create Page creates the page itself, while Manage Data adds the information that appears inside that page.",
+    steps: [
+      "Use Create Page when you want to create a completely new page.",
+      "Use Manage Data when you want to add information to an existing page.",
+      "For example, create a page called Faculty Members using Create Page.",
+      "Then use Manage Data to add individual faculty members, including their names, designations, photos, and other details.",
+      "You only need to create the page once. You can add multiple entries to it whenever required.",
+    ],
+    tags: [
+      "difference",
+      "create page",
+      "manage data",
+      "page content",
+      "entries",
+    ],
+  },
+  {
+    id: "page-access-permissions",
+    category: "Page Entries & Fields",
+    question: "Why can't I see or edit some pages?",
+    summary:
+      "You can only access and manage pages that are assigned to you according to your permissions. Some pages are maintained by the university or system administrators.",
+    steps: [
+      "Your available pages depend on your assigned access rights.",
+      "Some pages are available to the entire university, while others belong to a particular department or section.",
+      "You may be allowed to manage information on a page without having permission to change the page itself.",
+      "Permanent pages cannot be modified or deleted through normal page management.",
+      "Contact your administrator if you need access to a page or permission to make changes.",
+    ],
+    tags: [
+      "permissions",
+      "access",
+      "page access",
+      "permanent pages",
+      "department",
+    ],
+  },
+  {
+    id: "page-entries",
+    category: "Page Entries & Fields",
+    question: "What is a Page Entry?",
+    summary:
+      "A Page Entry is one individual piece of information added to a page. A page can contain one or many entries, depending on its purpose.",
+    steps: [
+      "First, select the required page in Manage Data.",
+      "Click Add Entry to create a new entry.",
+      "Fill in the details shown in the form.",
+      "Each entry can contain text, documents, and links, depending on the page settings.",
+      "Save the entry. It will appear on the corresponding website page.",
+      "For example, a Faculty Members page can have a separate entry for every faculty member.",
+    ],
+    tags: ["page entry", "add entry", "information", "content", "records"],
+  },
+  {
+    id: "single-entry-page",
+    category: "Page Entries & Fields",
+    question: "Why can I add only one entry to a page?",
+    summary:
+      "Some pages are designed to contain only one entry. These pages are intended for information that does not need multiple separate records.",
+    steps: [
+      "A page may be configured to allow only one entry.",
+      "For example, an About Us page may need only one entry.",
+      "Other pages, such as Faculty Members or Notices, can contain multiple entries.",
+      "If a page already has its single entry, you may need to edit that entry instead of adding another one.",
+    ],
+    tags: ["single entry", "one entry", "add entry", "page settings"],
+  },
+  {
+    id: "page-display-order",
+    category: "Ordering & Scopes",
+    question: "How can I change the order of information on a page?",
+    summary:
+      "You can control the order in which information appears on a page using the display order option.",
+    steps: [
+      "Open Manage Data and select the required page.",
+      "Find the entry whose position you want to change.",
+      "Update its display order.",
+      "Entries with smaller display order numbers appear before entries with larger numbers.",
+      "Save your changes to update the order on the website.",
+    ],
+    tags: ["display order", "sorting", "arrange entries", "ordering"],
+  },
+  {
+    id: "page-fields",
+    category: "Page Entries & Fields",
+    question: "Why are the form fields different on different pages?",
+    summary:
+      "Each page is designed to collect different types of information. The form fields are based on the requirements of that particular page.",
+    steps: [
+      "A Faculty Members page may ask for a name, designation, department, and profile link.",
+      "A Notices page may ask for a notice title, date, document, and related link.",
+      "A page administrator decides which information fields are needed when creating the page.",
+      "Fill in the available fields according to their labels and instructions.",
+      "If a field is unclear, check the guidance provided on the page or contact your administrator.",
+    ],
+    tags: ["fields", "form", "labels", "field names", "page information"],
   },
   {
     id: "department-category-codes",

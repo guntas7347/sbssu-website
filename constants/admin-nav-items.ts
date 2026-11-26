@@ -61,14 +61,14 @@ export const ADMIN_NAV_ITEMS: NavItem[] = [
     requiredRights: ["admin", "hod"],
   },
   {
-    name: "Page Categories",
+    name: "Create Page",
     href: "/admin/page-categories",
     category: "Content & Media",
     icon: ListSortAscending,
     requiredRights: ["admin", "hod"],
   },
   {
-    name: "Page Entries",
+    name: "Manage Data",
     href: "/admin/page-entries",
     category: "Content & Media",
     icon: FileText,
